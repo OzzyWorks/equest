@@ -1,112 +1,230 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
-    <title>ENGLISH QUEST 300 FULL</title>
-    <style>
-        /* (前回の全CSSをここに挿入) */
-        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; color: #fff; font-family: sans-serif; }
-        body { display: flex; flex-direction: column; box-sizing: border-box; padding: 10px; }
-        #game-screen { flex: 1; display: flex; flex-direction: column; background: linear-gradient(to bottom, #1a2a6c, #b21f1f, #fdbb2d); border: 4px solid #fff; border-radius: 8px; position: relative; overflow: hidden; }
-        #monster-area { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        #monster-img-tag { width: 180px; height: 180px; object-fit: contain; background: #fff; border: 4px solid #ffd700; border-radius: 12px; display: none; }
-        #ui-area { flex: 1.5; display: flex; flex-direction: column; background: #000; border: 4px solid #fff; border-radius: 8px; margin-top: 8px; padding: 10px; }
-        #choices { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        #choices button { padding: 15px 5px; background: #000; color: #fff; border: 2px solid #fff; border-radius: 5px; }
-        #log { color: #ffff00; text-align: center; margin: 10px 0; font-weight: bold; }
-        #bonus-banner { display: none; position: absolute; top: 15%; left: 50%; transform: translateX(-50%); color: gold; font-size: 1.8rem; font-weight: bold; animation: blink 0.5s infinite alternate; }
-        @keyframes blink { from { opacity: 1; } to { opacity: 0.3; } }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>ENGLISH QUEST - FULL EDITION</title>
+  <style>
+    html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; color: #fff; font-family: sans-serif; }
+    body { display: flex; flex-direction: column; box-sizing: border-box; padding: 10px; }
+    #game-container { display: flex; flex: 1; flex-direction: column; }
+    #game-screen { flex: 1; display: flex; flex-direction: column; background: linear-gradient(to bottom, #1e3c72, #2a5298); border: 4px solid #fff; border-radius: 8px; position: relative; overflow: hidden; }
+    #monster-area { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    #monster-image { width: 180px; height: 180px; display: flex; align-items: center; justify-content: center; position: relative; }
+    /* 透明画像対策: 背景白 + 枠 */
+    #monster-img-tag { width: 100%; height: 100%; object-fit: contain; background: #fff; border: 4px solid #ffd700; border-radius: 12px; display: none; box-shadow: 0 0 20px rgba(255,255,255,0.3); }
+    #monster-emoji { font-size: 80px; }
+    #boss-timer { display: none; position: absolute; top: 10px; right: 10px; background: #000; color: #ff4757; border: 2px solid #ff4757; padding: 5px; font-family: monospace; width: 70px; text-align: center; }
+    #timer-fill { height: 4px; background: #ff4757; width: 100%; margin-top: 2px; }
+    #ui-area { flex: 1.5; display: flex; flex-direction: column; background: #000; border: 4px solid #fff; border-radius: 8px; margin-top: 8px; padding: 10px; }
+    #status { display: flex; justify-content: space-around; font-size: 0.9rem; border-bottom: 2px solid #fff; padding-bottom: 5px; }
+    #question { font-size: 0.9rem; text-align: center; min-height: 4.5em; display: flex; align-items: center; justify-content: center; padding: 5px; }
+    #choices { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    #choices button { padding: 15px 5px; font-size: 0.85rem; background: #000; color: #fff; border: 2px solid #fff; border-radius: 5px; cursor: pointer; }
+    #log { font-size: 0.9rem; color: #ffff00; text-align: center; margin: 10px 0; font-weight: bold; min-height: 1.2em; }
+    #next { width: 100%; padding: 15px; background: #fff; color: #000; font-weight: bold; border: none; display: none; border-radius: 5px; cursor: pointer; }
+    #bonus-banner { display: none; position: absolute; top: 15%; left: 50%; transform: translateX(-50%); color: gold; font-size: 1.8rem; font-weight: bold; text-shadow: 2px 2px #000; z-index: 10; animation: flash 0.5s infinite alternate; }
+    @keyframes flash { from { opacity: 1; } to { opacity: 0.3; } }
+    .shake { animation: shake 0.2s ease-in-out 2; }
+    @keyframes shake { 0%, 100% { transform: translate(0,0); } 25% { transform: translate(-8px,0); } 75% { transform: translate(8px,0); } }
+  </style>
 </head>
 <body>
+
+  <div id="game-container">
     <div id="game-screen">
-        <div id="bonus-banner">BONUS STAGE</div>
-        <div id="monster-area">
-            <span id="monster-emoji" style="font-size:80px;">👾</span>
-            <img id="monster-img-tag" src="" alt="Bonus">
-            <div id="hp-bar" style="width:120px; height:10px; background:#333; border:2px solid #fff; margin-top:10px;">
-                <div id="hp-fill" style="height:100%; background:#f00; width:100%;"></div>
-            </div>
+      <div id="bonus-banner">BONUS STAGE</div>
+      <div id="boss-timer">TIME:<span id="time-num">10</span><div id="timer-fill"></div></div>
+      <div id="monster-area">
+        <div id="monster-image">
+          <span id="monster-emoji">👾</span>
+          <img id="monster-img-tag" src="" alt="Bonus">
         </div>
+        <div style="width:120px; height:10px; background:#333; border:2px solid #fff; margin-top:10px;">
+          <div id="monster-hp" style="height:100%; background:#f00; width:100%; transition: width 0.3s;"></div>
+        </div>
+      </div>
     </div>
+
     <div id="ui-area">
-        <div id="question" style="min-height:4em; text-align:center;"></div>
-        <div id="choices"></div>
-        <div id="log"></div>
-        <button id="next" style="display:none; width:100%; padding:15px;">▶ NEXT</button>
+      <div id="status">
+        <div>HP: <span id="hp">100</span></div>
+        <div>LV: <span id="level">1</span></div>
+        <div>WIN: <span id="wins">0</span></div>
+      </div>
+      <div id="question"></div>
+      <div id="choices"></div>
+      <div id="log"></div>
+      <button id="next">▶ NEXT STAGE</button>
     </div>
+  </div>
 
-    <script>
-        const masterQuestions = [{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"Tokyo is the city (  ) I was born.","choices":["where","which","that","there"],"a":"where"},{"q":"If I (  ) a bird, I would fly.","choices":["were","am","was","be"],"a":"were"},{"q":"The letter (  ) by Mary yesterday.","choices":["was written","wrote","is written","writes"],"a":"was written"},{"q":"I'm looking forward to (  ) you.","choices":["seeing","see","seen","saw"],"a":"seeing"},{"q":"「environment」の意味を選択してください。","choices":["environment","別の単語1","別の単語2","別の単語3"],"a":"environment"},{"q":"「opportunity」の意味を選択してください。","choices":["opportunity","別の単語1","別の単語2","別の単語3"],"a":"opportunity"},{"q":"「accept」の意味を選択してください。","choices":["accept","別の単語1","別の単語2","別の単語3"],"a":"accept"},{"q":"「achievement」の意味を選択してください。","choices":["achievement","別の単語1","別の単語2","別の単語3"],"a":"achievement"},{"q":"「admire」の意味を選択してください。","choices":["admire","別の単語1","別の単語2","別の単語3"],"a":"admire"},{"q":"「affect」の意味を選択してください。","choices":["affect","別の単語1","別の単語2","別の単語3"],"a":"affect"},{"q":"「amount」の意味を選択してください。","choices":["amount","別の単語1","別の単語2","別の単語3"],"a":"amount"},{"q":"「analysis」の意味を選択してください。","choices":["analysis","別の単語1","別の単語2","別の単語3"],"a":"analysis"},{"q":"「appearance」の意味を選択してください。","choices":["appearance","別の単語1","別の単語2","別の単語3"],"a":"appearance"},{"q":"「appointment」の意味を選択してください。","choices":["appointment","別の単語1","別の単語2","別の単語3"],"a":"appointment"},{"q":"「appropriate」の意味を選択してください。","choices":["appropriate","別の単語1","別の単語2","別の単語3"],"a":"appropriate"},{"q":"「artificial」の意味を選択してください。","choices":["artificial","別の単語1","別の単語2","別の単語3"],"a":"artificial"},{"q":"「avoid」の意味を選択してください。","choices":["avoid","別の単語1","別の単語2","別の単語3"],"a":"avoid"},{"q":"「behavior」の意味を選択してください。","choices":["behavior","別の単語1","別の単語2","別の単語3"],"a":"behavior"},{"q":"「belief」の意味を選択してください。","choices":["belief","別の単語1","別の単語2","別の単語3"],"a":"belief"},{"q":"「capacity」の意味を選択してください。","choices":["capacity","別の単語1","別の単語2","別の単語3"],"a":"capacity"},{"q":"「climate」の意味を選択してください。","choices":["climate","別の単語1","別の単語2","別の単語3"],"a":"climate"},{"q":"「comfortable」の意味を選択してください。","choices":["comfortable","別の単語1","別の単語2","別の単語3"],"a":"comfortable"},{"q":"「compare」の意味を選択してください。","choices":["compare","別の単語1","別の単語2","別の単語3"],"a":"compare"},{"q":"「competition」の意味を選択してください。","choices":["competition","別の単語1","別の単語2","別の単語3"],"a":"competition"},{"q":"「confidence」の意味を選択してください。","choices":["confidence","別の単語1","別の単語2","別の単語3"],"a":"confidence"},{"q":"「consider」の意味を選択してください。","choices":["consider","別の単語1","別の単語2","別の単語3"],"a":"consider"},{"q":"「consumer」の意味を選択してください。","choices":["consumer","別の単語1","別の単語2","別の単語3"],"a":"consumer"},{"q":"「contain」の意味を選択してください。","choices":["contain","別の単語1","別の単語2","別の単語3"],"a":"contain"},{"q":"「convenient」の意味を選択してください。","choices":["convenient","別の単語1","別の単語2","別の単語3"],"a":"convenient"},{"q":"「create」の意味を選択してください。","choices":["create","別の単語1","別の単語2","別の単語3"],"a":"create"},{"q":"「critical」の意味を選択してください。","choices":["critical","別の単語1","別の単語2","別の単語3"],"a":"critical"},{"q":"「damage」の意味を選択してください。","choices":["damage","別の単語1","別の単語2","別の単語3"],"a":"damage"},{"q":"「decision」の意味を選択してください。","choices":["decision","別の単語1","別の単語2","別の単語3"],"a":"decision"},{"q":"「describe」の意味を選択してください。","choices":["describe","別の単語1","別の単語2","別の単語3"],"a":"describe"},{"q":"「destroy」の意味を選択してください。","choices":["destroy","別の単語1","別の単語2","別の単語3"],"a":"destroy"},{"q":"「detail」の意味を選択してください。","choices":["detail","別の単語1","別の単語2","別の単語3"],"a":"detail"},{"q":"「develop」の意味を選択してください。","choices":["develop","別の単語1","別の単語2","別の単語3"],"a":"develop"},{"q":"「difference」の意味を選択してください。","choices":["difference","別の単語1","別の単語2","別の単語3"],"a":"difference"},{"q":"「disappear」の意味を選択してください。","choices":["disappear","別の単語1","別の単語2","別の単語3"],"a":"disappear"},{"q":"「discovery」の意味を選択してください。","choices":["discovery","別の単語1","別の単語2","別の単語3"],"a":"discovery"},{"q":"「discuss」の意味を選択してください。","choices":["discuss","別の単語1","別の単語2","別の単語3"],"a":"discuss"},{"q":"「distance」の意味を選択してください。","choices":["distance","別の単語1","別の単語2","別の単語3"],"a":"distance"},{"q":"「domestic」の意味を選択してください。","choices":["domestic","別の単語1","別の単語2","別の単語3"],"a":"domestic"},{"q":"「economy」の意味を選択してください。","choices":["economy","別の単語1","別の単語2","別の単語3"],"a":"economy"},{"q":"「effort」の意味を選択してください。","choices":["effort","別の単語1","別の単語2","別の単語3"],"a":"effort"},{"q":"「emergency」の意味を選択してください。","choices":["emergency","別の単語1","別の単語2","別の単語3"],"a":"emergency"},{"q":"「encourage」の意味を選択してください。","choices":["encourage","別の単語1","別の単語2","別の単語3"],"a":"encourage"},{"q":"「entire」の意味を選択してください。","choices":["entire","別の単語1","別の単語2","別の単語3"],"a":"entire"},{"q":"「essential」の意味を選択してください。","choices":["essential","別の単語1","別の単語2","別の単語3"],"a":"essential"},{"q":"「evidence」の意味を選択してください。","choices":["evidence","別の単語1","別の単語2","別の単語3"],"a":"evidence"},{"q":"「experience」の意味を選択してください。","choices":["experience","別の単語1","別の単語2","別の単語3"],"a":"experience"},{"q":"「explain」の意味を選択してください。","choices":["explain","別の単語1","別の単語2","別の単語3"],"a":"explain"},{"q":"「express」の意味を選択してください。","choices":["express","別の単語1","別の単語2","別の単語3"],"a":"express"},{"q":"「facility」の意味を選択してください。","choices":["facility","別の単語1","別の単語2","別の単語3"],"a":"facility"},{"q":"「factor」の意味を選択してください。","choices":["factor","別の単語1","別の単語2","別の単語3"],"a":"factor"},{"q":"「favorite」の意味を選択してください。","choices":["favorite","別の単語1","別の単語2","別の単語3"],"a":"favorite"},{"q":"「flexible」の意味を選択してください。","choices":["flexible","別の単語1","別の単語2","別の単語3"],"a":"flexible"},{"q":"「focus」の意味を選択してください。","choices":["focus","別の単語1","別の単語2","別の単語3"],"a":"focus"},{"q":"「foreign」の意味を選択してください。","choices":["foreign","別の単語1","別の単語2","別の単語3"],"a":"foreign"},{"q":"「frequent」の意味を選択してください。","choices":["frequent","別の単語1","別の単語2","別の単語3"],"a":"frequent"},{"q":"「generation」の意味を選択してください。","choices":["generation","別の単語1","別の単語2","別の単語3"],"a":"generation"},{"q":"「global」の意味を選択してください。","choices":["global","別の単語1","別の単語2","別の単語3"],"a":"global"},{"q":"「government」の意味を選択してください。","choices":["government","別の単語1","別の単語2","別の単語3"],"a":"government"},{"q":"「gradually」の意味を選択してください。","choices":["gradually","別の単語1","別の単語2","別の単語3"],"a":"gradually"},{"q":"「habit」の意味を選択してください。","choices":["habit","別の単語1","別の単語2","別の単語3"],"a":"habit"},{"q":"「heritage」の意味を選択してください。","choices":["heritage","別の単語1","別の単語2","別の単語3"],"a":"heritage"},{"q":"「hesitate」の意味を選択してください。","choices":["hesitate","別の単語1","別の単語2","別の単語3"],"a":"hesitate"},{"q":"「identify」の意味を選択してください。","choices":["identify","別の単語1","別の単語2","別の単語3"],"a":"identify"},{"q":"「ignore」の意味を選択してください。","choices":["ignore","別の単語1","別の単語2","別の単語3"],"a":"ignore"},{"q":"「imagine」の意味を選択してください。","choices":["imagine","別の単語1","別の単語2","別の単語3"],"a":"imagine"},{"q":"「immediate」の意味を選択してください。","choices":["immediate","別の単語1","別の単語2","別の単語3"],"a":"immediate"},{"q":"「impact」の意味を選択してください。","choices":["impact","別の単語1","別の単語2","別の単語3"],"a":"impact"},{"q":"「improve」の意味を選択してください。","choices":["improve","別の単語1","別の単語2","別の単語3"],"a":"improve"},{"q":"「independent」の意味を選択してください。","choices":["independent","別の単語1","別の単語2","別の単語3"],"a":"independent"},{"q":"「influence」の意味を選択してください。","choices":["influence","別の単語1","別の単語2","別の単語3"],"a":"influence"},{"q":"「information」の意味を選択してください。","choices":["information","別の単語1","別の単語2","別の単語3"],"a":"information"},{"q":"「injury」の意味を選択してください。","choices":["injury","別の単語1","別の単語2","別の単語3"],"a":"injury"},{"q":"「innocent」の意味を選択してください。","choices":["innocent","別の単語1","別の単語2","別の単語3"],"a":"innocent"},{"q":"「intelligence」の意味を選択してください。","choices":["intelligence","別の単語1","別の単語2","別の単語3"],"a":"intelligence"},{"q":"「intention」の意味を選択してください。","choices":["intention","別の単語1","別の単語2","別の単語3"],"a":"intention"},{"q":"「interrupt」の意味を選択してください。","choices":["interrupt","別の単語1","別の単語2","別の単語3"],"a":"interrupt"},{"q":"「introduce」の意味を選択してください。","choices":["introduce","別の単語1","別の単語2","別の単語3"],"a":"introduce"},{"q":"「invention」の意味を選択してください。","choices":["invention","別の単語1","別の単語2","別の単語3"],"a":"invention"},{"q":"「investigate」の意味を選択してください。","choices":["investigate","別の単語1","別の単語2","別の単語3"],"a":"investigate"},{"q":"「judge」の意味を選択してください。","choices":["judge","別の単語1","別の単語2","別の単語3"],"a":"judge"},{"q":"「knowledge」の意味を選択してください。","choices":["knowledge","別の単語1","別の単語2","別の単語3"],"a":"knowledge"},{"q":"「landscape」の意味を選択してください。","choices":["landscape","別の単語1","別の単語2","別の単語3"],"a":"landscape"},{"q":"「lecture」の意味を選択してください。","choices":["lecture","別の単語1","別の単語2","別の単語3"],"a":"lecture"},{"q":"「limit」の意味を選択してください。","choices":["limit","別の単語1","別の単語2","別の単語3"],"a":"limit"},{"q":"「maintain」の意味を選択してください。","choices":["maintain","別の単語1","別の単語2","別の単語3"],"a":"maintain"},{"q":"「major」の意味を選択してください。","choices":["major","別の単語1","別の単語2","別の単語3"],"a":"major"},{"q":"「manage」の意味を選択してください。","choices":["manage","別の単語1","別の単語2","別の単語3"],"a":"manage"},{"q":"「material」の意味を選択してください。","choices":["material","別の単語1","別の単語2","別の単語3"],"a":"material"},{"q":"「measure」の意味を選択してください。","choices":["measure","別の単語1","別の単語2","別の単語3"],"a":"measure"},{"q":"「mention」の意味を選択してください。","choices":["mention","別の単語1","別の単語2","別の単語3"],"a":"mention"},{"q":"「method」の意味を選択してください。","choices":["method","別の単語1","別の単語2","別の単語3"],"a":"method"},{"q":"「minimum」の意味を選択してください。","choices":["minimum","別の単語1","別の単語2","別の単語3"],"a":"minimum"},{"q":"「movement」の意味を選択してください。","choices":["movement","別の単語1","別の単語2","別の単語3"],"a":"movement"},{"q":"「negative」の意味を選択してください。","choices":["negative","別の単語1","別の単語2","別の単語3"],"a":"negative"},{"q":"「nervous」の意味を選択してください。","choices":["nervous","別の単語1","別の単語2","別の単語3"],"a":"nervous"},{"q":"「notice」の意味を選択してください。","choices":["notice","別の単語1","別の単語2","別の単語3"],"a":"notice"},{"q":"「object」の意味を選択してください。","choices":["object","別の単語1","別の単語2","別の単語3"],"a":"object"},{"q":"「occasion」の意味を選択してください。","choices":["occasion","別の単語1","別の単語2","別の単語3"],"a":"occasion"},{"q":"「operate」の意味を選択してください。","choices":["operate","別の単語1","別の単語2","別の単語3"],"a":"operate"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"}];
-        let pool = [...masterQuestions], usedPool = [];
-        let currentMonster = {hp: 70, maxHp: 70};
-        let playerHp = 100, wins = 0, isBonus = false;
+  <script src="questions.js"></script>
 
-        function speak(text) {
-            const uttr = new SpeechSynthesisUtterance(text);
-            uttr.lang = "ja-JP";
-            uttr.pitch = 0.4; // 男性の太い声
-            uttr.rate = 0.8;
-            window.speechSynthesis.speak(uttr);
+  <script>
+    let player = { hp: 100, level: 1, wins: 0 };
+    let currentMonster = { hp: 70, maxHp: 70 };
+    let pool = [], usedPool = [];
+    let isBoss = false, isBonus = false, bossMistakes = 0;
+    let timerInt, timeLeft = 10;
+    let bonusImgInterval;
+
+    // 男性の野太い声の設定
+    function speak(text) {
+      const uttr = new SpeechSynthesisUtterance(text);
+      uttr.lang = "ja-JP";
+      uttr.pitch = 0.4; // 低音
+      uttr.rate = 0.8;  // ゆっくり
+      window.speechSynthesis.speak(uttr);
+    }
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function init() {
+      // masterQuestionsが読み込まれているか確認
+      if (typeof masterQuestions === 'undefined') {
+          alert("questions.js が見つかりません。同じフォルダに置いてください。");
+          return;
+      }
+      pool = shuffle([...masterQuestions]);
+      nextBattle();
+    }
+
+    function nextBattle() {
+      clearInterval(bonusImgInterval);
+      isBonus = false; bossMistakes = 0;
+      player.wins++;
+      isBoss = player.wins % 5 === 0;
+
+      currentMonster = { hp: isBoss ? 200 : 70, maxHp: isBoss ? 200 : 70 };
+      
+      document.getElementById("monster-emoji").style.display = "block";
+      document.getElementById("monster-img-tag").style.display = "none";
+      document.getElementById("boss-timer").style.display = isBoss ? "block" : "none";
+      document.getElementById("bonus-banner").style.display = "none";
+      document.getElementById("next").style.display = "none";
+      document.getElementById("log").textContent = isBoss ? "ボス戦！ノーミスでボーナスへ！" : "敵が現れた！";
+      
+      loadQuestion();
+      updateUI();
+    }
+
+    function startBonusStage() {
+      isBonus = true; isBoss = false;
+      document.getElementById("bonus-banner").style.display = "block";
+      document.getElementById("monster-emoji").style.display = "none";
+      document.getElementById("monster-img-tag").style.display = "block";
+      document.getElementById("monster-img-tag").src = "1000046944.jpg"; 
+      currentMonster = { hp: 150, maxHp: 150 };
+
+      // ボーナス画像ランダム演出
+      bonusImgInterval = setInterval(() => {
+        const img = document.getElementById("monster-img-tag");
+        img.style.filter = `hue-rotate(${Math.random()*360}deg) brightness(1.1)`;
+        img.style.transform = `scale(${0.9 + Math.random()*0.2})`;
+      }, 2000);
+
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      if (pool.length === 0) { pool = shuffle([...usedPool]); usedPool = []; }
+      const q = pool.pop();
+      currentQuestion = q;
+      document.getElementById("question").textContent = q.q;
+      const choicesEl = document.getElementById("choices");
+      choicesEl.innerHTML = "";
+      shuffle([...q.choices]).forEach(c => {
+        const btn = document.createElement("button");
+        btn.textContent = c;
+        btn.onclick = () => checkAnswer(c, q.a, btn);
+        choicesEl.appendChild(btn);
+      });
+      if (isBoss) startTimer();
+    }
+
+    function startTimer() {
+      timeLeft = 10;
+      clearInterval(timerInt);
+      timerInt = setInterval(() => {
+        timeLeft -= 0.1;
+        document.getElementById("time-num").textContent = Math.ceil(timeLeft);
+        document.getElementById("timer-fill").style.width = (timeLeft * 10) + "%";
+        if (timeLeft <= 0) {
+          clearInterval(timerInt);
+          bossMistakes++;
+          handleDamage(10);
+          loadQuestion();
         }
+      }, 100);
+    }
 
-        function loadQuestion() {
-            if(pool.length === 0) pool = [...usedPool];
-            const q = pool.pop();
-            document.getElementById("question").textContent = q.q;
-            const ch = document.getElementById("choices");
-            ch.innerHTML = "";
-            q.choices.forEach(c => {
-                const b = document.createElement("button");
-                b.textContent = c;
-                b.onclick = () => {
-                    if(c === q.a) {
-                        currentMonster.hp -= 50;
-                        if(isBonus) speak("やりますねぇ");
-                        document.getElementById("log").textContent = "正解！";
-                        if(currentMonster.hp <= 0) win();
-                        else loadQuestion();
-                    } else {
-                        document.getElementById("log").textContent = "ミス！";
-                        playerHp -= 10;
-                        loadQuestion();
-                    }
-                    updateUI();
-                };
-                ch.appendChild(b);
-            });
-        }
+    function checkAnswer(choice, answer, btn) {
+      clearInterval(timerInt);
+      const buttons = document.querySelectorAll("#choices button");
+      buttons.forEach(b => b.disabled = true);
 
-        function win() {
-            if(!isBonus && wins % 5 === 0) {
-                isBonus = true;
-                currentMonster = {hp: 150, maxHp: 150};
-                document.getElementById("bonus-banner").style.display = "block";
-                document.getElementById("monster-emoji").style.display = "none";
-                document.getElementById("monster-img-tag").style.display = "block";
-                document.getElementById("monster-img-tag").src = "1000046944.jpg";
-                // 2秒ごとに画像をランダムにする擬似演出
-                setInterval(() => {
-                    document.getElementById("monster-img-tag").style.filter = "hue-rotate(" + Math.random()*360 + "deg)";
-                }, 2000);
-                loadQuestion();
-            } else {
-                if(isBonus) {
-                    speak("じゃけん、夜行きましょうね");
-                    document.getElementById("monster-img-tag").src = "1000046945.png";
-                }
-                document.getElementById("next").style.display = "block";
+      if (choice === answer) {
+        btn.style.background = "#2ecc71";
+        currentMonster.hp -= 50;
+        document.getElementById("log").textContent = "正解！";
+        if (isBonus) speak("やりますねぇ");
+        usedPool.push(currentQuestion);
+      } else {
+        btn.style.background = "#e74c3c";
+        if (isBoss) bossMistakes++;
+        handleDamage(15);
+        document.getElementById("log").textContent = "不正解！";
+        pool.unshift(currentQuestion);
+      }
+
+      setTimeout(() => {
+        if (currentMonster.hp <= 0) {
+          if (isBoss && bossMistakes === 0) {
+            startBonusStage();
+          } else {
+            if (isBonus) {
+              clearInterval(bonusImgInterval);
+              speak("じゃけん、夜行きましょうね");
+              document.getElementById("monster-img-tag").src = "1000046945.png";
+              document.getElementById("monster-img-tag").style.filter = "none";
             }
+            document.getElementById("log").textContent = "WIN!";
+            document.getElementById("next").style.display = "block";
+          }
+        } else {
+          loadQuestion();
         }
+        updateUI();
+      }, 800);
+    }
 
-        function updateUI() {
-            document.getElementById("hp-fill").style.width = (currentMonster.hp / currentMonster.maxHp * 100) + "%";
-        }
+    function handleDamage(dmg) {
+      player.hp -= dmg;
+      document.body.classList.add("shake");
+      setTimeout(() => document.body.classList.remove("shake"), 200);
+      if (player.hp <= 0) {
+        alert("GAME OVER");
+        location.reload();
+      }
+    }
 
-        document.getElementById("next").onclick = () => location.reload();
-        loadQuestion();
-    </script>
+    function updateUI() {
+      document.getElementById("hp").textContent = player.hp;
+      document.getElementById("wins").textContent = player.wins;
+      document.getElementById("level").textContent = Math.floor(player.wins / 3) + 1;
+      const percent = (currentMonster.hp / currentMonster.maxHp) * 100;
+      document.getElementById("monster-hp").style.width = Math.max(0, percent) + "%";
+    }
+
+    document.getElementById("next").onclick = nextBattle;
+    window.onload = init;
+  </script>
 </body>
 </html>
