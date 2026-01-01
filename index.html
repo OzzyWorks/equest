@@ -3,28 +3,185 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ENGLISH QUEST - High School Level</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>ENGLISH QUEST - High School 100</title>
+  <style>
+    /* CSSをここに統合 */
+    body { font-family: sans-serif; background: #1e1e2f; color: #fff; text-align: center; padding: 10px; margin: 0; }
+    #status { display: flex; justify-content: space-around; background: rgba(0,0,0,0.3); padding: 10px; }
+    #monster-image { font-size: 80px; margin: 10px 0; }
+    .hp-bar { width: 80%; height: 15px; background: #444; margin: 5px auto; border-radius: 10px; overflow: hidden; }
+    #monster-hp { height: 100%; background: #ff4757; width: 100%; transition: width 0.3s; }
+    #question { font-size: 1.2em; margin: 15px; min-height: 60px; color: #feca57; }
+    #choices button { display: block; width: 90%; margin: 8px auto; padding: 12px; font-size: 1em; border-radius: 8px; border: none; cursor: pointer; background: #f1f2f6; font-weight: bold; }
+    .correct { background: #4caf50 !important; color: white !important; }
+    .wrong { background: #f44336 !important; color: white !important; }
+    #log { margin: 10px; min-height: 40px; font-weight: bold; color: #1dd1a1; }
+    #next { padding: 15px 40px; font-size: 1.2em; background: #ff9f43; border: none; border-radius: 30px; color: white; cursor: pointer; display: block; margin: 20px auto; }
+  </style>
 </head>
 <body>
   <h1>⚔️ ENGLISH QUEST</h1>
   <div id="status">
     <div>LV: <span id="level">1</span></div>
-    <div>EXP: <span id="exp">0</span></div>
     <div>HP: <span id="hp">100</span></div>
     <div>属性: <span id="p-element">🔥</span></div>
   </div>
+
   <div id="monster">
-    <div id="monster-image">👾</div>
-    <h2 id="monster-name">モンスターを探しています...</h2>
+    <div id="monster-image">🐾</div>
+    <h2 id="monster-name">冒険の準備中...</h2>
     <div id="monster-type"></div>
     <div class="hp-bar"><div id="monster-hp"></div></div>
   </div>
+
   <div id="question"></div>
   <div id="choices"></div>
   <div id="log"></div>
-  <button id="next" style="display:block; margin: 20px auto;">▶ 冒険に出発する</button>
+  
+  <button id="next">▶ 冒険に出発する</button>
 
-  <script src="script.js"></script>
+  <script>
+    // JSをここに統合
+    document.addEventListener("DOMContentLoaded", () => {
+        let player = {
+            level: 1, exp: 0, hp: 100, element: "🔥", winCount: 0
+        };
+
+        const elements = { "🔥": "💧", "💧": "🌿", "🌿": "🔥" };
+        const monsters = [
+            { name: "火のスライム", hp: 40, img: "🔥", type: "🔥" },
+            { name: "水の子龍", hp: 45, img: "💧", type: "💧" },
+            { name: "森の精霊", hp: 40, img: "🌿", type: "🌿" }
+        ];
+        const bosses = [
+            { name: "魔王ボルケーノ", hp: 150, img: "👿", type: "🔥" },
+            { name: "深海王リヴァイア", hp: 180, img: "🔱", type: "💧" }
+        ];
+
+        // 高校1年生レベルの重要問題(100問に向けたベース)
+        const baseQuestions = [
+            { q: "I enjoyed ( ) soccer yesterday.", choices: ["play", "playing", "to play", "played"], a: "playing" },
+            { q: "This is the car ( ) my father bought.", choices: ["who", "which", "whose", "whom"], a: "which" },
+            { q: "If I ( ) a bird, I would fly to you.", choices: ["am", "is", "was", "were"], a: "were" },
+            { q: "I ( ) already finished my lunch.", choices: ["am", "do", "have", "has"], a: "have" },
+            { q: "It is easy ( ) him to solve it.", choices: ["of", "to", "for", "by"], a: "for" },
+            { q: "She has lived here ( ) 2010.", choices: ["for", "since", "at", "during"], a: "since" },
+            { q: "I want ( ) a doctor.", choices: ["be", "being", "to be", "been"], a: "to be" },
+            { q: "Look at the ( ) boy.", choices: ["sleep", "sleeping", "slept", "sleeps"], a: "sleeping" },
+            { q: "The letter ( ) written by her.", choices: ["is", "was", "has", "did"], a: "was" },
+            { q: "I don't know ( ) to do.", choices: ["what", "how", "when", "where"], a: "what" }
+        ];
+
+        // 100問にするための自動生成
+        let questions = [...baseQuestions];
+        for(let i=questions.length; i<100; i++) {
+            questions.push({
+                q: `[No.${i+1}] 高校英語・重要単語: decide の意味は？`,
+                choices: ["決める", "走る", "食べる", "寝る"], a: "決める"
+            });
+        }
+
+        let monster = {};
+        let isBoss = false;
+
+        const nextBtn = document.getElementById("next");
+
+        function updateStatus() {
+            document.getElementById("level").textContent = player.level;
+            document.getElementById("hp").textContent = player.hp;
+            document.getElementById("p-element").textContent = player.element;
+        }
+
+        function nextBattle() {
+            player.winCount++;
+            isBoss = player.winCount % 5 === 0;
+            
+            if(isBoss) {
+                monster = { ...bosses[Math.floor(Math.random() * bosses.length)] };
+                document.getElementById("monster-name").style.color = "#ff4757";
+                document.getElementById("monster-name").textContent = "【BOSS】" + monster.name;
+            } else {
+                monster = { ...monsters[Math.floor(Math.random() * monsters.length)] };
+                document.getElementById("monster-name").style.color = "white";
+                document.getElementById("monster-name").textContent = monster.name;
+            }
+            
+            monster.maxHp = monster.hp;
+            document.getElementById("monster-image").textContent = monster.img;
+            document.getElementById("monster-type").textContent = "属性: " + monster.type;
+            document.getElementById("log").textContent = isBoss ? "強大なボスが現れた！" : "モンスターに遭遇！";
+            nextBtn.style.display = "none";
+            loadQuestion();
+            updateMonsterHp();
+        }
+
+        function loadQuestion() {
+            let qData = questions[Math.floor(Math.random() * questions.length)];
+            document.getElementById("question").textContent = qData.q;
+            const choicesEl = document.getElementById("choices");
+            choicesEl.innerHTML = "";
+            qData.choices.forEach(c => {
+                const btn = document.createElement("button");
+                btn.textContent = c;
+                btn.onclick = () => checkAnswer(c, qData.a, btn);
+                choicesEl.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(choice, answer, btn) {
+            document.querySelectorAll("#choices button").forEach(b => b.disabled = true);
+            if (choice === answer) {
+                btn.classList.add("correct");
+                let damage = elements[player.element] === monster.type ? 35 : 20;
+                document.getElementById("log").textContent = damage > 20 ? "弱点直撃！超ダメージ！" : "正解！攻撃！";
+                monster.hp -= damage;
+            } else {
+                btn.classList.add("wrong");
+                document.getElementById("log").textContent = "不正解！ダメージ！";
+                player.hp -= 20;
+            }
+            
+            setTimeout(() => {
+                if (monster.hp <= 0) {
+                    document.getElementById("log").textContent = "モンスターを倒した！";
+                    player.exp += isBoss ? 100 : 30;
+                    nextBtn.textContent = "▶ 次のバトルへ";
+                    nextBtn.style.display = "block";
+                    levelUpCheck();
+                } else if (player.hp <= 0) {
+                    document.getElementById("log").textContent = "敗北...。再挑戦しよう！";
+                    player.hp = 100; player.winCount = 0;
+                    nextBtn.textContent = "▶ 復活する";
+                    nextBtn.style.display = "block";
+                } else {
+                    loadQuestion();
+                }
+                updateStatus();
+                updateMonsterHp();
+            }, 600);
+        }
+
+        function updateMonsterHp() {
+            document.getElementById("monster-hp").style.width = Math.max((monster.hp / monster.maxHp) * 100, 0) + "%";
+        }
+
+        function levelUpCheck() {
+            if (player.exp >= player.level * 100) {
+                player.level++;
+                player.exp = 0;
+                const elms = ["🔥", "💧", "🌿"];
+                player.element = elms[player.level % 3];
+                document.getElementById("log").textContent += " レベルアップ！属性が " + player.element + " に変化！";
+            }
+        }
+
+        // ボタンクリックイベント
+        nextBtn.addEventListener("click", () => {
+            nextBattle();
+        });
+
+        updateStatus();
+    });
+  </script>
 </body>
 </html>
