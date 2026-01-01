@@ -3,13 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>ENGLISH QUEST - FIXED</title>
+  <title>ENGLISH QUEST - STABLE</title>
   <style>
     /* 全体レイアウト */
     html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; color: #fff; font-family: sans-serif; }
     body { display: flex; flex-direction: column; box-sizing: border-box; padding: 10px; }
     
-    /* 画面揺れ演出 */
+    /* ローディング画面 */
+    #loading-screen {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: #000; display: flex; flex-direction: column;
+      justify-content: center; align-items: center; z-index: 100;
+    }
+    .spinner { border: 4px solid #333; border-top: 4px solid #fff; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    /* 画面揺れ */
     @keyframes shake {
       0%, 100% { transform: translate(0,0); }
       25% { transform: translate(-8px, 0); }
@@ -17,7 +26,8 @@
     }
     .shake { animation: shake 0.2s ease-in-out 2; }
 
-    /* ドラクエ風背景 */
+    /* ゲーム画面構成 */
+    #game-container { display: none; flex: 1; flex-direction: column; }
     #game-screen {
       flex: 1; display: flex; flex-direction: column;
       background: linear-gradient(to bottom, #4facfe 0%, #00f2fe 40%, #228b22 40%, #006400 100%);
@@ -32,7 +42,6 @@
     #monster-image { font-size: 10vh; filter: drop-shadow(4px 4px 0px rgba(0,0,0,0.5)); transition: transform 0.2s; }
     #monster-name-box { background: rgba(0,0,0,0.8); padding: 2px 12px; border: 2px solid #fff; border-radius: 4px; margin-bottom: 5px; font-weight: bold; }
     
-    /* ボスタイマー */
     #boss-timer {
       display: none; position: absolute; top: 10px; right: 10px;
       background: #000; color: #ff4757; border: 2px solid #ff4757;
@@ -40,7 +49,7 @@
     }
     #timer-fill { height: 4px; background: #ff4757; width: 100%; margin-top: 2px; }
 
-    /* 操作パネル */
+    /* 操作エリア */
     #ui-area { flex: 1.5; display: flex; flex-direction: column; background: #000; border: 4px solid #fff; border-radius: 8px; margin-top: 8px; padding: 10px; z-index: 5; }
     #status { display: flex; justify-content: space-around; font-size: 0.8rem; border-bottom: 2px solid #fff; padding-bottom: 8px; margin-bottom: 5px; }
     
@@ -57,7 +66,7 @@
     }
 
     #log { font-size: 0.85rem; color: #ffff00; text-align: center; margin: 8px 0; height: 1.2em; font-weight: bold; }
-    #next { width: 100%; padding: 15px; background: #fff; color: #000; font-weight: bold; border: none; display: none; font-size: 1.1rem; border-radius: 4px; }
+    #next { width: 100%; padding: 15px; background: #fff; color: #000; font-weight: bold; border: none; display: none; font-size: 1.1rem; border-radius: 4px; cursor: pointer; }
     
     .correct { background: #2ecc71 !important; }
     .wrong { background: #e74c3c !important; }
@@ -65,38 +74,43 @@
 </head>
 <body id="main-body">
 
-  <div id="game-screen">
-    <div id="mountain"></div>
-    <div id="boss-timer">TIME:<span id="time-num">10</span><div id="timer-fill"></div></div>
-    
-    <div id="monster-area">
-      <div id="monster-name-box"><span id="monster-name">...</span></div>
-      <div id="monster-image">🐾</div>
-      <div style="width:60%; height:10px; background:#444; border:1px solid #fff; margin-top:8px;">
-        <div id="monster-hp" style="height:100%; background:#f00; width:100%; transition:width 0.2s;"></div>
-      </div>
-    </div>
+  <div id="loading-screen">
+    <div class="spinner"></div>
+    <p style="margin-top: 20px; font-weight: bold; letter-spacing: 2px;">NOW LOADING...</p>
   </div>
 
-  <div id="ui-area">
-    <div id="status">
-      <div>LV: <span id="level">1</span></div>
-      <div id="hp-box">HP: <span id="hp">100</span></div>
-      <div>属性: <span id="p-element">🔥</span></div>
+  <div id="game-container">
+    <div id="game-screen">
+      <div id="mountain"></div>
+      <div id="boss-timer">TIME:<span id="time-num">10</span><div id="timer-fill"></div></div>
+      
+      <div id="monster-area">
+        <div id="monster-name-box"><span id="monster-name">...</span></div>
+        <div id="monster-image">🐾</div>
+        <div style="width:60%; height:10px; background:#444; border:1px solid #fff; margin-top:8px;">
+          <div id="monster-hp" style="height:100%; background:#f00; width:100%; transition:width 0.2s;"></div>
+        </div>
+      </div>
     </div>
-    
-    <div id="question"></div>
-    <button id="heal-btn">🌿 薬草を使う (HP回復)</button>
-    <div id="choices"></div>
-    
-    <div id="log"></div>
-    <button id="next">▶ 次のバトルへ</button>
+
+    <div id="ui-area">
+      <div id="status">
+        <div>LV: <span id="level">1</span></div>
+        <div id="hp-box">HP: <span id="hp">100</span></div>
+        <div>属性: <span id="p-element">🔥</span></div>
+      </div>
+      
+      <div id="question"></div>
+      <button id="heal-btn">🌿 薬草を使う (HP全回復)</button>
+      <div id="choices"></div>
+      
+      <div id="log"></div>
+      <button id="next"></button>
+    </div>
   </div>
 
   <script>
-    // 1. 全ての問題データをここに定義
     const masterQuestions = [
-      // 穴埋め・文法
       { q: "I (  ) to the park yesterday.", choices: ["went", "go", "gone", "going"], a: "went" },
       { q: "This is the car (  ) he bought.", choices: ["which", "who", "whom", "whose"], a: "which" },
       { q: "He is (  ) than I am.", choices: ["taller", "tall", "tallest", "more tall"], a: "taller" },
@@ -104,16 +118,12 @@
       { q: "I have (  ) to Kyoto twice.", choices: ["been", "gone", "be", "go"], a: "been" },
       { q: "She (  ) lunch now.", choices: ["is eating", "eats", "ate", "eaten"], a: "is eating" },
       { q: "It is easy (  ) me to swim.", choices: ["for", "of", "to", "at"], a: "for" },
-      // 単語
       { q: "「environment」の意味は？", choices: ["環境", "政府", "習慣", "期待"], a: "環境" },
       { q: "「opportunity」の意味は？", choices: ["機会", "場所", "時間", "成功"], a: "機会" },
-      { q: "「necessary」の意味は？", choices: ["必要な", "便利な", "有名な", "高価な"], a: "必要な" },
-      // 熟語
       { q: "「take care (  )」で「世話をする」", choices: ["of", "for", "to", "at"], a: "of" },
       { q: "「look forward (  )」で「楽しみにする」", choices: ["to", "at", "for", "on"], a: "to" }
     ];
 
-    // 2. 変数管理
     let player = { level: 1, exp: 0, hp: 100, element: "🔥", winCount: 0 };
     const elements = { "🔥": "💧", "💧": "🌿", "🌿": "🔥" };
     let pool = [];
@@ -123,10 +133,14 @@
     let timeLeft = 10;
     let isBoss = false;
 
-    // 3. 初期化処理
+    // 初期化とローディング解除
     function init() {
-      pool = [...masterQuestions].sort(() => Math.random() - 0.5);
-      nextBattle();
+      setTimeout(() => {
+        pool = [...masterQuestions].sort(() => Math.random() - 0.5);
+        document.getElementById("loading-screen").style.display = "none";
+        document.getElementById("game-container").style.display = "flex";
+        nextBattle();
+      }, 800); // 演出として少しだけ待機
     }
 
     function nextBattle() {
@@ -143,7 +157,7 @@
       document.getElementById("monster-image").textContent = currentMonster.i;
       document.getElementById("boss-timer").style.display = isBoss ? "block" : "none";
       document.getElementById("next").style.display = "none";
-      document.getElementById("log").textContent = isBoss ? "ボスが現れた！" : "";
+      document.getElementById("log").textContent = isBoss ? "強大なボスが現れた！" : "モンスターが現れた！";
       
       loadQuestion();
       updateDisplay();
@@ -151,8 +165,6 @@
 
     function loadQuestion() {
       clearInterval(timerInt);
-      
-      // 重複防止：プールが空ならリセット
       if (pool.length === 0) {
         pool = [...usedPool].sort(() => Math.random() - 0.5);
         usedPool = [];
@@ -182,8 +194,7 @@
         updateTimerUI();
         if (timeLeft <= 0) {
           clearInterval(timerInt);
-          handleDamage(20, "時間切れ！ダメージ！");
-          // ボス戦の時間切れ時、自動で次の問題へ
+          handleDamage(10, "時間切れ！10ダメージ！");
           setTimeout(loadQuestion, 800);
         }
       }, 100);
@@ -203,27 +214,29 @@
         btn.classList.add("correct");
         let damage = (elements[player.element] === currentMonster.t) ? 60 : 25;
         currentMonster.hp -= damage;
-        document.getElementById("log").textContent = "正解！ 攻撃！";
+        document.getElementById("log").textContent = "正解！ 攻撃した！";
         document.getElementById("monster-image").style.transform = "scale(1.4)";
-        setTimeout(()=>document.getElementById("monster-image").style.transform="scale(1)",150);
+        setTimeout(()=>document.getElementById("monster-image").style.transform="scale(1)", 150);
       } else {
         btn.classList.add("wrong");
-        // 正解のボタンを緑にする
         buttons.forEach(b => { if(b.textContent === answer) b.classList.add("correct"); });
-        handleDamage(20, "不正解！");
+        handleDamage(10, "不正解！10ダメージ！");
       }
 
       setTimeout(() => {
         if (currentMonster.hp <= 0) {
           document.getElementById("log").textContent = "勝利した！";
           player.exp += isBoss ? 100 : 30;
-          document.getElementById("next").style.display = "block";
+          const nextBtn = document.getElementById("next");
+          nextBtn.textContent = "▶ 次のバトルへ"; // 正しく設定
+          nextBtn.style.display = "block";
           levelUpCheck();
         } else if (player.hp <= 0) {
-          document.getElementById("log").textContent = "全滅した...";
+          document.getElementById("log").textContent = "全滅してしまった...";
           player.hp = 100; player.winCount = 0;
-          document.getElementById("next").textContent = "▶ 復活する";
-          document.getElementById("next").style.display = "block";
+          const nextBtn = document.getElementById("next");
+          nextBtn.textContent = "▶ 復活する"; // 敗北時はこちら
+          nextBtn.style.display = "block";
         } else {
           loadQuestion();
         }
@@ -243,14 +256,9 @@
     function updateDisplay() {
       const hpEl = document.getElementById("hp");
       hpEl.textContent = player.hp;
-      
-      // HP 30以下で赤く点滅
       if (player.hp <= 30) hpEl.classList.add("hp-danger");
       else hpEl.classList.remove("hp-danger");
-
-      // HP 20以下で回復ボタン
       document.getElementById("heal-btn").style.display = (player.hp <= 20 && player.hp > 0) ? "block" : "none";
-
       document.getElementById("monster-hp").style.width = (currentMonster.hp / currentMonster.maxHp * 100) + "%";
       document.getElementById("level").textContent = player.level;
       document.getElementById("p-element").textContent = player.element;
@@ -258,7 +266,7 @@
 
     document.getElementById("heal-btn").onclick = () => {
       player.hp = 100;
-      document.getElementById("log").textContent = "薬草でHPが回復した！";
+      document.getElementById("log").textContent = "薬草でHPが全快した！";
       updateDisplay();
     };
 
@@ -269,9 +277,10 @@
       }
     }
 
-    document.getElementById("next").onclick = () => nextBattle();
+    document.getElementById("next").onclick = () => {
+      nextBattle();
+    };
 
-    // 起動
     window.onload = init;
   </script>
 </body>
