@@ -3,51 +3,47 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>ENGLISH QUEST 100 - FIXED</title>
+  <title>ENGLISH QUEST 230+</title>
   <style>
-    /* 1画面に強制収容するスタイル */
-    html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; background: #1e1e2f; color: #fff; font-family: sans-serif; }
-    body { display: flex; flex-direction: column; box-sizing: border-box; padding: 10px; }
-    h1 { font-size: 1rem; margin: 0 0 5px 0; flex-shrink: 0; text-align: center; }
-    #status { display: flex; justify-content: space-around; background: rgba(0,0,0,0.3); padding: 5px; font-size: 0.8rem; border-radius: 8px; flex-shrink: 0; }
-    
-    #monster { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 0; }
-    #monster-image { font-size: 12vh; margin: 5px 0; line-height: 1; }
-    #monster-name { font-size: 0.9rem; margin: 2px 0; }
-    .hp-bar { width: 60%; height: 8px; background: #444; border-radius: 4px; overflow: hidden; }
+    html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; background: #1a1a2e; color: #fff; font-family: 'Segoe UI', sans-serif; }
+    body { display: flex; flex-direction: column; box-sizing: border-box; padding: 8px; }
+    h1 { font-size: 0.9rem; margin: 0 0 5px 0; text-align: center; color: #eccc68; }
+    #status { display: flex; justify-content: space-around; background: rgba(255,255,255,0.1); padding: 5px; font-size: 0.75rem; border-radius: 8px; flex-shrink: 0; border: 1px solid #444; }
+    #monster-area { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 0; position: relative; }
+    #monster-image { font-size: 10vh; margin: 2px 0; transition: transform 0.2s; }
+    #monster-name { font-size: 0.85rem; margin: 2px 0; font-weight: bold; }
+    .hp-bar-container { width: 60%; height: 6px; background: #333; border-radius: 3px; overflow: hidden; margin-bottom: 2px; }
     #monster-hp { height: 100%; background: #ff4757; width: 100%; transition: width 0.3s; }
-
-    #question-area { flex: 1.5; display: flex; flex-direction: column; justify-content: center; min-height: 0; }
-    #question { font-size: 0.95rem; margin-bottom: 10px; color: #feca57; font-weight: bold; text-align: center; }
+    #monster-type { font-size: 0.65rem; color: #ced4da; }
+    #question-area { flex: 1.4; display: flex; flex-direction: column; justify-content: center; min-height: 0; padding: 0 5px; }
+    #question { font-size: 0.85rem; margin-bottom: 8px; color: #ffa502; font-weight: bold; text-align: center; min-height: 2.8em; display: flex; align-items: center; justify-content: center; line-height: 1.3; }
     #choices { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-    #choices button { padding: 12px 2px; font-size: 0.8rem; border-radius: 6px; border: none; background: #f1f2f6; font-weight: bold; color: #2f3542; cursor: pointer; }
-    
-    #footer-area { height: 70px; flex-shrink: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-    #log { font-size: 0.8rem; color: #1dd1a1; margin-bottom: 5px; height: 1rem; }
-    #next { width: 90%; padding: 10px; font-size: 1rem; background: #ff9f43; border: none; border-radius: 20px; color: white; font-weight: bold; display: none; }
-    
-    .correct { background: #4caf50 !important; color: white !important; }
-    .wrong { background: #f44336 !important; color: white !important; }
+    #choices button { padding: 10px 4px; font-size: 0.75rem; border-radius: 6px; border: none; background: #f1f2f6; font-weight: bold; color: #2f3542; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    #footer { height: 65px; flex-shrink: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    #log { font-size: 0.75rem; color: #2ed573; margin-bottom: 4px; height: 1rem; font-weight: bold; }
+    #next { width: 85%; padding: 10px; font-size: 0.9rem; background: #ff7f50; border: none; border-radius: 20px; color: white; font-weight: bold; display: none; box-shadow: 0 4px #e67e22; }
+    .correct { background: #2ed573 !important; color: white !important; }
+    .wrong { background: #ff4757 !important; color: white !important; }
   </style>
 </head>
 <body>
-  <h1>⚔️ ENGLISH QUEST 100</h1>
+  <h1>⚔️ ENGLISH QUEST 230</h1>
   <div id="status">
     <div>LV: <span id="level">1</span></div>
     <div>HP: <span id="hp">100</span></div>
-    <div>属性: <span id="p-element">🔥</span></div>
+    <div>自分: <span id="p-element">🔥</span></div>
   </div>
-  <div id="monster">
+  <div id="monster-area">
     <div id="monster-image">🐾</div>
-    <div id="monster-name">...</div>
-    <div class="hp-bar"><div id="monster-hp"></div></div>
-    <div id="monster-type" style="font-size: 0.7rem; margin-top: 2px;"></div>
+    <div id="monster-name">Loading...</div>
+    <div class="hp-bar-container"><div id="monster-hp"></div></div>
+    <div id="monster-type"></div>
   </div>
   <div id="question-area">
     <div id="question"></div>
     <div id="choices"></div>
   </div>
-  <div id="footer-area">
+  <div id="footer">
     <div id="log"></div>
     <button id="next">▶ 次のバトルへ</button>
   </div>
@@ -56,48 +52,69 @@
     document.addEventListener("DOMContentLoaded", () => {
       let player = { level: 1, exp: 0, hp: 100, element: "🔥", winCount: 0 };
       const elements = { "🔥": "💧", "💧": "🌿", "🌿": "🔥" };
-      
-      // 基本問題集（ここをベースに100問以上作成）
-      const rawQuestions = [
-        { q: "I ( ) already finished my lunch.", choices: ["have", "has", "am", "do"], a: "have" },
-        { q: "The book ( ) was written by Soseki is famous.", choices: ["who", "which", "whom", "whose"], a: "which" },
-        { q: "If I ( ) a bird, I would fly to you.", choices: ["am", "is", "was", "were"], a: "were" },
-        { q: "How long have you ( ) in Tokyo?", choices: ["live", "lived", "living", "lives"], a: "lived" },
-        { q: "It is easy ( ) him to solve it.", choices: ["of", "to", "for", "by"], a: "for" },
-        { q: "She has lived here ( ) 2010.", choices: ["for", "since", "at", "during"], a: "since" },
-        { q: "Look at the ( ) boy.", choices: ["sleep", "sleeping", "slept", "sleeps"], a: "sleeping" },
-        { q: "I enjoyed ( ) soccer yesterday.", choices: ["play", "playing", "to play", "played"], a: "playing" },
-        { q: "The letter ( ) written by her.", choices: ["is", "was", "has", "did"], a: "was" },
-        { q: "Could you ( ) me a favor?", choices: ["do", "make", "give", "tell"], a: "do" }
+
+      // 115問から倍以上の230問以上に拡張したリスト
+      const masterQuestions = [
+        // 文法セクション（関係詞、比較、完了形、助動詞、不定詞など）
+        { q: "This is the car ( ) my father bought.", choices: ["which", "who", "whom", "whose"], a: "which" },
+        { q: "I know a boy ( ) can play the violin.", choices: ["who", "which", "whose", "what"], a: "who" },
+        { q: "I have ( ) to London three times.", choices: ["been", "gone", "be", "go"], a: "been" },
+        { q: "If I ( ) a bird, I would fly to you.", choices: ["were", "am", "was", "is"], a: "were" },
+        { q: "I am looking forward to ( ) you.", choices: ["seeing", "see", "saw", "to see"], a: "seeing" },
+        { q: "She is ( ) than me.", choices: ["taller", "tall", "tallest", "more tall"], a: "taller" },
+        { q: "You ( ) not enter this room.", choices: ["must", "can", "may", "will"], a: "must" },
+        { q: "I forgot ( ) the window.", choices: ["to close", "closing", "close", "closed"], a: "to close" },
+        { q: "He is ( ) popular boy in class.", choices: ["the most", "most", "more", "much"], a: "the most" },
+        { q: "This cake ( ) by my sister yesterday.", choices: ["was made", "is made", "made", "makes"], a: "was made" },
+        { q: "I don't know ( ) to solve it.", choices: ["how", "what", "which", "who"], a: "how" },
+        { q: "He ( ) have been sick yesterday.", choices: ["must", "can", "should", "will"], a: "must" },
+        { q: "The news made us ( ).", choices: ["happy", "happily", "happiness", "to happy"], a: "happy" },
+        { q: "I've lived here ( ) 2010.", choices: ["since", "for", "during", "at"], a: "since" },
+        { q: "Would you like ( ) to drink?", choices: ["something", "anything", "nothing", "everything"], a: "something" }
       ];
 
-      // 単語問題などで100問以上に水増し
-      const words = [
-        ["decide","決める","走る","話す","待つ"],["improve","改善する","壊す","買う","売る"],
-        ["avoid","避ける","認める","頼む","探す"],["increase","増える","減る","止まる","動く"],
-        ["realize","気づく","実現する","放す","隠す"],["various","様々な","狭い","恐ろしい","等しい"],
-        ["environment","環境","政府","証拠","実験"],["traditional","伝統的な","新しい","国際的な","自然の"],
-        ["mention","言及する","維持する","意味する","管理する"],["crowded","混雑した","危険な","清潔な","残酷な"],
-        ["protect","保護する","生産する","供給する","準備する"],["expensive","高価な","安い","早い","遅い"],
-        ["prepare","準備する","約束する","妨げる","許す"],["allow","許可する","否定する","考える","信じる"],
-        ["necessary","必要な","便利な","正しい","珍しい"],["experience","経験","期待","説明","表情"],
-        ["opinion","意見","機会","関係","目的"],["result","結果","原因","理由","責任"],
-        ["foreign","外国の","国内の","親切な","有名な"],["comfortable","快適な","恐ろしい","不可能な","複雑な"]
+      // 単語・熟語の大幅拡張データ（100セット以上追加）
+      const wordPairs = [
+        ["admit","認める"],["avoid","避ける"],["consider","よく考える"],["decide","決定する"],["expect","期待する"],
+        ["imagine","想像する"],["improve","向上させる"],["increase","増やす"],["decrease","減らす"],["manage","何とかやり遂げる"],
+        ["mention","言及する"],["offer","提供する"],["prepare","準備する"],["provide","供給する"],["realize","気づく"],
+        ["receive","受け取る"],["reduce","減らす"],["remain","〜のままでいる"],["require","必要とする"],["suggest","提案する"],
+        ["accept","受け入れる"],["achieve","達成する"],["allow","許可する"],["cause","原因となる"],["create","創造する"],
+        ["depend","依存する"],["describe","描写する"],["develop","発達させる"],["exist","存在する"],["express","表現する"],
+        ["identify","特定する"],["indicate","指し示す"],["influence","影響を与える"],["maintain","維持する"],["observe","観察する"],
+        ["perform","行う"],["prevent","妨げる"],["produce","生産する"],["protect","保護する"],["publish","出版する"],
+        ["recognize","認識する"],["replace","取って代わる"],["respond","反応する"],["satisfy","満足させる"],["separate","分ける"],
+        ["various","様々な"],["common","共通の"],["necessary","必要な"],["important","重要な"],["difficult","難しい"],
+        ["environment","環境"],["education","教育"],["government","政府"],["situation","状況"],["opportunity","機会"],
+        ["benefit","利益"],["culture","文化"],["experience","経験"],["individual","個人"],["material","材料"],
+        ["particular","特定の"],["available","利用可能な"],["likely","〜しそうな"],["possible","可能な"],["successful","成功した"],
+        ["tradition","伝統"],["technology","技術"],["science","科学"],["knowledge","知識"],["resource","資源"],
+        ["attitude","態度"],["purpose","目的"],["opinion","意見"],["result","結果","原因","理由","責任"],
+        ["actually","実は"],["especially","特に"],["probably","おそらく"],["recently","最近"],["suddenly","突然"],
+        ["look after","世話をする"],["take part in","参加する"],["carry out","実行する"],["rely on","頼る"],["turn off","消す"],
+        ["believe in","信じる"],["succeed in","成功する"],["agree with","同意する"],["suffer from","苦しむ"],["belong to","属する"],
+        ["stand for","象徴する"],["put off","延期する"],["call off","中止する"],["run out of","使い果たす"],["get over","乗り越える"],
+        ["amount","量"],["quality","質"],["standard","基準"],["effect","効果"],["danger","危険"],
+        ["encourage","励ます"],["discover","発見する"],["explain","説明する"],["protect","守る"],["support","支える"],
+        ["abstract","抽象的な"],["concrete","具体的な"],["constant","絶え間ない"],["efficient","効率的な"],["negative","否定的な"],
+        ["positive","肯定的な"],["previous","以前の"],["primary","主要な"],["rare","珍しい"],["significant","重要な"],
+        ["visible","目に見える"],["ancient","古代の"],["modern","現代の"],["global","地球規模の"],["local","地元の"],
+        ["complex","複雑な"],["simple","単純な"],["major","主要な"],["minor","重要でない"],["legal","法律上の"],
+        ["accurate","正確な"],["vague","あいまいな"],["stable","安定した"],["rough","粗い"],["smooth","滑らかな"],
+        ["broad","広い"],["narrow","狭い"],["tough","困難な"],["sharp","鋭い"],["dull","鈍い"]
       ];
 
-      let masterList = [...rawQuestions];
-      words.forEach(w => {
-        masterList.push({ q: `意味は？: ${w[0]}`, choices: [w[1], w[2], w[3], w[4]], a: w[1] });
+      // wordPairsをmasterQuestions形式に変換して追加（2倍以上の量へ）
+      wordPairs.forEach(w => {
+        // 単語の意味を問う問題
+        masterQuestions.push({ q: `意味は？: ${w[0]}`, choices: [w[1], "走る", "壊す", "歌う"], a: w[1] });
+        // 意味から単語を選ぶ問題（バリエーション増）
+        masterQuestions.push({ q: `「${w[1]}」にあてはまる英単語は？`, choices: [w[0], "speak", "take", "make"], a: w[0] });
       });
-      // 100問にするためダミー問題を生成
-      for(let i=masterList.length; i<110; i++) {
-        masterList.push({ q: `英単語No.${i} checkの意味は？`, choices: ["確認する", "食べる", "走る", "寝る"], a: "確認する" });
-      }
 
-      let currentQuestions = [...masterList]; // 出題用プール
+      let currentPool = [...masterQuestions];
       let monster = {};
       let isBoss = false;
-      const nextBtn = document.getElementById("next");
 
       function updateStatus() {
         document.getElementById("level").textContent = player.level;
@@ -108,34 +125,28 @@
       function nextBattle() {
         player.winCount++;
         isBoss = player.winCount % 5 === 0;
-        const monsters = [{n:"火スラ",h:40,i:"🔥",t:"🔥"}, {n:"水竜",h:45,i:"💧",t:"💧"}, {n:"森精",h:40,i:"🌿",t:"🌿"}];
-        const bosses = [{n:"炎帝",h:150,i:"👹",t:"🔥"}, {n:"海王",h:180,i:"🔱",t:"💧"}, {n:"森皇",h:160,i:"🌳",t:"🌿"}];
-        
+        const monsters = [{n:"火スラ",h:40,i:"🔥",t:"🔥"},{n:"水竜",h:45,i:"💧",t:"💧"},{n:"森精",h:40,i:"🌿",t:"🌿"}];
+        const bosses = [{n:"炎帝",h:220,i:"👹",t:"🔥"},{n:"海龍",h:250,i:"🔱",t:"💧"},{n:"森神",h:230,i:"🌳",t:"🌿"}];
         monster = isBoss ? {...bosses[Math.floor(Math.random()*bosses.length)]} : {...monsters[Math.floor(Math.random()*monsters.length)]};
-        monster.maxHp = monster.h;
-        document.getElementById("monster-name").textContent = (isBoss?"[BOSS]":"")+monster.n;
+        monster.maxH = monster.h;
+        document.getElementById("monster-name").textContent = (isBoss?"【BOSS】":"")+monster.n;
         document.getElementById("monster-image").textContent = monster.i;
-        document.getElementById("monster-type").textContent = "属性:"+monster.t;
+        document.getElementById("monster-type").textContent = "属性: " + monster.t;
+        document.getElementById("monster-name").style.color = isBoss ? "#ff4757" : "white";
         document.getElementById("log").textContent = "";
-        nextBtn.style.display = "none";
+        document.getElementById("next").style.display = "none";
         loadQuestion();
         updateMonsterHp();
       }
 
       function loadQuestion() {
-        if(currentQuestions.length === 0) currentQuestions = [...masterList]; // 1周したら復活
-        
-        // ランダムに選んで、使った問題をリストから消す（同じ問題ばかり出ないようにする）
-        const index = Math.floor(Math.random() * currentQuestions.length);
-        const qData = currentQuestions.splice(index, 1)[0];
-
+        if(currentPool.length === 0) currentPool = [...masterQuestions];
+        const idx = Math.floor(Math.random()*currentPool.length);
+        const qData = currentPool.splice(idx, 1)[0];
         document.getElementById("question").textContent = qData.q;
         const choicesEl = document.getElementById("choices");
-        choicesEl.innerHTML = ""; // 以前の選択肢を完全に消去
-
-        // 選択肢をシャッフルして表示
-        const shuffledChoices = [...qData.choices].sort(() => Math.random() - 0.5);
-        shuffledChoices.forEach(c => {
+        choicesEl.innerHTML = "";
+        [...qData.choices].sort(()=>Math.random()-0.5).forEach(c => {
           const btn = document.createElement("button");
           btn.textContent = c;
           btn.onclick = () => checkAnswer(c, qData.a, btn);
@@ -147,28 +158,30 @@
         document.querySelectorAll("#choices button").forEach(b => b.disabled = true);
         if (choice === answer) {
           btn.classList.add("correct");
-          let damage = elements[player.element] === monster.t ? 40 : 20;
-          document.getElementById("log").textContent = "正解！攻撃！";
+          let isAdv = elements[player.element] === monster.t;
+          let damage = isAdv ? (isBoss ? 45 : 35) : (isBoss ? 20 : 15);
+          document.getElementById("log").textContent = isAdv ? "弱点直撃！" : "正解！";
           monster.h -= damage;
+          document.getElementById("monster-image").style.transform = "scale(1.2)";
+          setTimeout(() => document.getElementById("monster-image").style.transform = "scale(1)", 200);
         } else {
           btn.classList.add("wrong");
-          document.getElementById("log").textContent = "ミス！ダメージ！";
-          player.hp -= 20;
+          document.getElementById("log").textContent = "不正解！";
+          player.hp -= (isBoss ? 25 : 15);
         }
-        
         setTimeout(() => {
           if (monster.h <= 0) {
-            document.getElementById("log").textContent = "倒した！";
-            player.exp += isBoss ? 100 : 30;
-            nextBtn.style.display = "block";
+            document.getElementById("log").textContent = isBoss ? "ボス撃破！" : "勝利！";
+            player.exp += isBoss ? 150 : 35;
+            document.getElementById("next").style.display = "block";
             levelUpCheck();
           } else if (player.hp <= 0) {
-            document.getElementById("log").textContent = "敗北...";
+            document.getElementById("log").textContent = "敗北…";
             player.hp = 100; player.winCount = 0;
-            nextBtn.textContent = "▶ 復活する";
-            nextBtn.style.display = "block";
+            document.getElementById("next").textContent = "▶ 復活する";
+            document.getElementById("next").style.display = "block";
           } else {
-            loadQuestion(); // 次の問題へ
+            loadQuestion();
           }
           updateStatus();
           updateMonsterHp();
@@ -176,20 +189,21 @@
       }
 
       function updateMonsterHp() {
-        document.getElementById("monster-hp").style.width = Math.max((monster.h / monster.maxHp) * 100, 0) + "%";
+        document.getElementById("monster-hp").style.width = Math.max((monster.h / monster.maxH)*100, 0) + "%";
       }
 
       function levelUpCheck() {
         if (player.exp >= player.level * 100) {
           player.level++; player.exp = 0;
           player.element = ["🔥", "💧", "🌿"][player.level % 3];
+          document.getElementById("log").textContent += " LV UP!";
         }
       }
 
-      nextBtn.addEventListener("click", () => {
-        nextBtn.textContent = "▶ 次のバトルへ";
+      document.getElementById("next").onclick = () => {
+        document.getElementById("next").textContent = "▶ 次のバトルへ";
         nextBattle();
-      });
+      };
 
       updateStatus();
       nextBattle();
