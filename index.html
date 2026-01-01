@@ -116,10 +116,10 @@
     function speak(text) {
       const uttr = new SpeechSynthesisUtterance(text);
       uttr.lang = "ja-JP";
-      uttr.pitch = 0.4;
       
       // iOSかAndroid(その他)かで速度を切り替え
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      uttr.piych = isIOS ? 0.2 : 0.4;
       uttr.rate = isIOS ? 0.8 : 1.6;
 
       window.speechSynthesis.speak(uttr);
