@@ -3,79 +3,75 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>ENGLISH QUEST - ADVANCED</title>
+  <title>ENGLISH QUEST - PERFECT BALANCE</title>
   <style>
-    /* 基本レイアウト */
     html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; color: #fff; font-family: sans-serif; }
     body { display: flex; flex-direction: column; box-sizing: border-box; padding: 10px; }
     
-    /* ① 画面揺れエフェクトの設定 */
+    /* 画面揺れエフェクト */
     @keyframes shake {
-      0% { transform: translate(1px, 1px) rotate(0deg); }
-      10% { transform: translate(-1px, -2px) rotate(-1deg); }
-      20% { transform: translate(-3px, 0px) rotate(1deg); }
-      30% { transform: translate(3px, 2px) rotate(0deg); }
-      40% { transform: translate(1px, -1px) rotate(1deg); }
-      50% { transform: translate(-1px, 2px) rotate(-1deg); }
-      60% { transform: translate(-3px, 1px) rotate(0deg); }
-      70% { transform: translate(3px, 1px) rotate(-1deg); }
-      80% { transform: translate(-1px, -1px) rotate(1deg); }
-      90% { transform: translate(1px, 2px) rotate(0deg); }
-      100% { transform: translate(1px, -2px) rotate(-1deg); }
+      0% { transform: translate(1px, 1px); }
+      20% { transform: translate(-3px, 0px); }
+      40% { transform: translate(1px, -1px); }
+      60% { transform: translate(-3px, 1px); }
+      80% { transform: translate(-1px, -1px); }
+      100% { transform: translate(1px, 2px); }
     }
-    .shake { animation: shake 0.4s; }
+    .shake { animation: shake 0.3s; }
 
-    /* ④ 背景の描画（ドラクエ風） */
+    /* 背景描画 */
     #game-screen {
       flex: 1; display: flex; flex-direction: column;
-      background: linear-gradient(to bottom, #7080ff 0%, #7080ff 50%, #40a040 50%, #40a040 100%); /* 空と草原 */
+      background: linear-gradient(to bottom, #4facfe 0%, #00f2fe 40%, #228b22 40%, #006400 100%);
       border: 4px solid #fff; border-radius: 8px; position: relative; overflow: hidden;
     }
     #mountain {
-      position: absolute; top: 35%; left: 0; width: 100%; height: 15%;
-      background: repeating-linear-gradient(45deg, #206020, #206020 20px, #1a501a 20px, #1a501a 40px);
-      clip-path: polygon(0% 100%, 10% 20%, 20% 60%, 30% 10%, 45% 80%, 60% 20%, 80% 90%, 90% 30%, 100% 100%);
+      position: absolute; top: 30%; left: 0; width: 100%; height: 15%;
+      background: #004d00; clip-path: polygon(0% 100%, 15% 20%, 30% 70%, 50% 10%, 70% 60%, 85% 30%, 100% 100%);
     }
 
     #monster-area { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2; }
-    #monster-image { font-size: 12vh; filter: drop-shadow(2px 2px 0px #000); transition: transform 0.2s; }
-    #monster-name-box { background: rgba(0,0,0,0.7); padding: 2px 10px; border: 2px solid #fff; border-radius: 4px; margin-bottom: 5px; }
+    #monster-image { font-size: 12vh; filter: drop-shadow(4px 4px 0px rgba(0,0,0,0.5)); transition: transform 0.2s; }
+    #monster-name-box { background: rgba(0,0,0,0.8); padding: 2px 12px; border: 2px solid #fff; border-radius: 4px; margin-bottom: 5px; font-weight: bold; }
     
-    /* ③ カウントダウンの見た目 */
+    /* カウントダウン表示 */
     #boss-timer {
       display: none; position: absolute; top: 10px; right: 10px;
-      background: #000; color: #ff4757; border: 2px solid #ff4757;
-      padding: 5px 10px; font-family: monospace; font-size: 1.2rem; font-weight: bold;
+      background: #000; color: #ff0000; border: 2px solid #ff0000;
+      padding: 5px; font-family: 'Courier New', Courier, monospace; text-align: center; width: 60px;
     }
-    #timer-gauge { width: 60%; height: 6px; background: #222; border-radius: 3px; margin-top: 5px; overflow: hidden; }
-    #timer-fill { height: 100%; background: #00d2ff; width: 100%; }
+    #timer-fill-container { width: 100%; height: 4px; background: #333; margin-top: 2px; }
+    #timer-fill { height: 100%; background: #ff0000; width: 100%; }
 
     /* UIエリア */
-    #ui-area { flex: 1.2; display: flex; flex-direction: column; background: #000; border: 4px solid #fff; border-radius: 8px; margin-top: 8px; padding: 10px; }
-    #status { display: flex; justify-content: space-around; font-size: 0.8rem; border-bottom: 2px solid #fff; padding-bottom: 5px; margin-bottom: 8px; }
-    #question { font-size: 0.9rem; text-align: center; color: #fff; min-height: 2.8em; display: flex; align-items: center; justify-content: center; }
-    #choices { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 5px; }
-    #choices button { padding: 12px 5px; font-size: 0.8rem; background: #000; color: #fff; border: 2px solid #fff; border-radius: 4px; font-weight: bold; }
-    #choices button:active { background: #fff; color: #000; }
-
-    #log { font-size: 0.8rem; color: #ffff00; text-align: center; margin: 5px 0; height: 1em; }
-    #next { width: 100%; padding: 10px; background: #fff; color: #000; font-weight: bold; border: none; display: none; }
+    #ui-area { flex: 1.3; display: flex; flex-direction: column; background: #000; border: 4px solid #fff; border-radius: 8px; margin-top: 8px; padding: 10px; }
+    #status { display: flex; justify-content: space-around; font-size: 0.8rem; border-bottom: 2px solid #fff; padding-bottom: 8px; margin-bottom: 10px; }
+    #question { font-size: 0.9rem; text-align: center; min-height: 3em; display: flex; align-items: center; justify-content: center; line-height: 1.4; }
+    #choices { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    #choices button { padding: 12px 5px; font-size: 0.8rem; background: #000; color: #fff; border: 2px solid #fff; border-radius: 4px; font-weight: bold; cursor: pointer; }
     
-    .correct { background: #40a040 !important; }
-    .wrong { background: #e03030 !important; }
+    #log { font-size: 0.8rem; color: #ffff00; text-align: center; margin: 8px 0; height: 1.2em; font-weight: bold; }
+    #next { width: 100%; padding: 12px; background: #fff; color: #000; font-weight: bold; border: none; display: none; border-radius: 4px; font-size: 1rem; }
+    
+    .correct { background: #2ecc71 !important; color: #fff !important; }
+    .wrong { background: #e74c3c !important; color: #fff !important; }
+    .boss-mode { border-color: #ff0000 !important; }
   </style>
 </head>
 <body id="main-body">
 
   <div id="game-screen">
     <div id="mountain"></div>
-    <div id="boss-timer">TIME: <span id="time-num">10</span><div id="timer-gauge"><div id="timer-fill"></div></div></div>
+    <div id="boss-timer">
+      <div id="time-num">10</div>
+      <div id="timer-fill-container"><div id="timer-fill"></div></div>
+    </div>
     
     <div id="monster-area">
       <div id="monster-name-box"><span id="monster-name">...</span></div>
       <div id="monster-image">🐾</div>
-      <div style="width:50%; height:8px; background:#444; border:1px solid #fff; margin-top:5px;">
-        <div id="monster-hp" style="height:100%; background:#f00; width:100%; transition:width 0.3s;"></div>
+      <div style="width:60%; height:10px; background:#444; border:2px solid #fff; margin-top:8px;">
+        <div id="monster-hp" style="height:100%; background:#f00; width:100%; transition:width 0.2s;"></div>
       </div>
     </div>
   </div>
@@ -84,12 +80,12 @@
     <div id="status">
       <div>LV: <span id="level">1</span></div>
       <div>HP: <span id="hp">100</span></div>
-      <div>属性: <span id="p-element">🔥</span></div>
+      <div>自分: <span id="p-element">🔥</span></div>
     </div>
-    <div id="question"></div>
+    <div id="question">問題読み込み中...</div>
     <div id="choices"></div>
     <div id="log"></div>
-    <button id="next">▶ つぎへ</button>
+    <button id="next">▶ つぎのバトルへ</button>
   </div>
 
   <script>
@@ -100,37 +96,54 @@
       let timeLeft = 10;
       let isBoss = false;
 
-      // ② 穴埋め問題を大幅に強化したリスト
+      // 問題データベース：穴埋め(G), 単語(W), 熟語(P)をバランスよく配置
       const masterQuestions = [
-        // 穴埋め問題（Grammar Focus）
-        { q: "She (  ) to the library yesterday.", choices: ["went", "goes", "go", "gone"], a: "went" },
-        { q: "I have (  ) in Tokyo for ten years.", choices: ["lived", "live", "living", "lives"], a: "lived" },
-        { q: "This is the car (  ) my father bought.", choices: ["which", "who", "whom", "whose"], a: "which" },
-        { q: "He is (  ) than any other student.", choices: ["taller", "tall", "tallest", "as tall"], a: "taller" },
-        { q: "If it (  ) sunny tomorrow, we'll go out.", choices: ["is", "will be", "be", "was"], a: "is" },
-        { q: "Would you mind (  ) the window?", choices: ["opening", "open", "to open", "opened"], a: "opening" },
-        { q: "I want (  ) a doctor in the future.", choices: ["to be", "being", "be", "been"], a: "to be" },
-        { q: "He was too tired (  ) walk anymore.", choices: ["to", "for", "that", "at"], a: "to" },
-        { q: "The book (  ) written by him is famous.", choices: ["which", "who", "where", "what"], a: "which" },
-        { q: "My brother enjoys (  ) video games.", choices: ["playing", "to play", "play", "played"], a: "playing" },
-        // 単語問題も一部残す
+        // 【穴埋め文法】
+        { q: "I (  ) breakfast at 7:00 this morning.", choices: ["ate", "eat", "eaten", "eating"], a: "ate" },
+        { q: "The boy (  ) is running is my brother.", choices: ["who", "which", "whose", "whom"], a: "who" },
+        { q: "This cake (  ) made by my mother.", choices: ["was", "is", "did", "has"], a: "was" },
+        { q: "He is (  ) than I am.", choices: ["taller", "tall", "tallest", "more tall"], a: "taller" },
+        { q: "I have (  ) to London twice.", choices: ["been", "gone", "be", "go"], a: "been" },
+        { q: "If I (  ) a bird, I would fly.", choices: ["were", "am", "was", "is"], a: "were" },
+        { q: "She stopped (  ) the piano.", choices: ["playing", "to play", "play", "played"], a: "playing" },
+        { q: "It is easy (  ) me to solve it.", choices: ["for", "of", "to", "at"], a: "for" },
+        // 【英単語】
         { q: "「environment」の意味は？", choices: ["環境", "政府", "習慣", "期待"], a: "環境" },
-        { q: "「distinguish」の意味は？", choices: ["区別する", "絶滅する", "展示する", "配布する"], a: "区別する" }
+        { q: "「increase」の意味は？", choices: ["増える", "減る", "止まる", "去る"], a: "増える" },
+        { q: "「necessary」の意味は？", choices: ["必要な", "便利な", "有名な", "高価な"], a: "必要な" },
+        { q: "「realize」の意味は？", choices: ["気づく", "実現する", "繰り返す", "修理する"], a: "気づく" },
+        { q: "「improve」の意味は？", choices: ["向上させる", "減少させる", "隠す", "頼む"], a: "向上させる" },
+        { q: "「opportunity」の意味は？", choices: ["機会", "場所", "時間", "成功"], a: "機会" },
+        // 【熟語】
+        { q: "「take care (  )」で「世話をする」", choices: ["of", "for", "to", "with"], a: "of" },
+        { q: "「look forward (  )」で「楽しみに待つ」", choices: ["to", "at", "for", "in"], a: "to" },
+        { q: "「be good (  )」で「得意である」", choices: ["at", "in", "for", "to"], a: "at" },
+        { q: "「give (  )」で「あきらめる」", choices: ["up", "off", "out", "away"], a: "up" },
+        { q: "「look (  )」で「〜をさがす」", choices: ["for", "at", "after", "into"], a: "for" },
+        { q: "「by the (  )」で「ところで」", choices: ["way", "road", "street", "time"], a: "way" }
       ];
+
+      // 出題済みを管理するプール
+      let pool = [];
+
+      function refreshPool() {
+        pool = [...masterQuestions].sort(() => Math.random() - 0.5);
+      }
 
       function nextBattle() {
         player.winCount++;
         isBoss = player.winCount % 5 === 0;
         
-        const monsters = [{n:"スライム",i:"💧",t:"💧"},{n:"ドラキー",i:"🦇",t:"🌿"},{n:"火の魂",i:"🔥",t:"🔥"}];
-        const bosses = [{n:"りゅうおう",i:"🐲",t:"🔥"},{n:"ポセイドン",i:"🔱",t:"💧"},{n:"エント",i:"🌳",t:"🌿"}];
+        const monsters = [{n:"スライム",i:"💧",t:"💧"},{n:"ドラキー",i:"🦇",t:"🌿"},{n:"ゴースト",i:"👻",t:"🔥"}];
+        const bosses = [{n:"りゅうおう",i:"🐲",t:"🔥"},{n:"クラーケン",i:"🦑",t:"💧"},{n:"大長老",i:"👴",t:"🌿"}];
         
-        let m = isBoss ? bosses[Math.floor(Math.random()*bosses.length)] : monsters[Math.floor(Math.random()*monsters.length)];
-        window.monster = { ...m, maxHp: isBoss ? 200 : 50, hp: isBoss ? 200 : 50 };
+        let m = isBoss ? bosses[Math.floor(Math.random() * bosses.length)] : monsters[Math.floor(Math.random() * monsters.length)];
+        window.currentMonster = { ...m, maxHp: isBoss ? 250 : 50, hp: isBoss ? 250 : 50 };
 
-        document.getElementById("monster-name").textContent = (isBoss ? "BOSS: " : "") + window.monster.n;
-        document.getElementById("monster-image").textContent = window.monster.i;
+        document.getElementById("monster-name").textContent = (isBoss ? "BOSS: " : "") + window.currentMonster.n;
+        document.getElementById("monster-image").textContent = window.currentMonster.i;
         document.getElementById("boss-timer").style.display = isBoss ? "block" : "none";
+        document.getElementById("ui-area").className = isBoss ? "boss-mode" : "";
         document.getElementById("next").style.display = "none";
         document.getElementById("log").textContent = "";
         
@@ -140,12 +153,15 @@
 
       function loadQuestion() {
         clearInterval(timerInt);
-        const qData = masterQuestions[Math.floor(Math.random()*masterQuestions.length)];
+        // プールが空になったら補充（これで繰り返しを防止）
+        if (pool.length === 0) refreshPool();
+        
+        const qData = pool.pop();
         document.getElementById("question").textContent = qData.q;
         const choicesEl = document.getElementById("choices");
         choicesEl.innerHTML = "";
 
-        [...qData.choices].sort(()=>Math.random()-0.5).forEach(c => {
+        [...qData.choices].sort(() => Math.random() - 0.5).forEach(c => {
           const btn = document.createElement("button");
           btn.textContent = c;
           btn.onclick = () => checkAnswer(c, qData.a, btn);
@@ -155,7 +171,6 @@
         if (isBoss) startBossTimer();
       }
 
-      // ③ ボス戦のカウントダウン動作修正
       function startBossTimer() {
         timeLeft = 10;
         document.getElementById("time-num").textContent = timeLeft;
@@ -168,7 +183,7 @@
           
           if (timeLeft <= 0) {
             clearInterval(timerInt);
-            applyDamage(20, "時間切れ！ダメージ！");
+            handleDamage(25, "時間切れ！");
           }
         }, 100);
       }
@@ -178,29 +193,29 @@
         const buttons = document.querySelectorAll("#choices button");
         buttons.forEach(b => {
           b.disabled = true;
-          if(b.textContent === answer) b.classList.add("correct");
+          if (b.textContent === answer) b.classList.add("correct");
         });
 
         if (choice === answer) {
-          let damage = elements[player.element] === window.monster.t ? 50 : 20;
-          window.monster.hp -= damage;
+          let damage = (elements[player.element] === window.currentMonster.t) ? 60 : 25;
+          window.currentMonster.hp -= damage;
           document.getElementById("log").textContent = "正解！ 攻撃！";
-          // 敵を揺らす演出
-          document.getElementById("monster-image").style.transform = "translateX(20px)";
-          setTimeout(()=>document.getElementById("monster-image").style.transform="translateX(0)",100);
+          // 敵を少し跳ねさせる演出
+          document.getElementById("monster-image").style.transform = "scale(1.3)";
+          setTimeout(() => document.getElementById("monster-image").style.transform = "scale(1)", 150);
         } else {
           btn.classList.add("wrong");
-          applyDamage(15, "不正解！ ダメージ！");
+          handleDamage(20, "不正解！");
         }
 
         setTimeout(() => {
-          if (window.monster.hp <= 0) {
-            document.getElementById("log").textContent = "勝利！";
-            player.exp += isBoss ? 100 : 30;
+          if (window.currentMonster.hp <= 0) {
+            document.getElementById("log").textContent = "モンスターを倒した！";
+            player.exp += isBoss ? 150 : 35;
             document.getElementById("next").style.display = "block";
             levelUpCheck();
           } else if (player.hp <= 0) {
-            document.getElementById("log").textContent = "全滅した...";
+            document.getElementById("log").textContent = "冒険が終わってしまった...";
             player.hp = 100; player.winCount = 0;
             document.getElementById("next").textContent = "▶ 復活する";
             document.getElementById("next").style.display = "block";
@@ -211,33 +226,21 @@
         }, 800);
       }
 
-      // ① 画面揺れ演出
-      function applyDamage(dmg, msg) {
+      function handleDamage(dmg, msg) {
         player.hp -= dmg;
-        document.getElementById("log").textContent = msg;
-        const body = document.getElementById("main-body");
-        body.classList.add("shake");
-        setTimeout(() => body.classList.remove("shake"), 400);
+        document.getElementById("log").textContent = msg + " ダメージを受けた！";
+        document.getElementById("main-body").classList.add("shake");
+        setTimeout(() => document.getElementById("main-body").classList.remove("shake"), 300);
       }
 
       function updateHpDisplay() {
         document.getElementById("hp").textContent = player.hp;
-        document.getElementById("monster-hp").style.width = (window.monster.hp / window.monster.maxHp * 100) + "%";
+        document.getElementById("monster-hp").style.width = (window.currentMonster.hp / window.currentMonster.maxHp * 100) + "%";
         document.getElementById("level").textContent = player.level;
         document.getElementById("p-element").textContent = player.element;
       }
 
       function levelUpCheck() {
-        if (player.exp >= player.level * 100) {
+        if (player.exp >= 100) {
           player.level++; player.exp = 0;
-          player.element = ["🔥", "💧", "🌿"][player.level % 3];
-        }
-      }
-
-      document.getElementById("next").onclick = () => nextBattle();
-
-      nextBattle();
-    });
-  </script>
-</body>
-</html>
+          player.element = ["🔥", "💧", "🌿"][player.level
