@@ -22,7 +22,6 @@
     #monster-image-box { width: 180px; height: 180px; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
     #monster-emoji { font-size: 100px; filter: drop-shadow(0 0 10px #000); }
     
-    /* 敵の名前表示ラベル */
     #monster-name { background: rgba(0,0,0,0.7); padding: 2px 10px; border: 1px solid #fff; font-size: 0.9rem; margin-bottom: 5px; color: #fff; }
 
     #bonus-image-view { 
@@ -52,8 +51,13 @@
     #next { padding: 12px; font-weight: bold; border-radius: 5px; cursor: pointer; margin: 5px; border: 2px solid #fff; background: #fff; color: #000; width: 80%; }
 
     #bonus-banner { display: none; position: absolute; top: 15%; left: 50%; transform: translateX(-50%); color: gold; font-size: 2rem; font-weight: bold; text-shadow: 3px 3px #000; z-index: 5; animation: flash 0.5s infinite alternate; }
-    #review-modal { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; overflow-y: auto; padding: 20px; box-sizing: border-box; border: 4px solid gold; }
     
+    /* 難易度選択・復習モーダル共通 */
+    #review-modal, #difficulty-modal { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; overflow-y: auto; padding: 20px; box-sizing: border-box; border: 4px solid gold; }
+    #difficulty-modal { display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    .diff-btn { width: 80%; padding: 20px; margin: 10px; font-size: 1.2rem; font-weight: bold; border: 3px solid #fff; background: #000; color: #fff; cursor: pointer; }
+    .diff-btn:active { background: #fff; color: #000; }
+
     .review-item { margin-bottom: 15px; border-bottom: 1px solid #444; padding-bottom: 10px; }
     .btn-focus { padding: 5px 10px; background: #e74c3c; color: #fff; border: none; font-size: 0.7rem; cursor: pointer; margin-top: 5px; font-weight: bold; }
 
@@ -63,6 +67,12 @@
   </style>
 </head>
 <body>
+
+  <div id="difficulty-modal" style="display: flex;">
+    <h2 style="color:gold; margin-bottom: 30px;">ぼうけんの 難易度</h2>
+    <button class="diff-btn" onclick="selectDifficulty('questions.js')">NORMAL</button>
+    <button class="diff-btn" onclick="selectDifficulty('questions2.js')" style="border-color: #e74c3c; color: #e74c3c;">応用編</button>
+  </div>
 
   <div id="game-screen">
     <div id="bonus-banner">BONUS STAGE</div>
@@ -103,7 +113,6 @@
     </div>
   </div>
 
-  <script src="questions.js"></script>
   <script>
     let player = { hp: 100, wins: 0, maxHp: 100, canHeal: true };
     let monster = { hp: 70, maxHp: 70 };
@@ -112,15 +121,10 @@
     let timerInt, timeLeft = 10, bonusImgInterval, currentQ = null;
 
     const positions = ["0% 0%", "50% 0%", "100% 0%", "0% 50%", "50% 50%", "100% 50%", "0% 100%", "50% 100%", "100% 100%"];
-    
-    // 敵データ
     const monsterData = [
-      { emoji: "👻", name: "ゴースト" },
-      { emoji: "🦇", name: "ドラキー" },
-      { emoji: "🐺", name: "リカント" },
-      { emoji: "🐍", name: "おおさそり" },
-      { emoji: "🕷️", name: "大グモ" },
-      { emoji: "💀", name: "がいこつ兵" }
+      { emoji: "👻", name: "ゴースト" }, { emoji: "🦇", name: "ドラキー" },
+      { emoji: "🐺", name: "リカント" }, { emoji: "🐍", name: "おおさそり" },
+      { emoji: "🕷️", name: "大グモ" }, { emoji: "💀", name: "がいこつ兵" }
     ];
 
     function speak(text) {
@@ -132,8 +136,22 @@
       window.speechSynthesis.speak(uttr);
     }
 
+    // 難易度選択後にスクリプトをロード
+    function selectDifficulty(fileName) {
+      document.getElementById("difficulty-modal").style.display = "none";
+      const script = document.createElement('script');
+      script.src = fileName;
+      script.onload = () => {
+        if (typeof masterQuestions === 'undefined') {
+          alert(fileName + "が見つかりません");
+          return;
+        }
+        init();
+      };
+      document.body.appendChild(script);
+    }
+
     function init() {
-      if (typeof masterQuestions === 'undefined') { alert("questions.jsが見つかりません"); return; }
       pool = [...masterQuestions].sort(() => Math.random() - 0.5);
       startBattle();
     }
@@ -144,7 +162,6 @@
       isBoss = (player.wins > 0 && (player.wins + 1) % 5 === 0);
       
       monster.maxHp = isBoss ? 200 : 70; monster.hp = monster.maxHp;
-      
       const mEmoji = document.getElementById("monster-emoji");
       const mName = document.getElementById("monster-name");
       mEmoji.style.display = "block";
@@ -193,7 +210,6 @@
         btn.onclick = () => checkAnswer(c);
         choicesEl.appendChild(btn);
       });
-      // ボーナスステージ以外でボスならタイマー開始
       if (isBoss && !isBonus) startTimer();
     }
 
@@ -286,13 +302,11 @@
     }
 
     function startBonus() {
-      isBonus = true; isBoss = false; monster.maxHp = 500; monster.hp = 500;
+      isBonus = true; isBoss = false; monster.maxHp = 350; monster.hp = 350;
       document.getElementById("bonus-banner").style.display = "block";
       document.getElementById("monster-emoji").style.display = "none";
       document.getElementById("monster-name").textContent = "??? (BONUS)";
-      // ボーナスステージではタイマー非表示
       document.getElementById("boss-timer").style.display = "none";
-      
       const bView = document.getElementById("bonus-image-view");
       bView.style.display = "block";
       bonusImgInterval = setInterval(() => {
@@ -303,13 +317,11 @@
       updateUI(); loadQuestion();
     }
 
-    // ①「ミスを見る」ボタンでの追加音声
     function openReviewAnytime() {
-      speak("あっ、いいっすよ、カッコ快諾");
+      speak("あっ、いいっすよ（快諾）");
       showReview();
     }
 
-    // ②「集中攻撃」ボタンでの追加音声
     function setFocusQuestion(index) {
       speak("わかるわかる（タメ口）");
       const item = missList[index];
@@ -354,8 +366,6 @@
       const pct = Math.max(0, (monster.hp / monster.maxHp) * 100);
       document.getElementById("monster-hp-bar").style.width = pct + "%";
     }
-
-    window.onload = init;
   </script>
 </body>
 </html>
