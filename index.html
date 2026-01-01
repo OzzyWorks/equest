@@ -3,41 +3,60 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>ENGLISH QUEST - ULTIMATE PLUS</title>
+  <title>ENGLISH QUEST - DQ EDITION</title>
   <style>
-    html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; color: #fff; font-family: sans-serif; }
+    /* ドラクエ風フォントに近いサンセリフ指定 */
+    html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; color: #fff; font-family: 'Courier New', Consolas, monospace; }
     body { display: flex; flex-direction: column; box-sizing: border-box; padding: 10px; }
-    #game-screen { flex: 1; display: flex; flex-direction: column; background: linear-gradient(to bottom, #1e3c72, #2a5298); border: 4px solid #fff; border-radius: 8px; position: relative; overflow: hidden; }
-    #monster-area { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+
+    /* 戦闘背景（ドラクエ風グラデーション） */
+    #game-screen { 
+      flex: 1; display: flex; flex-direction: column; 
+      background: linear-gradient(to bottom, #000080 0%, #0000ff 50%, #40a0ff 100%); 
+      border: 4px solid #fff; border-radius: 8px; position: relative; overflow: hidden; 
+    }
     
-    /* モンスター・ボーナス表示エリア */
-    #monster-image-box { width: 180px; height: 180px; background: #fff; border: 4px solid #ffd700; border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
-    #monster-emoji { font-size: 80px; }
+    /* 地面（ドラクエ風） */
+    #monster-area { 
+      flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; 
+      background: radial-gradient(ellipse at bottom, #228b22 0%, rgba(0,0,0,0) 70%);
+    }
     
-    /* ボーナス画像表示用のレイヤー (3x3分割表示用) */
+    #monster-image-box { width: 180px; height: 180px; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+    #monster-emoji { font-size: 100px; filter: drop-shadow(0 0 10px #000); }
+    
+    /* ボーナス画像表示用のレイヤー (3x3分割) */
     #bonus-image-view { 
       display: none; width: 100%; height: 100%; 
       background-image: url('1000046944.jpg'); 
-      background-size: 300% 300%; /* 3x3分割のため300% */
-      background-repeat: no-repeat;
+      background-size: 300% 300%; background-repeat: no-repeat;
+      border: 4px solid #ffd700; border-radius: 12px;
     }
     /* 勝利時画像用のレイヤー */
-    #victory-image-view { display: none; width: 100%; height: 100%; object-fit: contain; }
+    #victory-image-view { display: none; width: 100%; height: 100%; object-fit: contain; background: #fff; border-radius: 12px; }
 
-    #boss-timer { display: none; position: absolute; top: 10px; right: 10px; background: #000; color: #ff4757; border: 2px solid #ff4757; padding: 5px; font-family: monospace; width: 70px; text-align: center; z-index: 10; }
+    #boss-timer { display: none; position: absolute; top: 10px; right: 10px; background: #000; color: #ff4757; border: 2px solid #fff; padding: 5px; width: 80px; text-align: center; z-index: 10; }
     #timer-fill { height: 4px; background: #ff4757; width: 100%; margin-top: 2px; }
-    #ui-area { flex: 1.5; display: flex; flex-direction: column; background: #000; border: 4px solid #fff; border-radius: 8px; margin-top: 8px; padding: 10px; position: relative; }
-    #status { display: flex; justify-content: space-around; font-size: 0.85rem; border-bottom: 2px solid #fff; padding-bottom: 5px; }
-    #question { font-size: 0.95rem; text-align: center; min-height: 4.5em; display: flex; align-items: center; justify-content: center; padding: 5px; }
-    #choices { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    #choices button { padding: 15px 5px; font-size: 0.85rem; background: #000; color: #fff; border: 2px solid #fff; border-radius: 5px; cursor: pointer; }
-    #log { font-size: 0.9rem; color: #ffff00; text-align: center; margin: 5px 0; font-weight: bold; min-height: 1.2em; }
+
+    /* UIエリア（ドラクエ風ウィンドウ） */
+    #ui-area { flex: 1.5; display: flex; flex-direction: column; background: #000; border: 4px solid #fff; border-radius: 8px; margin-top: 8px; padding: 12px; position: relative; box-shadow: inset 0 0 0 2px #000; }
+    #status { display: flex; justify-content: space-around; font-size: 1rem; border-bottom: 2px solid #fff; padding-bottom: 8px; margin-bottom: 8px; }
+    
+    #question { font-size: 1rem; text-align: center; min-height: 4.5em; display: flex; align-items: center; justify-content: center; padding: 5px; line-height: 1.5; }
+    #choices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    #choices button { padding: 15px 5px; font-size: 0.9rem; background: #000; color: #fff; border: 2px solid #fff; border-radius: 0; cursor: pointer; transition: 0.1s; }
+    #choices button:active { background: #fff; color: #000; }
+
+    #log { font-size: 0.9rem; color: #ffff00; text-align: center; margin: 8px 0; font-weight: bold; min-height: 1.2em; }
+    
     #next-area { display: none; text-align: center; }
-    #next, #btn-review-open { padding: 12px; font-weight: bold; border-radius: 5px; cursor: pointer; margin: 5px; }
+    #next, #btn-review-open { padding: 12px; font-weight: bold; border-radius: 5px; cursor: pointer; margin: 5px; border: 2px solid #fff; }
     #next { background: #fff; color: #000; width: 60%; }
-    #btn-review-open { background: #555; color: #fff; border: 1px solid #fff; }
-    #bonus-banner { display: none; position: absolute; top: 15%; left: 50%; transform: translateX(-50%); color: gold; font-size: 1.8rem; font-weight: bold; text-shadow: 2px 2px #000; z-index: 5; animation: flash 0.5s infinite alternate; }
-    #review-modal { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100; overflow-y: auto; padding: 20px; box-sizing: border-box; border: 3px solid gold; }
+    #btn-review-open { background: #000; color: #fff; }
+
+    #bonus-banner { display: none; position: absolute; top: 15%; left: 50%; transform: translateX(-50%); color: gold; font-size: 2rem; font-weight: bold; text-shadow: 3px 3px #000; z-index: 5; animation: flash 0.5s infinite alternate; }
+    #review-modal { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100; overflow-y: auto; padding: 20px; box-sizing: border-box; border: 4px solid gold; }
+    
     @keyframes flash { from { opacity: 1; } to { opacity: 0.3; } }
     .shake { animation: shake 0.2s ease-in-out 2; }
     @keyframes shake { 0%, 100% { transform: translate(0,0); } 25% { transform: translate(-8px,0); } 75% { transform: translate(8px,0); } }
@@ -54,7 +73,7 @@
         <div id="bonus-image-view"></div>
         <img id="victory-image-view" src="" alt="">
       </div>
-      <div style="width:140px; height:12px; background:#333; border:2px solid #fff; margin-top:10px;">
+      <div style="width:140px; height:12px; background:#333; border:2px solid #fff; margin-top:20px;">
         <div id="monster-hp-bar" style="height:100%; background:#f00; width:100%; transition: width 0.3s;"></div>
       </div>
     </div>
@@ -71,14 +90,14 @@
     <div id="log"></div>
     
     <div id="next-area">
-      <button id="next">▶ NEXT BATTLE</button>
-      <button id="btn-review-open" onclick="showReview()">MISS LIST</button>
+      <button id="next">▶ つぎの たたかいへ</button>
+      <button id="btn-review-open" onclick="showReview()">ミスを ふりかえる</button>
     </div>
 
     <div id="review-modal">
       <h3 style="color:gold; text-align:center;">MISS LIST (復習)</h3>
       <div id="review-list" style="font-size:0.85rem; line-height:1.6;"></div>
-      <button onclick="closeReview()" style="width:100%; padding:15px; margin-top:20px; background:gold; font-weight:bold;">閉じる</button>
+      <button onclick="closeReview()" style="width:100%; padding:15px; margin-top:20px; background:gold; font-weight:bold; color:#000; border:none;">とじる</button>
     </div>
   </div>
 
@@ -90,12 +109,10 @@
     let isBoss = false, isBonus = false, bossMistakes = 0;
     let timerInt, timeLeft = 10, bonusImgInterval, currentQ = null;
 
-    // 3x3分割の座標定義 (0%, 50%, 100% の組み合わせ)
-    const positions = [
-      "0% 0%", "50% 0%", "100% 0%",
-      "0% 50%", "50% 50%", "100% 50%",
-      "0% 100%", "50% 100%", "100% 100%"
-    ];
+    const positions = ["0% 0%", "50% 0%", "100% 0%", "0% 50%", "50% 50%", "100% 50%", "0% 100%", "50% 100%", "100% 100%"];
+
+    // 雑魚敵絵文字リスト
+    const monsterEmojis = ["👻", "🦇", "🐺", "🐍", "🕷️", "💀"];
 
     function speak(text) {
       const uttr = new SpeechSynthesisUtterance(text);
@@ -113,15 +130,25 @@
       clearInterval(bonusImgInterval); clearInterval(timerInt);
       isBonus = false; bossMistakes = 0; player.canHeal = true;
       isBoss = (player.wins > 0 && (player.wins + 1) % 5 === 0);
+      
       monster.maxHp = isBoss ? 200 : 70; monster.hp = monster.maxHp;
       
-      document.getElementById("monster-emoji").style.display = "block";
+      const mEmoji = document.getElementById("monster-emoji");
+      mEmoji.style.display = "block";
+      // 雑魚ならランダム、ボスならドラゴン
+      mEmoji.textContent = isBoss ? "🐉" : monsterEmojis[Math.floor(Math.random()*monsterEmojis.length)];
+      
       document.getElementById("bonus-image-view").style.display = "none";
       document.getElementById("victory-image-view").style.display = "none";
       document.getElementById("boss-timer").style.display = isBoss ? "block" : "none";
       document.getElementById("bonus-banner").style.display = "none";
       document.getElementById("next-area").style.display = "none";
-      document.getElementById("log").textContent = isBoss ? "ボス戦！ノーミスでボーナスへ" : "敵が現れた！";
+      
+      if (isBoss) {
+        document.getElementById("log").innerHTML = "<span style='color:red;'>BOSS が あらわれた！</span><br><small>ノーミスクリアで ボーナスステージへ！</small>";
+      } else {
+        document.getElementById("log").textContent = "まものが あらわれた！";
+      }
       
       updateUI(); loadQuestion();
     }
@@ -144,16 +171,16 @@
     }
 
     function showHealEvent() {
-      document.getElementById("question").innerHTML = "<span style='color:ff4757; font-weight:bold;'>ピンチだ！体制を立て直しますか？</span>";
+      document.getElementById("question").innerHTML = "<span style='color:#ff4757;'>ちからが つきそうだ…<br>かみさまに いのりを ささげますか？</span>";
       const choicesEl = document.getElementById("choices");
       choicesEl.innerHTML = "";
       const healBtn = document.createElement("button");
-      healBtn.textContent = "祈り（HP50回復）";
-      healBtn.style.gridColumn = "1 / span 2"; healBtn.style.background = "#2ecc71";
+      healBtn.textContent = "いのる（HP50 かいふく）";
+      healBtn.style.gridColumn = "1 / span 2"; healBtn.style.background = "#000"; healBtn.style.borderColor = "#2ecc71";
       healBtn.onclick = () => {
         player.hp = Math.min(player.maxHp, player.hp + 50);
         player.canHeal = false;
-        document.getElementById("log").textContent = "HPが回復した！";
+        document.getElementById("log").textContent = "HPが かいふくした！";
         updateUI(); loadQuestion();
       };
       choicesEl.appendChild(healBtn);
@@ -167,7 +194,7 @@
         document.getElementById("timer-fill").style.width = (timeLeft * 10) + "%";
         if (timeLeft <= 0) { 
           clearInterval(timerInt); bossMistakes++; damagePlayer(10); 
-          highlightCorrect(); document.getElementById("log").textContent = "時間切れ！"; 
+          highlightCorrect(); document.getElementById("log").textContent = "じかんぎれ！"; 
           setTimeout(loadQuestion, 1200); 
         }
       }, 100);
@@ -177,13 +204,13 @@
       clearInterval(timerInt);
       highlightCorrect();
       if (choice === currentQ.a) {
-        monster.hp -= 50; document.getElementById("log").textContent = "正解！";
+        monster.hp -= 50; document.getElementById("log").textContent = "かいしんの いちげき！";
         if (isBonus) speak("やりますねぇ");
         usedPool.push(currentQ);
       } else {
         if (isBoss) bossMistakes++;
         missList.push({q: currentQ.q, a: currentQ.a, user: choice});
-        damagePlayer(10); document.getElementById("log").textContent = "不正解！";
+        damagePlayer(15); document.getElementById("log").textContent = "つう恨の ミス！";
         pool.unshift(currentQ);
       }
       updateUI();
@@ -214,7 +241,7 @@
           vic.style.display = "block"; vic.src = "1000046945.png";
         }
         player.wins++;
-        document.getElementById("log").textContent = "VICTORY!";
+        document.getElementById("log").textContent = "まものを たおした！";
         document.getElementById("next-area").style.display = "block";
         document.getElementById("choices").innerHTML = "";
       }
@@ -228,7 +255,6 @@
       const bView = document.getElementById("bonus-image-view");
       bView.style.display = "block";
       
-      // 2秒ごとにランダムな3x3の部位を表示
       bonusImgInterval = setInterval(() => {
         const rndPos = positions[Math.floor(Math.random() * positions.length)];
         bView.style.backgroundPosition = rndPos;
@@ -257,7 +283,7 @@
     function showReview() {
       const modal = document.getElementById("review-modal");
       const list = document.getElementById("review-list");
-      list.innerHTML = missList.length === 0 ? "ミスはありません。" : "";
+      list.innerHTML = missList.length === 0 ? "ミスは ありませんでした。" : "";
       missList.forEach((m, i) => {
         list.innerHTML += `<div style="margin-bottom:10px;">${i+1}. ${m.q}<br><span style="color:#ff4757;">× ${m.user}</span> → <span style="color:#2ecc71;">○ ${m.a}</span></div><hr style="border:0.5px solid #444;">`;
       });
