@@ -3,25 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>ENGLISH QUEST - FULL EDITION</title>
+  <title>ENGLISH QUEST - COMPLETE EDITION</title>
   <style>
     html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; color: #fff; font-family: sans-serif; }
     body { display: flex; flex-direction: column; box-sizing: border-box; padding: 10px; }
-    #game-container { display: flex; flex: 1; flex-direction: column; }
     #game-screen { flex: 1; display: flex; flex-direction: column; background: linear-gradient(to bottom, #1e3c72, #2a5298); border: 4px solid #fff; border-radius: 8px; position: relative; overflow: hidden; }
     #monster-area { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    #monster-name-tag { background: rgba(0,0,0,0.7); padding: 2px 12px; border: 1px solid #fff; margin-bottom: 8px; font-size: 0.8rem; }
     #monster-image { width: 180px; height: 180px; display: flex; align-items: center; justify-content: center; position: relative; }
-    /* 透明画像対策: 背景白 + 枠 */
-    #monster-img-tag { width: 100%; height: 100%; object-fit: contain; background: #fff; border: 4px solid #ffd700; border-radius: 12px; display: none; box-shadow: 0 0 20px rgba(255,255,255,0.3); }
+    /* 透明画像対策 */
+    #monster-img-tag { width: 100%; height: 100%; object-fit: contain; background: #fff; border: 4px solid #ffd700; border-radius: 12px; display: none; }
     #monster-emoji { font-size: 80px; }
-    #boss-timer { display: none; position: absolute; top: 10px; right: 10px; background: #000; color: #ff4757; border: 2px solid #ff4757; padding: 5px; font-family: monospace; width: 70px; text-align: center; }
+    #boss-timer { display: none; position: absolute; top: 10px; right: 10px; background: #000; color: #ff4757; border: 2px solid #ff4757; padding: 5px; font-family: monospace; width: 70px; text-align: center; z-index: 11; }
     #timer-fill { height: 4px; background: #ff4757; width: 100%; margin-top: 2px; }
     #ui-area { flex: 1.5; display: flex; flex-direction: column; background: #000; border: 4px solid #fff; border-radius: 8px; margin-top: 8px; padding: 10px; }
-    #status { display: flex; justify-content: space-around; font-size: 0.9rem; border-bottom: 2px solid #fff; padding-bottom: 5px; }
-    #question { font-size: 0.9rem; text-align: center; min-height: 4.5em; display: flex; align-items: center; justify-content: center; padding: 5px; }
+    #status { display: flex; justify-content: space-around; font-size: 0.9rem; border-bottom: 2px solid #fff; padding-bottom: 5px; margin-bottom: 5px; }
+    #question { font-size: 0.95rem; text-align: center; min-height: 4.5em; display: flex; align-items: center; justify-content: center; padding: 5px; line-height: 1.4; }
     #choices { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     #choices button { padding: 15px 5px; font-size: 0.85rem; background: #000; color: #fff; border: 2px solid #fff; border-radius: 5px; cursor: pointer; }
-    #log { font-size: 0.9rem; color: #ffff00; text-align: center; margin: 10px 0; font-weight: bold; min-height: 1.2em; }
+    #log { font-size: 0.9rem; color: #ffff00; text-align: center; margin: 8px 0; font-weight: bold; min-height: 1.2em; }
     #next { width: 100%; padding: 15px; background: #fff; color: #000; font-weight: bold; border: none; display: none; border-radius: 5px; cursor: pointer; }
     #bonus-banner { display: none; position: absolute; top: 15%; left: 50%; transform: translateX(-50%); color: gold; font-size: 1.8rem; font-weight: bold; text-shadow: 2px 2px #000; z-index: 10; animation: flash 0.5s infinite alternate; }
     @keyframes flash { from { opacity: 1; } to { opacity: 0.3; } }
@@ -31,119 +31,94 @@
 </head>
 <body>
 
-  <div id="game-container">
-    <div id="game-screen">
-      <div id="bonus-banner">BONUS STAGE</div>
-      <div id="boss-timer">TIME:<span id="time-num">10</span><div id="timer-fill"></div></div>
-      <div id="monster-area">
-        <div id="monster-image">
-          <span id="monster-emoji">👾</span>
-          <img id="monster-img-tag" src="" alt="Bonus">
-        </div>
-        <div style="width:120px; height:10px; background:#333; border:2px solid #fff; margin-top:10px;">
-          <div id="monster-hp" style="height:100%; background:#f00; width:100%; transition: width 0.3s;"></div>
-        </div>
+  <div id="game-screen">
+    <div id="bonus-banner">BONUS STAGE</div>
+    <div id="boss-timer">TIME:<span id="time-num">10</span><div id="timer-fill"></div></div>
+    <div id="monster-area">
+      <div id="monster-name-tag"><span id="m-name">MONSTER</span></div>
+      <div id="monster-image">
+        <span id="monster-emoji">👾</span>
+        <img id="monster-img-tag" src="" alt="Bonus">
       </div>
-    </div>
-
-    <div id="ui-area">
-      <div id="status">
-        <div>HP: <span id="hp">100</span></div>
-        <div>LV: <span id="level">1</span></div>
-        <div>WIN: <span id="wins">0</span></div>
+      <div style="width:140px; height:12px; background:#333; border:2px solid #fff; margin-top:10px; position:relative;">
+        <div id="monster-hp-bar" style="height:100%; background:#f00; width:100%; transition: width 0.3s;"></div>
       </div>
-      <div id="question"></div>
-      <div id="choices"></div>
-      <div id="log"></div>
-      <button id="next">▶ NEXT STAGE</button>
     </div>
   </div>
 
-  <script src="questions.js"></script>
+  <div id="ui-area">
+    <div id="status">
+      <div>HP: <span id="hp">100</span></div>
+      <div>WIN: <span id="wins">0</span></div>
+      <div>LV: <span id="level">1</span></div>
+    </div>
+    <div id="question"></div>
+    <div id="choices"></div>
+    <div id="log"></div>
+    <button id="next">▶ NEXT BATTLE</button>
+  </div>
 
+  <script src="questions.js"></script>
   <script>
-    let player = { hp: 100, level: 1, wins: 0 };
-    let currentMonster = { hp: 70, maxHp: 70 };
+    let player = { hp: 100, wins: 0 };
+    let monster = { hp: 70, maxHp: 70, name: "" };
     let pool = [], usedPool = [];
     let isBoss = false, isBonus = false, bossMistakes = 0;
     let timerInt, timeLeft = 10;
     let bonusImgInterval;
+    let currentQ = null;
 
-    // 男性の野太い声の設定
     function speak(text) {
       const uttr = new SpeechSynthesisUtterance(text);
       uttr.lang = "ja-JP";
       uttr.pitch = 0.4; // 低音
-      uttr.rate = 0.8;  // ゆっくり
+      uttr.rate = 0.8; 
       window.speechSynthesis.speak(uttr);
     }
 
-    function shuffle(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-      }
-      return array;
-    }
-
     function init() {
-      // masterQuestionsが読み込まれているか確認
       if (typeof masterQuestions === 'undefined') {
-          alert("questions.js が見つかりません。同じフォルダに置いてください。");
-          return;
+        alert("questions.jsが見つかりません。"); return;
       }
-      pool = shuffle([...masterQuestions]);
-      nextBattle();
+      pool = [...masterQuestions].sort(() => Math.random() - 0.5);
+      startNewBattle();
     }
 
-    function nextBattle() {
+    function startNewBattle() {
       clearInterval(bonusImgInterval);
-      isBonus = false; bossMistakes = 0;
-      player.wins++;
-      isBoss = player.wins % 5 === 0;
+      clearInterval(timerInt);
+      isBonus = false; 
+      bossMistakes = 0;
+      isBoss = (player.wins > 0 && (player.wins + 1) % 5 === 0);
 
-      currentMonster = { hp: isBoss ? 200 : 70, maxHp: isBoss ? 200 : 70 };
-      
+      monster.maxHp = isBoss ? 200 : 70;
+      monster.hp = monster.maxHp;
+      monster.name = isBoss ? "BOSS DRAGON" : "MONSTER";
+
+      document.getElementById("m-name").textContent = monster.name;
       document.getElementById("monster-emoji").style.display = "block";
       document.getElementById("monster-img-tag").style.display = "none";
+      document.getElementById("monster-img-tag").style.filter = "none";
       document.getElementById("boss-timer").style.display = isBoss ? "block" : "none";
       document.getElementById("bonus-banner").style.display = "none";
       document.getElementById("next").style.display = "none";
-      document.getElementById("log").textContent = isBoss ? "ボス戦！ノーミスでボーナスへ！" : "敵が現れた！";
-      
-      loadQuestion();
+      document.getElementById("log").textContent = isBoss ? "ボス戦！ノーミスでボーナスへ" : "敵が現れた！";
+
       updateUI();
-    }
-
-    function startBonusStage() {
-      isBonus = true; isBoss = false;
-      document.getElementById("bonus-banner").style.display = "block";
-      document.getElementById("monster-emoji").style.display = "none";
-      document.getElementById("monster-img-tag").style.display = "block";
-      document.getElementById("monster-img-tag").src = "1000046944.jpg"; 
-      currentMonster = { hp: 150, maxHp: 150 };
-
-      // ボーナス画像ランダム演出
-      bonusImgInterval = setInterval(() => {
-        const img = document.getElementById("monster-img-tag");
-        img.style.filter = `hue-rotate(${Math.random()*360}deg) brightness(1.1)`;
-        img.style.transform = `scale(${0.9 + Math.random()*0.2})`;
-      }, 2000);
-
       loadQuestion();
     }
 
     function loadQuestion() {
-      if (pool.length === 0) { pool = shuffle([...usedPool]); usedPool = []; }
-      const q = pool.pop();
-      currentQuestion = q;
-      document.getElementById("question").textContent = q.q;
+      if (pool.length === 0) { pool = [...usedPool].sort(() => Math.random() - 0.5); usedPool = []; }
+      currentQ = pool.pop();
+      document.getElementById("question").textContent = currentQ.q;
       const choicesEl = document.getElementById("choices");
       choicesEl.innerHTML = "";
-      shuffle([...q.choices]).forEach(c => {
+      
+      [...currentQ.choices].sort(() => Math.random() - 0.5).forEach(c => {
         const btn = document.createElement("button");
         btn.textContent = c;
-        btn.onclick = () => checkAnswer(c, q.a, btn);
+        btn.onclick = () => checkAnswer(c);
         choicesEl.appendChild(btn);
       });
       if (isBoss) startTimer();
@@ -159,58 +134,92 @@
         if (timeLeft <= 0) {
           clearInterval(timerInt);
           bossMistakes++;
-          handleDamage(10);
-          loadQuestion();
+          highlightCorrect();
+          damagePlayer(10);
+          document.getElementById("log").textContent = "時間切れ！";
+          setTimeout(loadQuestion, 1200);
         }
       }, 100);
     }
 
-    function checkAnswer(choice, answer, btn) {
+    function checkAnswer(choice) {
       clearInterval(timerInt);
-      const buttons = document.querySelectorAll("#choices button");
-      buttons.forEach(b => b.disabled = true);
+      highlightCorrect();
+      const isCorrect = (choice === currentQ.a);
 
-      if (choice === answer) {
-        btn.style.background = "#2ecc71";
-        currentMonster.hp -= 50;
+      if (isCorrect) {
+        monster.hp -= 50;
         document.getElementById("log").textContent = "正解！";
         if (isBonus) speak("やりますねぇ");
-        usedPool.push(currentQuestion);
+        usedPool.push(currentQ);
       } else {
-        btn.style.background = "#e74c3c";
         if (isBoss) bossMistakes++;
-        handleDamage(15);
+        damagePlayer(15);
         document.getElementById("log").textContent = "不正解！";
-        pool.unshift(currentQuestion);
+        pool.unshift(currentQ);
       }
 
+      updateUI();
       setTimeout(() => {
-        if (currentMonster.hp <= 0) {
-          if (isBoss && bossMistakes === 0) {
-            startBonusStage();
-          } else {
-            if (isBonus) {
-              clearInterval(bonusImgInterval);
-              speak("じゃけん、夜行きましょうね");
-              document.getElementById("monster-img-tag").src = "1000046945.png";
-              document.getElementById("monster-img-tag").style.filter = "none";
-            }
-            document.getElementById("log").textContent = "WIN!";
-            document.getElementById("next").style.display = "block";
-          }
+        if (monster.hp <= 0) {
+          handleMonsterDefeat();
         } else {
           loadQuestion();
         }
-        updateUI();
-      }, 800);
+      }, 1000);
     }
 
-    function handleDamage(dmg) {
+    function highlightCorrect() {
+      const btns = document.querySelectorAll("#choices button");
+      btns.forEach(b => {
+        b.disabled = true;
+        if (b.textContent === currentQ.a) b.style.background = "#2ecc71";
+        else b.style.opacity = "0.5";
+      });
+    }
+
+    function handleMonsterDefeat() {
+      if (isBoss && bossMistakes === 0) {
+        startBonus();
+      } else {
+        if (isBonus) {
+          clearInterval(bonusImgInterval);
+          speak("じゃけん、夜行きましょうね");
+          document.getElementById("monster-img-tag").src = "1000046945.png";
+          document.getElementById("monster-img-tag").style.filter = "none";
+        }
+        player.wins++;
+        document.getElementById("log").textContent = "モンスターを倒した！";
+        document.getElementById("next").style.display = "block";
+        document.getElementById("choices").innerHTML = "";
+      }
+    }
+
+    function startBonus() {
+      isBonus = true; isBoss = false;
+      monster.maxHp = 150; monster.hp = 150;
+      monster.name = "SPECIAL BONUS";
+      document.getElementById("m-name").textContent = monster.name;
+      document.getElementById("bonus-banner").style.display = "block";
+      document.getElementById("monster-emoji").style.display = "none";
+      document.getElementById("monster-img-tag").style.display = "block";
+      document.getElementById("monster-img-tag").src = "1000046944.jpg"; 
+
+      bonusImgInterval = setInterval(() => {
+        const img = document.getElementById("monster-img-tag");
+        img.style.filter = `hue-rotate(${Math.random()*360}deg) brightness(1.1)`;
+      }, 2000);
+      updateUI();
+      loadQuestion();
+    }
+
+    function damagePlayer(dmg) {
       player.hp -= dmg;
       document.body.classList.add("shake");
       setTimeout(() => document.body.classList.remove("shake"), 200);
       if (player.hp <= 0) {
-        alert("GAME OVER");
+        player.hp = 0; updateUI();
+        alert("GAME OVER\nWIN数: " + player.wins);
         location.reload();
       }
     }
@@ -219,11 +228,11 @@
       document.getElementById("hp").textContent = player.hp;
       document.getElementById("wins").textContent = player.wins;
       document.getElementById("level").textContent = Math.floor(player.wins / 3) + 1;
-      const percent = (currentMonster.hp / currentMonster.maxHp) * 100;
-      document.getElementById("monster-hp").style.width = Math.max(0, percent) + "%";
+      const pct = Math.max(0, (monster.hp / monster.maxHp) * 100);
+      document.getElementById("monster-hp-bar").style.width = pct + "%";
     }
 
-    document.getElementById("next").onclick = nextBattle;
+    document.getElementById("next").onclick = startNewBattle;
     window.onload = init;
   </script>
 </body>
