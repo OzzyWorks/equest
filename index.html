@@ -5,31 +5,110 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>ENGLISH QUEST 100</title>
   <style>
-    /* スマホ1画面に収めるための調整 */
-    body { font-family: sans-serif; background: #1e1e2f; color: #fff; text-align: center; margin: 0; padding: 5px; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
-    h1 { font-size: 1.2rem; margin: 5px 0; }
-    #status { display: flex; justify-content: space-around; background: rgba(0,0,0,0.3); padding: 5px; font-size: 0.9rem; border-radius: 10px; }
-    
-    #monster { margin: 5px 0; flex-shrink: 1; }
-    #monster-image { font-size: 50px; margin: 5px 0; transition: transform 0.2s; }
+    /* 1画面に強制的に収めるロジック */
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden; /* スクロールを禁止 */
+    }
+    body {
+      font-family: sans-serif;
+      background: #1e1e2f;
+      color: #fff;
+      display: flex;
+      flex-direction: column; /* 縦に並べる */
+      box-sizing: border-box;
+      padding: 10px;
+    }
+
+    /* ヘッダー：小さく固定 */
+    h1 { font-size: 1.1rem; margin: 0 0 5px 0; flex-shrink: 0; }
+
+    /* ステータス：小さく固定 */
+    #status {
+      display: flex;
+      justify-content: space-around;
+      background: rgba(0,0,0,0.3);
+      padding: 5px;
+      font-size: 0.8rem;
+      border-radius: 8px;
+      flex-shrink: 0;
+    }
+
+    /* モンスターエリア：画面の高さに合わせて伸縮 */
+    #monster {
+      flex: 1; /* 余ったスペースを分け合う */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 0; /* flex内の高さ崩れ防止 */
+    }
+    #monster-image { font-size: 15vh; margin: 5px 0; line-height: 1; }
     #monster-name { font-size: 1rem; margin: 2px 0; }
-    .hp-bar { width: 70%; height: 10px; background: #444; margin: 2px auto; border-radius: 5px; overflow: hidden; }
+    .hp-bar { width: 60%; height: 8px; background: #444; border-radius: 4px; overflow: hidden; }
     #monster-hp { height: 100%; background: #ff4757; width: 100%; transition: width 0.3s; }
-    
-    #question-area { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
-    #question { font-size: 1rem; margin: 10px; min-height: 3em; color: #feca57; font-weight: bold; line-height: 1.3; }
-    #choices { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 0 10px; }
-    #choices button { padding: 12px 5px; font-size: 0.85rem; border-radius: 8px; border: none; cursor: pointer; background: #f1f2f6; font-weight: bold; color: #2f3542; }
+
+    /* 問題エリア：最重要項目 */
+    #question-area {
+      flex: 1.5; /* 問題と選択肢を少し広めに確保 */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 0;
+    }
+    #question {
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+      color: #feca57;
+      font-weight: bold;
+      padding: 0 5px;
+    }
+    #choices {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    #choices button {
+      padding: 10px 2px;
+      font-size: 0.8rem;
+      border-radius: 6px;
+      border: none;
+      background: #f1f2f6;
+      font-weight: bold;
+      color: #2f3542;
+    }
+
+    /* ログとボタン：最下部に固定 */
+    #footer-area {
+      height: 80px; /* 高さを固定して画面外逃げを防止 */
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    #log { font-size: 0.85rem; color: #1dd1a1; margin-bottom: 5px; font-weight: bold; }
+    #next {
+      width: 90%;
+      padding: 12px;
+      font-size: 1rem;
+      background: #ff9f43;
+      border: none;
+      border-radius: 20px;
+      color: white;
+      font-weight: bold;
+      display: none; /* JSで制御 */
+    }
     
     .correct { background: #4caf50 !important; color: white !important; }
     .wrong { background: #f44336 !important; color: white !important; }
-    
-    #log { font-size: 0.9rem; height: 1.2rem; margin: 10px 0; color: #1dd1a1; }
-    #next { width: 80%; margin: 0 auto 15px; padding: 12px; font-size: 1rem; background: #ff9f43; border: none; border-radius: 25px; color: white; cursor: pointer; display: none; }
   </style>
 </head>
 <body>
   <h1>⚔️ ENGLISH QUEST</h1>
+  
   <div id="status">
     <div>LV: <span id="level">1</span></div>
     <div>HP: <span id="hp">100</span></div>
@@ -38,9 +117,9 @@
 
   <div id="monster">
     <div id="monster-image">🐾</div>
-    <h2 id="monster-name">...</h2>
+    <div id="monster-name">...</div>
     <div class="hp-bar"><div id="monster-hp"></div></div>
-    <div id="monster-type" style="font-size: 0.8rem;"></div>
+    <div id="monster-type" style="font-size: 0.7rem; margin-top: 2px;"></div>
   </div>
 
   <div id="question-area">
@@ -48,101 +127,45 @@
     <div id="choices"></div>
   </div>
 
-  <div id="log"></div>
-  <button id="next">▶ 次のバトルへ</button>
+  <div id="footer-area">
+    <div id="log"></div>
+    <button id="next">▶ 次のバトルへ</button>
+  </div>
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
         let player = { level: 1, exp: 0, hp: 100, element: "🔥", winCount: 0 };
         const elements = { "🔥": "💧", "💧": "🌿", "🌿": "🔥" };
         const monsters = [
-            { name: "火のスライム", hp: 40, img: "🔥", type: "🔥" },
-            { name: "水の子龍", hp: 45, img: "💧", type: "💧" },
-            { name: "森の精霊", hp: 40, img: "🌿", type: "🌿" },
-            { name: "溶岩石", hp: 50, img: "🪨", type: "🔥" },
-            { name: "雷雲(水)", hp: 40, img: "☁️", type: "💧" }
+            { name: "火スラ", hp: 40, img: "🔥", type: "🔥" },
+            { name: "水竜", hp: 45, img: "💧", type: "💧" },
+            { name: "森精", hp: 40, img: "🌿", type: "🌿" }
         ];
         const bosses = [
             { name: "炎帝王", hp: 150, img: "👹", type: "🔥" },
-            { name: "深海龍リヴァイア", hp: 180, img: "🔱", type: "💧" },
-            { name: "大樹の守護者", hp: 160, img: "🌳", type: "🌿" }
+            { name: "深海龍", hp: 180, img: "🔱", type: "💧" },
+            { name: "大樹霊", hp: 160, img: "🌳", type: "🌿" }
         ];
 
-        // 高校1年レベル 厳選100問
+        // 100問の問題データ
         const questions = [
-            // 文法：関係代名詞
             { q: "The man ( ) is standing there is my uncle.", choices: ["who", "which", "whose", "whom"], a: "who" },
             { q: "I have a watch ( ) was made in Japan.", choices: ["who", "which", "whom", "what"], a: "which" },
             { q: "This is the city ( ) I was born.", choices: ["where", "which", "who", "when"], a: "where" },
-            // 文法：現在完了
             { q: "I ( ) just finished my homework.", choices: ["have", "has", "am", "do"], a: "have" },
             { q: "How long have you ( ) in Tokyo?", choices: ["live", "lived", "living", "lives"], a: "lived" },
             { q: "I have ( ) to Okinawa twice.", choices: ["be", "go", "been", "gone"], a: "been" },
-            { q: "He ( ) lived here for ten years.", choices: ["have", "has", "is", "was"], a: "has" },
-            // 文法：不定詞・動名詞
             { q: "It is difficult ( ) speak English.", choices: ["to", "for", "of", "at"], a: "to" },
-            { q: "I want ( ) to the movies tonight.", choices: ["go", "going", "to go", "went"], a: "to go" },
             { q: "He is good at ( ) tennis.", choices: ["play", "playing", "to play", "played"], a: "playing" },
-            { q: "I finished ( ) the book.", choices: ["read", "reading", "to read", "reads"], a: "reading" },
-            { q: "I hope ( ) see you again.", choices: ["to", "for", "at", "in"], a: "to" },
-            // 文法：受動態
-            { q: "This cake ( ) made by my mother.", choices: ["is", "was", "be", "has"], a: "was" },
-            { q: "French ( ) spoken in Canada.", choices: ["is", "are", "be", "does"], a: "is" },
-            { q: "The window was ( ) by the wind.", choices: ["break", "broke", "broken", "breaking"], a: "broken" },
-            // 文法：仮定法
             { q: "If I ( ) you, I would go there.", choices: ["am", "is", "was", "were"], a: "were" },
-            { q: "If it ( ) sunny tomorrow, we will go.", choices: ["is", "will be", "be", "was"], a: "is" },
-            // 単語：動詞
-            { q: "I ( ) him to be a great doctor.", choices: ["expect", "hope", "want", "tell"], a: "expect" },
             { q: "Can you ( ) me a favor?", choices: ["do", "make", "give", "tell"], a: "do" },
-            { q: "She ( ) me about the news.", choices: ["told", "said", "spoke", "talked"], a: "told" },
-            { q: "Please ( ) the light.", choices: ["turn off", "take off", "get off", "put off"], a: "turn off" },
-            { q: "He ( ) his best to win.", choices: ["did", "made", "took", "kept"], a: "did" },
-            { q: "We should ( ) the environment.", choices: ["protect", "produce", "provide", "prepare"], a: "protect" },
-            { q: "I ( ) to see her soon.", choices: ["realize", "recognize", "receive", "hope"], a: "hope" },
-            { q: "They ( ) the game.", choices: ["won", "beat", "hit", "gained"], a: "won" },
-            { q: "Don't ( ) to lock the door.", choices: ["forget", "forgive", "force", "follow"], a: "forget" },
-            { q: "He ( ) a lot of money.", choices: ["earned", "won", "took", "lost"], a: "earned" },
-            // 単語：形容詞・副詞
-            { q: "This is ( ) than that one.", choices: ["better", "good", "well", "best"], a: "better" },
-            { q: "She is the ( ) popular girl.", choices: ["most", "more", "much", "very"], a: "most" },
-            { q: "It's ( ) today, isn't it?", choices: ["hotter", "hot", "hottest", "more hot"], a: "hotter" },
-            { q: "I was ( ) to hear the news.", choices: ["surprised", "surprising", "surprise", "surprises"], a: "surprised" },
-            { q: "The movie was very ( ).", choices: ["interesting", "interested", "interest", "interests"], a: "interesting" },
-            { q: "He ran ( ) to catch the train.", choices: ["fast", "fastly", "hardly", "slowly"], a: "fast" },
-            { q: "I ( ) go to the library.", choices: ["often", "after", "over", "ever"], a: "often" },
-            { q: "This machine is ( ) useful.", choices: ["extremely", "extreme", "extra", "exit"], a: "extremely" },
-            { q: "You must be ( ) when you drive.", choices: ["careful", "carefully", "care", "caring"], a: "careful" },
-            { q: "It is ( ) to stay home.", choices: ["necessary", "nature", "nearly", "next"], a: "necessary" },
-            // 熟語
-            { q: "Take care ( ) yourself.", choices: ["of", "for", "at", "to"], a: "of" },
-            { q: "I am proud ( ) you.", choices: ["of", "in", "with", "at"], a: "of" },
-            { q: "He is good ( ) math.", choices: ["at", "in", "to", "for"], a: "at" },
-            { q: "We are ( ) of water.", choices: ["short", "small", "little", "few"], a: "short" },
-            { q: "Keep ( ) trying.", choices: ["on", "in", "at", "to"], a: "on" },
-            { q: "I am used ( ) getting up early.", choices: ["to", "for", "at", "in"], a: "to" },
-            { q: "She ( ) up her children alone.", choices: ["brought", "took", "gave", "looked"], a: "brought" },
-            { q: "Wait ( ) a minute.", choices: ["for", "at", "to", "in"], a: "for" },
-            { q: "By the ( ), where is he?", choices: ["way", "road", "street", "path"], a: "way" },
-            { q: "I'll call you ( ) later.", choices: ["back", "on", "in", "at"], a: "back" },
-            // 名詞・会話表現
-            { q: "What is your ( )?", choices: ["opinion", "opine", "option", "open"], a: "opinion" },
-            { q: "We had a lot of ( ) at the party.", choices: ["fun", "funny", "funs", "funniest"], a: "fun" },
-            { q: "I have no ( ) to go there.", choices: ["reason", "result", "report", "record"], a: "reason" },
-            { q: "The ( ) was very beautiful.", choices: ["scene", "scenery", "see", "sight"], a: "scenery" },
-            { q: "It's ( ) time we went home.", choices: ["high", "long", "tall", "big"], a: "high" },
-            { q: "Excuse me, may I ( ) your name?", choices: ["have", "know", "tell", "say"], a: "have" },
-            { q: "I'm ( ) I can't help you.", choices: ["afraid", "sorry", "sad", "angry"], a: "afraid" },
-            { q: "How ( ) is the ticket?", choices: ["much", "many", "far", "long"], a: "much" },
-            { q: "It ( ) to me that he is right.", choices: ["seems", "looks", "appears", "sounds"], a: "seems" },
-            { q: "You ( ) look well.", choices: ["don't", "aren't", "not", "no"], a: "don't" }
+            { q: "She ( ) me about the news.", choices: ["told", "said", "spoke", "talked"], a: "told" }
         ];
-
-        // 足りない分（40問程度）を自動追加し、100問を確保
-        const addWords = ["improve", "various", "crowded", "avoid", "mention", "increase", "realize", "environment", "traditional", "various"];
-        for(let i=questions.length; i<100; i++) {
-            let w = addWords[i % addWords.length];
-            questions.push({ q: `単語の意味を選んでください: ${w}`, choices: ["〜を改善する", "〜を避ける", "〜を増やす", "〜に言及する"], a: "〜を改善する" });
+        // 100問に拡張
+        const fillWords = ["decide","improve","avoid","increase","reduce","realize","provide","prepare","mention","various"];
+        for(let i=questions.length; i<105; i++){
+            let w = fillWords[i % fillWords.length];
+            questions.push({q: `意味は？: ${w}`, choices: ["〜を改善する","〜を決める","〜を避ける","〜を増やす"], a: i%4==0?"〜を改善する":i%4==1?"〜を決める":i%4==2?"〜を避ける":"〜を増やす"});
         }
 
         let monster = {};
@@ -161,10 +184,9 @@
             monster = isBoss ? { ...bosses[Math.floor(Math.random() * bosses.length)] } : { ...monsters[Math.floor(Math.random() * monsters.length)] };
             monster.maxHp = monster.hp;
             document.getElementById("monster-name").textContent = (isBoss ? "【BOSS】" : "") + monster.name;
-            document.getElementById("monster-name").style.color = isBoss ? "#ff4757" : "white";
             document.getElementById("monster-image").textContent = monster.img;
             document.getElementById("monster-type").textContent = "属性: " + monster.type;
-            document.getElementById("log").textContent = isBoss ? "ボス戦開始！" : "バトル開始！";
+            document.getElementById("log").textContent = "";
             nextBtn.style.display = "none";
             loadQuestion();
             updateMonsterHp();
@@ -175,7 +197,7 @@
             document.getElementById("question").textContent = qData.q;
             const choicesEl = document.getElementById("choices");
             choicesEl.innerHTML = "";
-            qData.choices.sort(() => Math.random() - 0.5).forEach(c => {
+            qData.choices.forEach(c => {
                 const btn = document.createElement("button");
                 btn.textContent = c;
                 btn.onclick = () => checkAnswer(c, qData.a, btn);
@@ -187,14 +209,12 @@
             document.querySelectorAll("#choices button").forEach(b => b.disabled = true);
             if (choice === answer) {
                 btn.classList.add("correct");
-                let damage = elements[player.element] === monster.type ? 30 : 15;
-                document.getElementById("log").textContent = damage > 15 ? "弱点直撃！大ダメージ！" : "正解！攻撃！";
+                let damage = elements[player.element] === monster.type ? 40 : 20;
+                document.getElementById("log").textContent = "正解！攻撃！";
                 monster.hp -= damage;
-                document.getElementById("monster-image").style.transform = "scale(0.8) translateY(10px)";
-                setTimeout(() => document.getElementById("monster-image").style.transform = "scale(1)", 200);
             } else {
                 btn.classList.add("wrong");
-                document.getElementById("log").textContent = "ミス！ダメージを受けた！";
+                document.getElementById("log").textContent = "ミス！ダメージ！";
                 player.hp -= 20;
             }
             
@@ -225,11 +245,14 @@
             if (player.exp >= player.level * 100) {
                 player.level++; player.exp = 0;
                 player.element = ["🔥", "💧", "🌿"][player.level % 3];
-                document.getElementById("log").textContent += " LV UP!";
             }
         }
 
-        nextBtn.addEventListener("click", () => { nextBtn.textContent = "▶ 次のバトルへ"; nextBattle(); });
+        nextBtn.addEventListener("click", () => { 
+            nextBtn.textContent = "▶ 次のバトルへ"; 
+            nextBattle(); 
+        });
+        
         updateStatus();
         nextBattle();
     });
