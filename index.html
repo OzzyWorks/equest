@@ -116,7 +116,7 @@
 
     function speak(text) {
       const uttr = new SpeechSynthesisUtterance(text);
-      uttr.lang = "ja-JP"; uttr.pitch = 0.4; uttr.rate = 0.8;
+      uttr.lang = "ja-JP"; uttr.pitch = 0.4; uttr.rate = 2.0;
       window.speechSynthesis.speak(uttr);
     }
 
@@ -205,8 +205,12 @@
       highlightCorrect();
       if (choice === currentQ.a) {
         monster.hp -= 50; document.getElementById("log").textContent = "かいしんの いちげき！";
-        if (isBonus) speak("やりますねぇ");
+        if (isBonus) {
+        speak("やりますねぇ");
         usedPool.push(currentQ);
+        } else {
+        speak("おっ、そうだなっ！");
+        }
       } else {
         if (isBoss) bossMistakes++;
         missList.push({q: currentQ.q, a: currentQ.a, user: choice});
