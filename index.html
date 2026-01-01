@@ -183,7 +183,7 @@
       } else {
         if (isBoss) bossMistakes++;
         missList.push({q: currentQ.q, a: currentQ.a, user: choice});
-        damagePlayer(15); document.getElementById("log").textContent = "不正解！";
+        damagePlayer(10); document.getElementById("log").textContent = "不正解！";
         pool.unshift(currentQ);
       }
       updateUI();
