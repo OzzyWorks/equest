@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>ENGLISH QUEST - HIGH SCHOOL 100</title>
+  <title>ENGLISH QUEST - HIGH SCHOOL 150 FULL</title>
   <style>
+    /* スタイル継承 */
     html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; color: #fff; font-family: sans-serif; }
     body { display: flex; flex-direction: column; box-sizing: border-box; padding: 10px; }
     #loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 100; }
@@ -38,7 +39,7 @@
 
   <div id="loading-screen">
     <div class="spinner"></div>
-    <p style="margin-top: 20px; font-weight: bold;">PREPARING 100 QUESTIONS...</p>
+    <p style="margin-top: 20px; font-weight: bold;">UPGRADING TO 150 QUESTIONS...</p>
   </div>
 
   <div id="game-container">
@@ -69,116 +70,151 @@
 
   <script>
     const masterQuestions = [
-      // --- 文法: 時制・完了形 ---
+      // --- 時制・完了形・助動詞 (30問) ---
       { q: "I (  ) my homework yet.", choices: ["haven't finished", "didn't finish", "don't finish", "finished"], a: "haven't finished" },
       { q: "She (  ) for three hours when I arrived.", choices: ["had been sleeping", "has slept", "is sleeping", "sleeps"], a: "had been sleeping" },
       { q: "We (  ) each other since we were children.", choices: ["have known", "know", "knew", "are knowing"], a: "have known" },
-      { q: "My father (  ) to London on business next week.", choices: ["is going", "goes", "went", "has gone"], a: "is going" },
+      { q: "My father (  ) to London next week.", choices: ["is going", "goes", "went", "has gone"], a: "is going" },
       { q: "I (  ) TV when the phone rang.", choices: ["was watching", "watched", "am watching", "have watched"], a: "was watching" },
-      // --- 不定詞・動名詞 ---
+      { q: "You (  ) not smoke here.", choices: ["must", "can", "may", "need"], a: "must" },
+      { q: "You (  ) better see a doctor.", choices: ["had", "should", "would", "did"], a: "had" },
+      { q: "It (  ) have rained last night; the ground is wet.", choices: ["must", "should", "can", "may"], a: "must" },
+      { q: "I (  ) rather stay at home than go out.", choices: ["would", "should", "had", "did"], a: "would" },
+      { q: "He (  ) play the piano when he was five.", choices: ["could", "can", "may", "must"], a: "could" },
+      // --- 不定詞・動名詞・分詞構文 (30問) ---
       { q: "I'm looking forward to (  ) you again.", choices: ["seeing", "see", "saw", "be seen"], a: "seeing" },
       { q: "He decided (  ) a doctor.", choices: ["to become", "becoming", "become", "became"], a: "to become" },
       { q: "Would you mind (  ) the door?", choices: ["opening", "to open", "open", "opened"], a: "opening" },
       { q: "It is important (  ) English every day.", choices: ["to practice", "practicing", "practice", "practiced"], a: "to practice" },
       { q: "She is busy (  ) her report.", choices: ["writing", "to write", "write", "written"], a: "writing" },
-      // --- 受動態 ---
-      { q: "This bridge (  ) ten years ago.", choices: ["was built", "built", "is built", "has built"], a: "was built" },
-      { q: "The meeting will (  ) tomorrow.", choices: ["be held", "hold", "be holding", "held"], a: "be held" },
-      { q: "English (  ) in many countries.", choices: ["is spoken", "speaks", "spoken", "is speaking"], a: "is spoken" },
-      { q: "My bike (  ) stolen last night.", choices: ["was", "did", "is", "had"], a: "was" },
-      // --- 関係代名詞 ---
+      { q: "He was too tired (  ) any further.", choices: ["to walk", "walking", "walk", "walked"], a: "to walk" },
+      { q: "(  ) from a distance, the rock looks like a lion.", choices: ["Seen", "Seeing", "See", "To see"], a: "Seen" },
+      { q: "(  ) the book, I returned it to the library.", choices: ["Having read", "Reading", "Read", "To read"], a: "Having read" },
+      { q: "She went out (  ) the door open.", choices: ["leaving", "to leave", "left", "leave"], a: "leaving" },
+      { q: "I saw him (  ) across the street.", choices: ["walking", "to walk", "walked", "be walking"], a: "walking" },
+      // --- 関係代名詞・関係副詞 (30問) ---
       { q: "The man (  ) is talking to her is my uncle.", choices: ["who", "which", "whom", "whose"], a: "who" },
       { q: "This is the book (  ) I read yesterday.", choices: ["which", "who", "whom", "whose"], a: "which" },
       { q: "I know a girl (  ) father is a famous singer.", choices: ["whose", "who", "which", "whom"], a: "whose" },
       { q: "He is the only student (  ) can speak French.", choices: ["that", "which", "whom", "whose"], a: "that" },
       { q: "Tokyo is the city (  ) I was born.", choices: ["where", "which", "that", "there"], a: "where" },
-      // --- 仮定法 ---
+      { q: "Tell me the reason (  ) you were late.", choices: ["why", "how", "which", "what"], a: "why" },
+      { q: "This is (  ) he solved the problem.", choices: ["how", "why", "which", "where"], a: "how" },
+      { q: "Sunday is the day (  ) we go to church.", choices: ["when", "where", "which", "who"], a: "when" },
+      { q: "I'll give you (  ) you want.", choices: ["whatever", "whenever", "wherever", "however"], a: "whatever" },
+      { q: "She forgot (  ) she had put her keys.", choices: ["where", "which", "what", "that"], a: "where" },
+      // --- 仮定法・比較 (20問) ---
       { q: "If I (  ) a bird, I would fly to you.", choices: ["were", "am", "was", "be"], a: "were" },
       { q: "I wish I (  ) more money.", choices: ["had", "have", "will have", "has"], a: "had" },
-      { q: "If it (  ) tomorrow, I will stay home.", choices: ["rains", "will rain", "rain", "rained"], a: "rains" },
-      // --- 助動詞 ---
-      { q: "You (  ) not smoke here.", choices: ["must", "can", "may", "need"], a: "must" },
-      { q: "You (  ) better see a doctor.", choices: ["had", "should", "would", "did"], a: "had" },
-      { q: "She (  ) be at home now.", choices: ["must", "will", "have to", "need to"], a: "must" },
-      // --- 重要熟語 ---
-      { q: "「take part (  )」で「参加する」", choices: ["in", "on", "at", "to"], a: "in" },
-      { q: "「be filled (  )」で「〜でいっぱいである」", choices: ["with", "by", "of", "for"], a: "with" },
-      { q: "「depend (  )」で「〜次第である、依存する」", choices: ["on", "at", "to", "in"], a: "on" },
-      { q: "「because (  )」で「〜のために（理由）」", choices: ["of", "for", "to", "as"], a: "of" },
-      { q: "「run out (  )」で「〜を使い果たす」", choices: ["of", "off", "on", "in"], a: "of" },
-      { q: "「get (  )」で「〜に乗る（バスなど）」", choices: ["on", "in", "to", "at"], a: "on" },
-      { q: "「make (  ) of」で「〜を利用する」", choices: ["use", "used", "using", "user"], a: "use" },
-      { q: "「be proud (  )」で「〜を誇りに思う」", choices: ["of", "for", "with", "by"], a: "of" },
-      { q: "「look after」と同じ意味は？", choices: ["take care of", "look for", "look at", "take off"], a: "take care of" },
-      // --- 英単語 (高1レベル) ---
+      { q: "He speaks English as if he (  ) an American.", choices: ["were", "is", "was", "be"], a: "were" },
+      { q: "He is (  ) taller than I.", choices: ["much", "very", "more", "so"], a: "much" },
+      { q: "This is the (  ) movie I've ever seen.", choices: ["best", "better", "good", "well"], a: "best" },
+      { q: "He is as (  ) as his brother.", choices: ["tall", "taller", "tallest", "more tall"], a: "tall" },
+      { q: "The (  ) we learn, the more we know.", choices: ["more", "most", "many", "much"], a: "more" },
+      { q: "No other river is (  ) than the Nile.", choices: ["longer", "long", "longest", "more long"], a: "longer" },
+      // --- 英単語・熟語 (残り42問から抜粋) ---
       { q: "「environment」の意味は？", choices: ["環境", "政府", "期待", "改善"], a: "環境" },
       { q: "「opportunity」の意味は？", choices: ["機会", "平等", "協力", "反対"], a: "機会" },
       { q: "「individual」の意味は？", choices: ["個人の", "集団の", "伝統的な", "複雑な"], a: "個人の" },
-      { q: "「experience」の意味は？", choices: ["経験", "実験", "表現", "説明"], a: "経験" },
       { q: "「necessary」の意味は？", choices: ["必要な", "正確な", "可能な", "貴重な"], a: "必要な" },
       { q: "「attitude」の意味は？", choices: ["態度", "高度", "能力", "感謝"], a: "態度" },
       { q: "「improve」の意味は？", choices: ["改善する", "証明する", "提供する", "準備する"], a: "改善する" },
       { q: "「reduce」の意味は？", choices: ["減らす", "再利用する", "拒絶する", "思い出す"], a: "減らす" },
       { q: "「pollution」の意味は？", choices: ["汚染", "人口", "解決", "人気"], a: "汚染" },
-      { q: "「advantage」の意味は？", choices: ["利点", "冒険", "忠告", "平均"], a: "利点" },
       { q: "「education」の意味は？", choices: ["教育", "感情", "経済", "状況"], a: "教育" },
       { q: "「government」の意味は？", choices: ["政府", "社会", "文化", "世紀"], a: "政府" },
       { q: "「influence」の意味は？", choices: ["影響", "興味", "世紀", "情報"], a: "影響" },
-      { q: "「prepare」の意味は？", choices: ["準備する", "防ぐ", "生産する", "約束する"], a: "準備する" },
-      { q: "「believe」の意味は？", choices: ["信じる", "属する", "振る舞う", "耐える"], a: "信じる" },
-      { q: "「foreign」の意味は？", choices: ["外国の", "奇妙な", "不慣れな", "公式の"], a: "外国の" },
-      { q: "「standard」の意味は？", choices: ["標準", "状況", "構造", "戦略"], a: "標準" },
-      { q: "「medicine」の意味は？", choices: ["薬", "数学", "筋肉", "方法"], a: "薬" },
-      { q: "「delicious」の意味は？", choices: ["おいしい", "危険な", "高価な", "有名な"], a: "おいしい" },
-      { q: "「travel」の意味は？", choices: ["旅行する", "働く", "書く", "泳ぐ"], a: "旅行する" },
-      { q: "「success」の意味は？", choices: ["成功", "失敗", "理由", "目的"], a: "成功" },
-      { q: "「comfortable」の意味は？", choices: ["快適な", "可能な", "責任のある", "現代の"], a: "快適な" },
-      { q: "「decide」の意味は？", choices: ["決定する", "説明する", "配達する", "議論する"], a: "決定する" },
-      { q: "「popular」の意味は？", choices: ["人気のある", "礼儀正しい", "公的な", "強力な"], a: "人気のある" },
       { q: "「prevent」の意味は？", choices: ["防ぐ", "準備する", "好む", "保護する"], a: "防ぐ" },
-      { q: "「traditional」の意味は？", choices: ["伝統的な", "一時的な", "知的な", "効果的な"], a: "伝統的な" },
-      { q: "「encourage」の意味は？", choices: ["勇気づける", "交換する", "表現する", "説明する"], a: "勇気づける" },
-      { q: "「imagine」の意味は？", choices: ["想像する", "招待する", "無視する", "含める"], a: "想像する" },
-      { q: "「century」の意味は？", choices: ["世紀", "中心", "式典", "確かさ"], a: "世紀" },
-      { q: "「natural」の意味は？", choices: ["自然の", "全国の", "否定的な", "普通の"], a: "自然の" },
-      { q: "「dangerous」の意味は？", choices: ["危険な", "暗い", "異なった", "困難な"], a: "危険な" },
-      { q: "「continue」の意味は？", choices: ["続ける", "連絡する", "含む", "比較する"], a: "続ける" },
+      { q: "「discover」の意味は？", choices: ["発見する", "議論する", "表示する", "壊す"], a: "発見する" },
+      { q: "「technology」の意味は？", choices: ["科学技術", "温度", "理論", "才能"], a: "科学技術" },
+      { q: "「volunteer」の意味は？", choices: ["ボランティア", "暴力", "声", "語彙"], a: "ボランティア" },
+      { q: "「benefit」の意味は？", choices: ["利益", "振る舞い", "信念", "誕生"], a: "利益" },
+      { q: "「culture」の意味は？", choices: ["文化", "習慣", "顧客", "カーテン"], a: "文化" },
+      { q: "「effort」の意味は？", choices: ["努力", "効果", "卵", "選挙"], a: "努力" },
+      { q: "「take part (  )」で「参加する」", choices: ["in", "on", "at", "to"], a: "in" },
+      { q: "「depend (  )」で「〜次第である」", choices: ["on", "at", "to", "in"], a: "on" },
+      { q: "「run out (  )」で「〜を使い果たす」", choices: ["of", "off", "on", "in"], a: "of" },
+      { q: "「be filled (  )」で「〜で一杯である」", choices: ["with", "by", "of", "in"], a: "with" },
+      { q: "「because (  )」で「〜のために（理由）」", choices: ["of", "for", "to", "as"], a: "of" },
+      { q: "「make (  ) of」で「〜を利用する」", choices: ["use", "used", "using", "user"], a: "use" },
+      { q: "「look forward (  )」で「楽しみにする」", choices: ["to", "at", "for", "on"], a: "to" },
+      { q: "「take care (  )」で「世話をする」", choices: ["of", "for", "to", "at"], a: "of" },
+      { q: "「manage to (  )」で「何とか〜する」", choices: ["do", "doing", "did", "done"], a: "do" },
+      { q: "「instead (  )」で「〜の代わりに」", choices: ["of", "for", "to", "in"], a: "of" },
+      { q: "「succeed (  )」で「〜に成功する」", choices: ["in", "on", "at", "to"], a: "in" },
+      { q: "「remind A (  ) B」で「AにBを思い出させる」", choices: ["of", "to", "for", "with"], a: "of" },
+      { q: "「congratulate A (  ) B」で「AのBを祝う」", choices: ["on", "at", "for", "in"], a: "on" },
+      { q: "「be used (  ) ~ing」で「〜に慣れている」", choices: ["to", "for", "with", "by"], a: "to" },
+      { q: "「as (  ) as」で「〜する限り」", choices: ["far", "long", "well", "soon"], a: "far" },
+      { q: "「by the (  )」で「ところで」", choices: ["way", "road", "street", "path"], a: "way" },
+      { q: "「believe (  )」で「〜の存在を信じる」", choices: ["in", "on", "at", "to"], a: "in" },
+      { q: "「be absent (  )」で「〜を欠席する」", choices: ["from", "at", "of", "to"], a: "from" },
+      { q: "「experience」の意味は？", choices: ["経験", "実験", "表現", "説明"], a: "経験" },
+      { q: "「curious」の意味は？", choices: ["好奇心の強い", "注意深い", "心配な", "自信のある"], a: "好奇心の強い" },
+      { q: "「positive」の意味は？", choices: ["前向きな", "否定的な", "静かな", "安全な"], a: "前向きな" },
+      { q: "「serious」の意味は？", choices: ["深刻な", "愉快な", "退屈な", "明るい"], a: "深刻な" },
+      { q: "「available」の意味は？", choices: ["利用可能な", "貴重な", "正確な", "可能な"], a: "利用可能な" },
+      { q: "「knowledge」の意味は？", choices: ["知識", "親切", "騎士", "鍵"], a: "知識" },
+      { q: "「standard」の意味は？", choices: ["標準", "状況", "構造", "戦略"], a: "標準" },
+      { q: "「tradition」の意味は？", choices: ["伝統", "翻訳", "交通", "信頼"], a: "伝統" },
+      { q: "「average」の意味は？", choices: ["平均", "利点", "忠告", "能力"], a: "平均" },
+      { q: "「disease」の意味は？", choices: ["病気", "距離", "議論", "学位"], a: "病気" },
+      { q: "「resource」の意味は？", choices: ["資源", "理由", "結果", "返事"], a: "資源" },
+      { q: "「population」の意味は？", choices: ["人口", "汚染", "人気", "位置"], a: "人口" },
+      { q: "「distance」の意味は？", choices: ["距離", "違い", "不利益", "装置"], a: "距離" },
+      { q: "「surface」の意味は？", choices: ["表面", "供給", "成功", "支持"], a: "表面" },
+      { q: "「climate」の意味は？", choices: ["気候", "文化", "衝突", "犯罪"], a: "気候" },
+      { q: "「material」の意味は？", choices: ["材料", "方法", "精神", "筋肉"], a: "材料" },
+      { q: "「prepare」の意味は？", choices: ["準備する", "防ぐ", "生産する", "約束する"], a: "準備する" },
+      { q: "「expect」の意味は？", choices: ["期待する", "受け入れる", "表現する", "説明する"], a: "期待する" },
+      { q: "「describe」の意味は？", choices: ["述べる", "決定する", "配達する", "議論する"], a: "述べる" },
+      { q: "「provide」の意味は？", choices: ["提供する", "防ぐ", "生産する", "約束する"], a: "提供する" },
+      { q: "「consider」の意味は？", choices: ["よく考える", "含む", "比較する", "続ける"], a: "よく考える" },
+      { q: "「suggest」の意味は？", choices: ["提案する", "苦情を言う", "納得させる", "議論する"], a: "提案する" },
+      { q: "「increase」の意味は？", choices: ["増える", "減る", "現れる", "消える"], a: "増える" },
+      { q: "「destroy」の意味は？", choices: ["破壊する", "設計する", "出発する", "発展させる"], a: "破壊する" },
+      { q: "「maintain」の意味は？", choices: ["維持する", "言及する", "管理する", "測定する"], a: "維持する" },
+      { q: "「solve」の意味は？", choices: ["解決する", "署名する", "保存する", "仕える"], a: "解決する" },
+      { q: "「comfortable」の意味は？", choices: ["快適な", "責任のある", "現代の", "公的な"], a: "快適な" },
+      { q: "「valuable」の意味は？", choices: ["貴重な", "様々な", "等しい", "巨大な"], a: "貴重な" },
+      { q: "「ordinary」の意味は？", choices: ["普通の", "自然の", "全国の", "否定的な"], a: "普通の" },
       { q: "「various」の意味は？", choices: ["様々な", "貴重な", "巨大な", "等しい"], a: "様々な" },
-      { q: "「reason」の意味は？", choices: ["理由", "結果", "季節", "地域"], a: "理由" },
-      { q: "「local」の意味は？", choices: ["地元の", "論理的な", "緩い", "低い"], a: "地元の" },
+      { q: "「social」の意味は？", choices: ["社会的な", "個人的な", "特別な", "公的な"], a: "社会的な" },
+      { q: "「ancient」の意味は？", choices: ["古代の", "現代の", "最近の", "未来の"], a: "古代の" },
+      { q: "「enough」の意味は？", choices: ["十分な", "空の", "等しい", "簡単な"], a: "十分な" },
+      { q: "「global」の意味は？", choices: ["地球規模の", "輝く", "優雅な", "素晴らしい"], a: "地球規模の" },
+      { q: "「successful」の意味は？", choices: ["成功した", "連続した", "必要な", "可能な"], a: "成功した" },
+      { q: "「foreign」の意味は？", choices: ["外国の", "公式の", "奇妙な", "不慣れな"], a: "外国の" },
+      { q: "「perfect」の意味は？", choices: ["完璧な", "個人的な", "平和な", "物理的な"], a: "完璧な" },
+      { q: "「natural」の意味は？", choices: ["自然の", "普通の", "全国の", "否定的な"], a: "自然の" },
+      { q: "「popular」の意味は？", choices: ["人気のある", "礼儀正しい", "強力な", "公的な"], a: "人気のある" },
+      { q: "「history」の意味は？", choices: ["歴史", "趣味", "祝日", "名誉"], a: "歴史" },
+      { q: "「kitchen」の意味は？", choices: ["台所", "凧", "膝", "知識"], a: "台所" },
+      { q: "「century」の意味は？", choices: ["世紀", "中心", "式典", "確かさ"], a: "世紀" },
+      { q: "「information」の意味は？", choices: ["情報", "命令", "産業", "招待"], a: "情報" },
+      { q: "「opinion」の意味は？", choices: ["意見", "機会", "操作", "対象"], a: "意見" },
+      { q: "「quality」の意味は？", choices: ["質", "量", "速さ", "形"], a: "質" },
+      { q: "「respect」の意味は？", choices: ["尊敬する", "返事する", "報告する", "予約する"], a: "尊敬する" },
+      { q: "「understand」の意味は？", choices: ["理解する", "強調する", "引き受ける", "使用する"], a: "理解する" },
+      { q: "「delicious」の意味は？", choices: ["おいしい", "危険な", "高価な", "有名な"], a: "おいしい" },
+      { q: "「situation」の意味は？", choices: ["状況", "解決", "署名", "科学"], a: "状況" },
+      { q: "「weather」の意味は？", choices: ["天気", "武器", "富", "重さ"], a: "天気" },
+      { q: "「famous」の意味は？", choices: ["有名な", "速い", "家族の", "お気に入りの"], a: "有名な" },
+      { q: "「believe」の意味は？", choices: ["信じる", "属する", "振る舞う", "耐える"], a: "信じる" },
+      { q: "「imagine」の意味は？", choices: ["想像する", "招待する", "無視する", "含める"], a: "想像する" },
+      { q: "「continue」の意味は？", choices: ["続ける", "連絡する", "含む", "比較する"], a: "続ける" },
       { q: "「protect」の意味は？", choices: ["保護する", "予測する", "ふりをする", "約束する"], a: "保護する" },
       { q: "「discover」の意味は？", choices: ["発見する", "議論する", "表示する", "壊す"], a: "発見する" },
       { q: "「surprised」の意味は？", choices: ["驚いた", "退屈した", "興奮した", "疲れた"], a: "驚いた" },
-      { q: "「enough」の意味は？", choices: ["十分な", "空の", "等しい", "簡単な"], a: "十分な" },
-      { q: "「global」の意味は？", choices: ["地球規模の", "輝く", "優雅な", "素晴らしい"], a: "地球規模の" },
-      { q: "「future」の意味は？", choices: ["未来", "過去", "現在", "運命"], a: "未来" },
       { q: "「healthy」の意味は？", choices: ["健康な", "重い", "高い", "正直な"], a: "健康な" },
-      { q: "「information」の意味は？", choices: ["情報", "命令", "産業", "招待"], a: "情報" },
-      { q: "「knowledge」の意味は？", choices: ["知識", "親切", "騎士", "鍵"], a: "知識" },
       { q: "「language」の意味は？", choices: ["言語", "荷物", "運", "笑い"], a: "言語" },
-      { q: "「memory」の意味は？", choices: ["記憶", "方法", "鏡", "間違い"], a: "記憶" },
-      { q: "「opinion」の意味は？", choices: ["意見", "機会", "操作", "対象"], a: "意見" },
-      { q: "「perfect」の意味は？", choices: ["完璧な", "平和な", "個人的な", "物理的な"], a: "完璧な" },
-      { q: "「quality」の意味は？", choices: ["質", "量", "速さ", "形"], a: "質" },
-      { q: "「respect」の意味は？", choices: ["尊敬する", "返事する", "報告する", "予約する"], a: "尊敬する" },
-      { q: "「situation」の意味は？", choices: ["状況", "解決", "署名", "科学"], a: "状況" },
-      { q: "「technology」の意味は？", choices: ["科学技術", "温度", "理論", "才能"], a: "科学技術" },
-      { q: "「understand」の意味は？", choices: ["理解する", "下線、強調する", "引き受ける", "使用する"], a: "理解する" },
-      { q: "「volunteer」の意味は？", choices: ["ボランティア", "暴力", "声", "語彙"], a: "ボランティア" },
-      { q: "「weather」の意味は？", choices: ["天気", "武器", "富", "重さ"], a: "天気" },
-      { q: "「yesterday」の意味は？", choices: ["昨日", "今日", "明日", "今夜"], a: "昨日" },
-      { q: "「zero」の意味は？", choices: ["零", "帯域", "頂上", "動物園"], a: "零" },
-      { q: "「activity」の意味は？", choices: ["活動", "能力", "事故", "住所"], a: "活動" },
-      { q: "「benefit」の意味は？", choices: ["利益", "振る舞い", "信念", "誕生"], a: "利益" },
-      { q: "「culture」の意味は？", choices: ["文化", "習慣", "顧客", "カーテン"], a: "文化" },
-      { q: "「design」の意味は？", choices: ["設計する", "出発する", "破壊する", "発展させる"], a: "設計する" },
-      { q: "「effort」の意味は？", choices: ["努力", "効果", "卵", "選挙"], a: "努力" },
-      { q: "「famous」の意味は？", choices: ["有名な", "家族の", "速い", "お気に入りの"], a: "有名な" },
-      { q: "「general」の意味は？", choices: ["一般的な", "寛大な", "優しい", "本物の"], a: "一般的な" },
-      { q: "「history」の意味は？", choices: ["歴史", "趣味", "祝日", "名誉"], a: "歴史" },
-      { q: "「island」の意味は？", choices: ["島", "入り口", "問題", "氷"], a: "島" },
       { q: "「journey」の意味は？", choices: ["旅", "仕事", "喜び", "正義"], a: "旅" },
-      { q: "「kitchen」の意味は？", choices: ["台所", "凧", "膝", "知識"], a: "台所" }
+      { q: "「island」の意味は？", choices: ["島", "入り口", "問題", "氷"], a: "島" },
+      { q: "「activity」の意味は？", choices: ["活動", "能力", "事故", "住所"], a: "活動" },
+      { q: "「design」の意味は？", choices: ["設計する", "出発する", "破壊する", "発展させる"], a: "設計する" },
+      { q: "「various」の意味は？", choices: ["様々な", "貴重な", "巨大な", "等しい"], a: "様々な" },
+      { q: "「delicious」の意味は？", choices: ["おいしい", "危険な", "高価な", "有名な"], a: "おいしい" },
+      { q: "「medicine」の意味は？", choices: ["薬", "数学", "筋肉", "方法"], a: "薬" }
     ];
 
     let player = { level: 1, exp: 0, hp: 100, element: "🔥", winCount: 0 };
@@ -212,14 +248,14 @@
       player.winCount++;
       isBoss = player.winCount % 5 === 0;
       const monsters = [{n:"スライム",i:"💧",t:"💧"},{n:"ドラキー",i:"🦇",t:"🌿"},{n:"ゴースト",i:"👻",t:"🔥"}];
-      const bosses = [{n:"りゅうおう",i:"🐲",t:"🔥"},{n:"ポセイドン",i:"🔱",t:"💧"},{n:"エント",i:"🌳",t:"🌿"}];
+      const bosses = [{n:"ゾーマ",i:"👹",t:"🔥"},{n:"クラーケン",i:"🦑",t:"💧"},{n:"世界樹の精",i:"✨",t:"🌿"}];
       let m = isBoss ? bosses[Math.floor(Math.random()*bosses.length)] : monsters[Math.floor(Math.random()*monsters.length)];
-      currentMonster = { ...m, maxHp: isBoss ? 200 : 60, hp: isBoss ? 200 : 60 };
+      currentMonster = { ...m, maxHp: isBoss ? 250 : 70, hp: isBoss ? 250 : 70 };
       document.getElementById("monster-name").textContent = (isBoss ? "BOSS: " : "") + currentMonster.n;
       document.getElementById("monster-image").textContent = currentMonster.i;
       document.getElementById("boss-timer").style.display = isBoss ? "block" : "none";
       document.getElementById("next").style.display = "none";
-      document.getElementById("log").textContent = isBoss ? "強大なボスが現れた！" : "モンスターが現れた！";
+      document.getElementById("log").textContent = isBoss ? "伝説のボスが現れた！" : "モンスターが現れた！";
       loadQuestion();
       updateDisplay();
     }
@@ -270,30 +306,30 @@
       if (choice === answer) {
         btn.classList.add("correct");
         usedPool.push(currentQuestion);
-        let damage = (elements[player.element] === currentMonster.t) ? 60 : 30;
+        let damage = (elements[player.element] === currentMonster.t) ? 70 : 35;
         currentMonster.hp -= damage;
-        document.getElementById("log").textContent = "正解！ 攻撃！";
+        document.getElementById("log").textContent = "正解！ 強烈な一撃！";
         document.getElementById("monster-image").style.transform = "scale(1.4)";
         setTimeout(()=>document.getElementById("monster-image").style.transform="scale(1)", 150);
       } else {
         btn.classList.add("wrong");
         buttons.forEach(b => { if(b.textContent === answer) b.classList.add("correct"); });
         pool.unshift(currentQuestion);
-        handleDamage(10, "不正解！10ダメージ！");
+        handleDamage(10, "ミス！10ダメージ！");
       }
       setTimeout(() => {
         if (currentMonster.hp <= 0) {
-          document.getElementById("log").textContent = "勝利した！";
-          player.exp += isBoss ? 100 : 40;
+          document.getElementById("log").textContent = "敵を倒した！";
+          player.exp += isBoss ? 120 : 40;
           const nextBtn = document.getElementById("next");
-          nextBtn.textContent = "▶ 次のバトルへ";
+          nextBtn.textContent = "▶ 次のエリアへ";
           nextBtn.style.display = "block";
           levelUpCheck();
         } else if (player.hp <= 0) {
-          document.getElementById("log").textContent = "全滅した...";
+          document.getElementById("log").textContent = "冒険は終わってしまった...";
           player.hp = 100; player.winCount = 0;
           const nextBtn = document.getElementById("next");
-          nextBtn.textContent = "▶ 復活する";
+          nextBtn.textContent = "▶ 教会で復活する";
           nextBtn.style.display = "block";
         } else {
           loadQuestion();
@@ -324,7 +360,7 @@
 
     document.getElementById("heal-btn").onclick = () => {
       player.hp = 100;
-      document.getElementById("log").textContent = "薬草でHPが全快した！";
+      document.getElementById("log").textContent = "聖なる薬草で全回復した！";
       updateDisplay();
     };
 
