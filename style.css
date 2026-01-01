@@ -1,76 +1,33 @@
 body {
   font-family: "Segoe UI", sans-serif;
-  background: #1e1e2f;
-  color: #fff;
-  text-align: center;
-  padding: 10px;
+  background: #1e1e2f; color: #fff;
+  text-align: center; padding: 10px; margin: 0;
 }
-
-h1 {
-  margin-bottom: 10px;
-}
-
 #status {
-  display: flex;
-  justify-content: space-around;
-  margin-bottom: 10px;
+  display: flex; justify-content: space-around;
+  background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px;
 }
-
-#monster {
-  margin: 15px 0;
-}
-
-#monster-image {
-  font-size: 80px;
-  margin: 10px 0;
-}
-
+#monster-image { font-size: 80px; margin: 10px 0; }
 .hp-bar {
-  width: 80%;
-  height: 15px;
-  background: #444;
-  margin: 0 auto;
-  border-radius: 10px;
+  width: 80%; height: 15px; background: #444;
+  margin: 5px auto; border-radius: 10px; overflow: hidden;
 }
-
 #monster-hp {
-  height: 100%;
-  background: red;
-  width: 100%;
-  border-radius: 10px;
+  height: 100%; background: #ff4757; width: 100%;
+  transition: width 0.3s ease, background 0.3s;
 }
-
-#question {
-  font-size: 1.1em;
-  margin: 15px 0;
-}
-
+#question { font-size: 1.1em; margin: 15px; min-height: 60px; line-height: 1.5; color: #feca57; }
 #choices button {
-  display: block;
-  width: 85%;
-  margin: 8px auto;
-  padding: 10px;
-  font-size: 1em;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
+  display: block; width: 90%; margin: 8px auto; padding: 12px;
+  font-size: 1em; border-radius: 8px; border: none; cursor: pointer;
+  background: #f1f2f6; color: #2f3542; font-weight: bold;
 }
-
-.correct {
-  background: #4caf50;
-}
-
-.wrong {
-  background: #f44336;
-}
-
-#log {
-  margin: 10px;
-  min-height: 40px;
-}
-
+.correct { background: #4caf50 !important; color: white !important; }
+.wrong { background: #f44336 !important; color: white !important; }
+#log { margin: 10px; min-height: 40px; font-weight: bold; color: #1dd1a1; }
 #next {
-  margin-top: 10px;
-  padding: 10px 20px;
-  font-size: 1em;
+  margin-top: 10px; padding: 12px 30px; font-size: 1.1em;
+  background: #ff9f43; border: none; border-radius: 25px; color: white; cursor: pointer;
 }
+/* ボス戦用のスタイル */
+.boss-mode { background: #4834d4 !important; border: 3px solid #eb4d4b; }

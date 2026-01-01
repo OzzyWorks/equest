@@ -3,33 +3,27 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ENGLISH QUEST Ver0+</title>
+  <title>ENGLISH QUEST - High School Level</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
   <h1>⚔️ ENGLISH QUEST</h1>
-
   <div id="status">
     <div>LV: <span id="level">1</span></div>
     <div>EXP: <span id="exp">0</span></div>
     <div>HP: <span id="hp">100</span></div>
+    <div>属性: <span id="p-element">🔥</span></div>
   </div>
-
   <div id="monster">
     <div id="monster-image">👾</div>
     <h2 id="monster-name"></h2>
-    <div class="hp-bar">
-      <div id="monster-hp"></div>
-    </div>
+    <div id="monster-type"></div>
+    <div class="hp-bar"><div id="monster-hp"></div></div>
   </div>
-
   <div id="question"></div>
   <div id="choices"></div>
   <div id="log"></div>
-
   <button id="next">▶ 次のバトル</button>
-
   <script src="script.js"></script>
 </body>
 </html>
