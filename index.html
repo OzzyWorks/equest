@@ -110,13 +110,18 @@
     let timerInt, timeLeft = 10, bonusImgInterval, currentQ = null;
 
     const positions = ["0% 0%", "50% 0%", "100% 0%", "0% 50%", "50% 50%", "100% 50%", "0% 100%", "50% 100%", "100% 100%"];
-
-    // 雑魚敵絵文字リスト
     const monsterEmojis = ["👻", "🦇", "🐺", "🐍", "🕷️", "💀"];
 
+    // ボイス再生関数 (OS判定付き)
     function speak(text) {
       const uttr = new SpeechSynthesisUtterance(text);
-      uttr.lang = "ja-JP"; uttr.pitch = 0.4; uttr.rate = 2.0;
+      uttr.lang = "ja-JP";
+      uttr.pitch = 0.4;
+      
+      // iOSかAndroid(その他)かで速度を切り替え
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      uttr.rate = isIOS ? 0.8 : 1.6;
+
       window.speechSynthesis.speak(uttr);
     }
 
@@ -135,7 +140,6 @@
       
       const mEmoji = document.getElementById("monster-emoji");
       mEmoji.style.display = "block";
-      // 雑魚ならランダム、ボスならドラゴン
       mEmoji.textContent = isBoss ? "🐉" : monsterEmojis[Math.floor(Math.random()*monsterEmojis.length)];
       
       document.getElementById("bonus-image-view").style.display = "none";
@@ -194,7 +198,11 @@
         document.getElementById("timer-fill").style.width = (timeLeft * 10) + "%";
         if (timeLeft <= 0) { 
           clearInterval(timerInt); bossMistakes++; damagePlayer(10); 
-          highlightCorrect(); document.getElementById("log").textContent = "じかんぎれ！"; 
+          highlightCorrect(); 
+          // 時間切れ＝不正解扱い
+          if (isBonus) speak("痛いですね・・・これは痛い・・・");
+          else speak("あーもうめちゃくちゃだよ");
+          document.getElementById("log").textContent = "じかんぎれ！"; 
           setTimeout(loadQuestion, 1200); 
         }
       }, 100);
@@ -206,15 +214,21 @@
       if (choice === currentQ.a) {
         monster.hp -= 50; document.getElementById("log").textContent = "かいしんの いちげき！";
         if (isBonus) {
-        speak("やりますねぇ");
-        usedPool.push(currentQ);
+          speak("やりますねぇぇ");
         } else {
-        speak("おっ、そうだなっ！");
+          speak("おっ、そうだな");
         }
+        usedPool.push(currentQ);
       } else {
         if (isBoss) bossMistakes++;
         missList.push({q: currentQ.q, a: currentQ.a, user: choice});
-        damagePlayer(10); document.getElementById("log").textContent = "つう恨の ミス！";
+        damagePlayer(10); 
+        document.getElementById("log").textContent = "つう恨の ミス！";
+        if (isBonus) {
+          speak("痛いですね・・・これは痛い・・・");
+        } else {
+          speak("あーもうめちゃくちゃだよ");
+        }
         pool.unshift(currentQ);
       }
       updateUI();
