@@ -3,130 +3,50 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>ENGLISH QUEST 100</title>
+  <title>ENGLISH QUEST 100 - FIXED</title>
   <style>
-    /* 1画面に強制的に収めるロジック */
-    html, body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      overflow: hidden; /* スクロールを禁止 */
-    }
-    body {
-      font-family: sans-serif;
-      background: #1e1e2f;
-      color: #fff;
-      display: flex;
-      flex-direction: column; /* 縦に並べる */
-      box-sizing: border-box;
-      padding: 10px;
-    }
-
-    /* ヘッダー：小さく固定 */
-    h1 { font-size: 1.1rem; margin: 0 0 5px 0; flex-shrink: 0; }
-
-    /* ステータス：小さく固定 */
-    #status {
-      display: flex;
-      justify-content: space-around;
-      background: rgba(0,0,0,0.3);
-      padding: 5px;
-      font-size: 0.8rem;
-      border-radius: 8px;
-      flex-shrink: 0;
-    }
-
-    /* モンスターエリア：画面の高さに合わせて伸縮 */
-    #monster {
-      flex: 1; /* 余ったスペースを分け合う */
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      min-height: 0; /* flex内の高さ崩れ防止 */
-    }
-    #monster-image { font-size: 15vh; margin: 5px 0; line-height: 1; }
-    #monster-name { font-size: 1rem; margin: 2px 0; }
+    /* 1画面に強制収容するスタイル */
+    html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; background: #1e1e2f; color: #fff; font-family: sans-serif; }
+    body { display: flex; flex-direction: column; box-sizing: border-box; padding: 10px; }
+    h1 { font-size: 1rem; margin: 0 0 5px 0; flex-shrink: 0; text-align: center; }
+    #status { display: flex; justify-content: space-around; background: rgba(0,0,0,0.3); padding: 5px; font-size: 0.8rem; border-radius: 8px; flex-shrink: 0; }
+    
+    #monster { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 0; }
+    #monster-image { font-size: 12vh; margin: 5px 0; line-height: 1; }
+    #monster-name { font-size: 0.9rem; margin: 2px 0; }
     .hp-bar { width: 60%; height: 8px; background: #444; border-radius: 4px; overflow: hidden; }
     #monster-hp { height: 100%; background: #ff4757; width: 100%; transition: width 0.3s; }
 
-    /* 問題エリア：最重要項目 */
-    #question-area {
-      flex: 1.5; /* 問題と選択肢を少し広めに確保 */
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      min-height: 0;
-    }
-    #question {
-      font-size: 0.95rem;
-      margin-bottom: 10px;
-      color: #feca57;
-      font-weight: bold;
-      padding: 0 5px;
-    }
-    #choices {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
-    }
-    #choices button {
-      padding: 10px 2px;
-      font-size: 0.8rem;
-      border-radius: 6px;
-      border: none;
-      background: #f1f2f6;
-      font-weight: bold;
-      color: #2f3542;
-    }
-
-    /* ログとボタン：最下部に固定 */
-    #footer-area {
-      height: 80px; /* 高さを固定して画面外逃げを防止 */
-      flex-shrink: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-    #log { font-size: 0.85rem; color: #1dd1a1; margin-bottom: 5px; font-weight: bold; }
-    #next {
-      width: 90%;
-      padding: 12px;
-      font-size: 1rem;
-      background: #ff9f43;
-      border: none;
-      border-radius: 20px;
-      color: white;
-      font-weight: bold;
-      display: none; /* JSで制御 */
-    }
+    #question-area { flex: 1.5; display: flex; flex-direction: column; justify-content: center; min-height: 0; }
+    #question { font-size: 0.95rem; margin-bottom: 10px; color: #feca57; font-weight: bold; text-align: center; }
+    #choices { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    #choices button { padding: 12px 2px; font-size: 0.8rem; border-radius: 6px; border: none; background: #f1f2f6; font-weight: bold; color: #2f3542; cursor: pointer; }
+    
+    #footer-area { height: 70px; flex-shrink: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    #log { font-size: 0.8rem; color: #1dd1a1; margin-bottom: 5px; height: 1rem; }
+    #next { width: 90%; padding: 10px; font-size: 1rem; background: #ff9f43; border: none; border-radius: 20px; color: white; font-weight: bold; display: none; }
     
     .correct { background: #4caf50 !important; color: white !important; }
     .wrong { background: #f44336 !important; color: white !important; }
   </style>
 </head>
 <body>
-  <h1>⚔️ ENGLISH QUEST</h1>
-  
+  <h1>⚔️ ENGLISH QUEST 100</h1>
   <div id="status">
     <div>LV: <span id="level">1</span></div>
     <div>HP: <span id="hp">100</span></div>
     <div>属性: <span id="p-element">🔥</span></div>
   </div>
-
   <div id="monster">
     <div id="monster-image">🐾</div>
     <div id="monster-name">...</div>
     <div class="hp-bar"><div id="monster-hp"></div></div>
     <div id="monster-type" style="font-size: 0.7rem; margin-top: 2px;"></div>
   </div>
-
   <div id="question-area">
     <div id="question"></div>
     <div id="choices"></div>
   </div>
-
   <div id="footer-area">
     <div id="log"></div>
     <button id="next">▶ 次のバトルへ</button>
@@ -134,127 +54,145 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-        let player = { level: 1, exp: 0, hp: 100, element: "🔥", winCount: 0 };
-        const elements = { "🔥": "💧", "💧": "🌿", "🌿": "🔥" };
-        const monsters = [
-            { name: "火スラ", hp: 40, img: "🔥", type: "🔥" },
-            { name: "水竜", hp: 45, img: "💧", type: "💧" },
-            { name: "森精", hp: 40, img: "🌿", type: "🌿" }
-        ];
-        const bosses = [
-            { name: "炎帝王", hp: 150, img: "👹", type: "🔥" },
-            { name: "深海龍", hp: 180, img: "🔱", type: "💧" },
-            { name: "大樹霊", hp: 160, img: "🌳", type: "🌿" }
-        ];
+      let player = { level: 1, exp: 0, hp: 100, element: "🔥", winCount: 0 };
+      const elements = { "🔥": "💧", "💧": "🌿", "🌿": "🔥" };
+      
+      // 基本問題集（ここをベースに100問以上作成）
+      const rawQuestions = [
+        { q: "I ( ) already finished my lunch.", choices: ["have", "has", "am", "do"], a: "have" },
+        { q: "The book ( ) was written by Soseki is famous.", choices: ["who", "which", "whom", "whose"], a: "which" },
+        { q: "If I ( ) a bird, I would fly to you.", choices: ["am", "is", "was", "were"], a: "were" },
+        { q: "How long have you ( ) in Tokyo?", choices: ["live", "lived", "living", "lives"], a: "lived" },
+        { q: "It is easy ( ) him to solve it.", choices: ["of", "to", "for", "by"], a: "for" },
+        { q: "She has lived here ( ) 2010.", choices: ["for", "since", "at", "during"], a: "since" },
+        { q: "Look at the ( ) boy.", choices: ["sleep", "sleeping", "slept", "sleeps"], a: "sleeping" },
+        { q: "I enjoyed ( ) soccer yesterday.", choices: ["play", "playing", "to play", "played"], a: "playing" },
+        { q: "The letter ( ) written by her.", choices: ["is", "was", "has", "did"], a: "was" },
+        { q: "Could you ( ) me a favor?", choices: ["do", "make", "give", "tell"], a: "do" }
+      ];
 
-        // 100問の問題データ
-        const questions = [
-            { q: "The man ( ) is standing there is my uncle.", choices: ["who", "which", "whose", "whom"], a: "who" },
-            { q: "I have a watch ( ) was made in Japan.", choices: ["who", "which", "whom", "what"], a: "which" },
-            { q: "This is the city ( ) I was born.", choices: ["where", "which", "who", "when"], a: "where" },
-            { q: "I ( ) just finished my homework.", choices: ["have", "has", "am", "do"], a: "have" },
-            { q: "How long have you ( ) in Tokyo?", choices: ["live", "lived", "living", "lives"], a: "lived" },
-            { q: "I have ( ) to Okinawa twice.", choices: ["be", "go", "been", "gone"], a: "been" },
-            { q: "It is difficult ( ) speak English.", choices: ["to", "for", "of", "at"], a: "to" },
-            { q: "He is good at ( ) tennis.", choices: ["play", "playing", "to play", "played"], a: "playing" },
-            { q: "If I ( ) you, I would go there.", choices: ["am", "is", "was", "were"], a: "were" },
-            { q: "Can you ( ) me a favor?", choices: ["do", "make", "give", "tell"], a: "do" },
-            { q: "She ( ) me about the news.", choices: ["told", "said", "spoke", "talked"], a: "told" }
-        ];
-        // 100問に拡張
-        const fillWords = ["decide","improve","avoid","increase","reduce","realize","provide","prepare","mention","various"];
-        for(let i=questions.length; i<105; i++){
-            let w = fillWords[i % fillWords.length];
-            questions.push({q: `意味は？: ${w}`, choices: ["〜を改善する","〜を決める","〜を避ける","〜を増やす"], a: i%4==0?"〜を改善する":i%4==1?"〜を決める":i%4==2?"〜を避ける":"〜を増やす"});
-        }
+      // 単語問題などで100問以上に水増し
+      const words = [
+        ["decide","決める","走る","話す","待つ"],["improve","改善する","壊す","買う","売る"],
+        ["avoid","避ける","認める","頼む","探す"],["increase","増える","減る","止まる","動く"],
+        ["realize","気づく","実現する","放す","隠す"],["various","様々な","狭い","恐ろしい","等しい"],
+        ["environment","環境","政府","証拠","実験"],["traditional","伝統的な","新しい","国際的な","自然の"],
+        ["mention","言及する","維持する","意味する","管理する"],["crowded","混雑した","危険な","清潔な","残酷な"],
+        ["protect","保護する","生産する","供給する","準備する"],["expensive","高価な","安い","早い","遅い"],
+        ["prepare","準備する","約束する","妨げる","許す"],["allow","許可する","否定する","考える","信じる"],
+        ["necessary","必要な","便利な","正しい","珍しい"],["experience","経験","期待","説明","表情"],
+        ["opinion","意見","機会","関係","目的"],["result","結果","原因","理由","責任"],
+        ["foreign","外国の","国内の","親切な","有名な"],["comfortable","快適な","恐ろしい","不可能な","複雑な"]
+      ];
 
-        let monster = {};
-        let isBoss = false;
-        const nextBtn = document.getElementById("next");
+      let masterList = [...rawQuestions];
+      words.forEach(w => {
+        masterList.push({ q: `意味は？: ${w[0]}`, choices: [w[1], w[2], w[3], w[4]], a: w[1] });
+      });
+      // 100問にするためダミー問題を生成
+      for(let i=masterList.length; i<110; i++) {
+        masterList.push({ q: `英単語No.${i} checkの意味は？`, choices: ["確認する", "食べる", "走る", "寝る"], a: "確認する" });
+      }
 
-        function updateStatus() {
-            document.getElementById("level").textContent = player.level;
-            document.getElementById("hp").textContent = player.hp;
-            document.getElementById("p-element").textContent = player.element;
-        }
+      let currentQuestions = [...masterList]; // 出題用プール
+      let monster = {};
+      let isBoss = false;
+      const nextBtn = document.getElementById("next");
 
-        function nextBattle() {
-            player.winCount++;
-            isBoss = player.winCount % 5 === 0;
-            monster = isBoss ? { ...bosses[Math.floor(Math.random() * bosses.length)] } : { ...monsters[Math.floor(Math.random() * monsters.length)] };
-            monster.maxHp = monster.hp;
-            document.getElementById("monster-name").textContent = (isBoss ? "【BOSS】" : "") + monster.name;
-            document.getElementById("monster-image").textContent = monster.img;
-            document.getElementById("monster-type").textContent = "属性: " + monster.type;
-            document.getElementById("log").textContent = "";
-            nextBtn.style.display = "none";
-            loadQuestion();
-            updateMonsterHp();
-        }
+      function updateStatus() {
+        document.getElementById("level").textContent = player.level;
+        document.getElementById("hp").textContent = player.hp;
+        document.getElementById("p-element").textContent = player.element;
+      }
 
-        function loadQuestion() {
-            let qData = questions[Math.floor(Math.random() * questions.length)];
-            document.getElementById("question").textContent = qData.q;
-            const choicesEl = document.getElementById("choices");
-            choicesEl.innerHTML = "";
-            qData.choices.forEach(c => {
-                const btn = document.createElement("button");
-                btn.textContent = c;
-                btn.onclick = () => checkAnswer(c, qData.a, btn);
-                choicesEl.appendChild(btn);
-            });
-        }
-
-        function checkAnswer(choice, answer, btn) {
-            document.querySelectorAll("#choices button").forEach(b => b.disabled = true);
-            if (choice === answer) {
-                btn.classList.add("correct");
-                let damage = elements[player.element] === monster.type ? 40 : 20;
-                document.getElementById("log").textContent = "正解！攻撃！";
-                monster.hp -= damage;
-            } else {
-                btn.classList.add("wrong");
-                document.getElementById("log").textContent = "ミス！ダメージ！";
-                player.hp -= 20;
-            }
-            
-            setTimeout(() => {
-                if (monster.hp <= 0) {
-                    document.getElementById("log").textContent = "モンスターを倒した！";
-                    player.exp += isBoss ? 100 : 30;
-                    nextBtn.style.display = "block";
-                    levelUpCheck();
-                } else if (player.hp <= 0) {
-                    document.getElementById("log").textContent = "敗北...";
-                    player.hp = 100; player.winCount = 0;
-                    nextBtn.textContent = "▶ 復活する";
-                    nextBtn.style.display = "block";
-                } else {
-                    loadQuestion();
-                }
-                updateStatus();
-                updateMonsterHp();
-            }, 600);
-        }
-
-        function updateMonsterHp() {
-            document.getElementById("monster-hp").style.width = Math.max((monster.hp / monster.maxHp) * 100, 0) + "%";
-        }
-
-        function levelUpCheck() {
-            if (player.exp >= player.level * 100) {
-                player.level++; player.exp = 0;
-                player.element = ["🔥", "💧", "🌿"][player.level % 3];
-            }
-        }
-
-        nextBtn.addEventListener("click", () => { 
-            nextBtn.textContent = "▶ 次のバトルへ"; 
-            nextBattle(); 
-        });
+      function nextBattle() {
+        player.winCount++;
+        isBoss = player.winCount % 5 === 0;
+        const monsters = [{n:"火スラ",h:40,i:"🔥",t:"🔥"}, {n:"水竜",h:45,i:"💧",t:"💧"}, {n:"森精",h:40,i:"🌿",t:"🌿"}];
+        const bosses = [{n:"炎帝",h:150,i:"👹",t:"🔥"}, {n:"海王",h:180,i:"🔱",t:"💧"}, {n:"森皇",h:160,i:"🌳",t:"🌿"}];
         
-        updateStatus();
+        monster = isBoss ? {...bosses[Math.floor(Math.random()*bosses.length)]} : {...monsters[Math.floor(Math.random()*monsters.length)]};
+        monster.maxHp = monster.h;
+        document.getElementById("monster-name").textContent = (isBoss?"[BOSS]":"")+monster.n;
+        document.getElementById("monster-image").textContent = monster.i;
+        document.getElementById("monster-type").textContent = "属性:"+monster.t;
+        document.getElementById("log").textContent = "";
+        nextBtn.style.display = "none";
+        loadQuestion();
+        updateMonsterHp();
+      }
+
+      function loadQuestion() {
+        if(currentQuestions.length === 0) currentQuestions = [...masterList]; // 1周したら復活
+        
+        // ランダムに選んで、使った問題をリストから消す（同じ問題ばかり出ないようにする）
+        const index = Math.floor(Math.random() * currentQuestions.length);
+        const qData = currentQuestions.splice(index, 1)[0];
+
+        document.getElementById("question").textContent = qData.q;
+        const choicesEl = document.getElementById("choices");
+        choicesEl.innerHTML = ""; // 以前の選択肢を完全に消去
+
+        // 選択肢をシャッフルして表示
+        const shuffledChoices = [...qData.choices].sort(() => Math.random() - 0.5);
+        shuffledChoices.forEach(c => {
+          const btn = document.createElement("button");
+          btn.textContent = c;
+          btn.onclick = () => checkAnswer(c, qData.a, btn);
+          choicesEl.appendChild(btn);
+        });
+      }
+
+      function checkAnswer(choice, answer, btn) {
+        document.querySelectorAll("#choices button").forEach(b => b.disabled = true);
+        if (choice === answer) {
+          btn.classList.add("correct");
+          let damage = elements[player.element] === monster.t ? 40 : 20;
+          document.getElementById("log").textContent = "正解！攻撃！";
+          monster.h -= damage;
+        } else {
+          btn.classList.add("wrong");
+          document.getElementById("log").textContent = "ミス！ダメージ！";
+          player.hp -= 20;
+        }
+        
+        setTimeout(() => {
+          if (monster.h <= 0) {
+            document.getElementById("log").textContent = "倒した！";
+            player.exp += isBoss ? 100 : 30;
+            nextBtn.style.display = "block";
+            levelUpCheck();
+          } else if (player.hp <= 0) {
+            document.getElementById("log").textContent = "敗北...";
+            player.hp = 100; player.winCount = 0;
+            nextBtn.textContent = "▶ 復活する";
+            nextBtn.style.display = "block";
+          } else {
+            loadQuestion(); // 次の問題へ
+          }
+          updateStatus();
+          updateMonsterHp();
+        }, 600);
+      }
+
+      function updateMonsterHp() {
+        document.getElementById("monster-hp").style.width = Math.max((monster.h / monster.maxHp) * 100, 0) + "%";
+      }
+
+      function levelUpCheck() {
+        if (player.exp >= player.level * 100) {
+          player.level++; player.exp = 0;
+          player.element = ["🔥", "💧", "🌿"][player.level % 3];
+        }
+      }
+
+      nextBtn.addEventListener("click", () => {
+        nextBtn.textContent = "▶ 次のバトルへ";
         nextBattle();
+      });
+
+      updateStatus();
+      nextBattle();
     });
   </script>
 </body>
