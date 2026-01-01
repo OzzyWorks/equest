@@ -8,18 +8,20 @@ let player = {
 // ===== モンスター =====
 let monster = {};
 const monsters = [
-  { name: "スライム", hp: 30 },
-  { name: "ゴブリン", hp: 40 },
-  { name: "コウモリ", hp: 35 }
+  { name: "スライム", hp: 30, img: "🟢" },
+  { name: "ゴブリン", hp: 40, img: "👺" },
+  { name: "コウモリ", hp: 35, img: "🦇" },
+  { name: "スケルトン", hp: 45, img: "💀" }
 ];
 
-// ===== 問題データ =====
+// ===== 問題 =====
 const questions = [
-  { q: "cat", choices: ["猫", "犬", "鳥", "魚"], a: "猫" },
-  { q: "book", choices: ["机", "本", "紙", "ペン"], a: "本" },
-  { q: "run", choices: ["歩く", "走る", "寝る", "見る"], a: "走る" },
-  { q: "get up", choices: ["寝る", "起きる", "行く", "取る"], a: "起きる" },
-  { q: "look at", choices: ["探す", "見る", "考える", "使う"], a: "見る" }
+  { type: "word", q: "decide", choices: ["決める", "切る", "望む", "続ける"], a: "決める" },
+  { type: "word", q: "increase", choices: ["減る", "増える", "止まる", "変わる"], a: "増える" },
+  { type: "phrase", q: "look for", choices: ["探す", "見る", "待つ", "世話する"], a: "探す" },
+  { type: "grammar", q: "I ___ a student.", choices: ["am", "is", "are", "be"], a: "am" },
+  { type: "grammar", q: "He ___ to school every day.", choices: ["go", "goes", "going", "went"], a: "goes" },
+  { type: "context", q: "I get up at 6 a.m. every day.「get up」の意味は？", choices: ["起きる", "寝る", "出かける", "勉強する"], a: "起きる" }
 ];
 
 let currentQuestion;
@@ -30,6 +32,7 @@ const expEl = document.getElementById("exp");
 const hpEl = document.getElementById("hp");
 const monsterNameEl = document.getElementById("monster-name");
 const monsterHpEl = document.getElementById("monster-hp");
+const monsterImageEl = document.getElementById("monster-image");
 const questionEl = document.getElementById("question");
 const choicesEl = document.getElementById("choices");
 const logEl = document.getElementById("log");
@@ -47,17 +50,28 @@ function updateStatus() {
 function nextBattle() {
   monster = { ...monsters[Math.floor(Math.random() * monsters.length)] };
   monster.maxHp = monster.hp;
+
   monsterNameEl.textContent = monster.name;
+  monsterImageEl.textContent = monster.img;
   logEl.textContent = "";
   nextBtn.style.display = "none";
+
   loadQuestion();
   updateMonsterHp();
 }
 
 function loadQuestion() {
   currentQuestion = questions[Math.floor(Math.random() * questions.length)];
-  questionEl.textContent = currentQuestion.q;
+
+  let label = "【問題】";
+  if (currentQuestion.type === "word") label = "【単語】";
+  if (currentQuestion.type === "phrase") label = "【熟語】";
+  if (currentQuestion.type === "grammar") label = "【文法】";
+  if (currentQuestion.type === "context") label = "【文脈】";
+
+  questionEl.textContent = label + " " + currentQuestion.q;
   choicesEl.innerHTML = "";
+
   currentQuestion.choices.forEach(choice => {
     const btn = document.createElement("button");
     btn.textContent = choice;
@@ -67,8 +81,8 @@ function loadQuestion() {
 }
 
 function answer(choice, btn) {
-  const buttons = document.querySelectorAll("#choices button");
-  buttons.forEach(b => b.disabled = true);
+  document.querySelectorAll("#choices button").forEach(b => b.disabled = true);
+
   if (choice === currentQuestion.a) {
     btn.classList.add("correct");
     logEl.textContent = "正解！攻撃！";
@@ -79,6 +93,7 @@ function answer(choice, btn) {
     logEl.textContent = "不正解…ダメージ！";
     player.hp -= 10;
   }
+
   checkBattle();
   updateStatus();
   save();
@@ -96,12 +111,12 @@ function checkBattle() {
   } else {
     setTimeout(loadQuestion, 500);
   }
+
   updateMonsterHp();
 }
 
 function updateMonsterHp() {
-  const percent = (monster.hp / monster.maxHp) * 100;
-  monsterHpEl.style.width = Math.max(percent, 0) + "%";
+  monsterHpEl.style.width = Math.max((monster.hp / monster.maxHp) * 100, 0) + "%";
 }
 
 function levelUpCheck() {

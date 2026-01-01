@@ -20,6 +20,11 @@ h1 {
   margin: 15px 0;
 }
 
+#monster-image {
+  font-size: 80px;
+  margin: 10px 0;
+}
+
 .hp-bar {
   width: 80%;
   height: 15px;
@@ -36,13 +41,13 @@ h1 {
 }
 
 #question {
-  font-size: 1.2em;
+  font-size: 1.1em;
   margin: 15px 0;
 }
 
 #choices button {
   display: block;
-  width: 80%;
+  width: 85%;
   margin: 8px auto;
   padding: 10px;
   font-size: 1em;
