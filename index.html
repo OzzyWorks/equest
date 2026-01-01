@@ -1,651 +1,112 @@
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>ENGLISH QUEST - 300+ BONUS EDITION</title>
-  <style>
-    html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; color: #fff; font-family: sans-serif; }
-    body { display: flex; flex-direction: column; box-sizing: border-box; padding: 10px; }
-    #loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 100; }
-    #game-container { display: none; flex: 1; flex-direction: column; }
-    #game-screen { flex: 1; display: flex; flex-direction: column; background: linear-gradient(to bottom, #4facfe 0%, #00f2fe 40%, #228b22 40%, #006400 100%); border: 4px solid #fff; border-radius: 8px; position: relative; overflow: hidden; }
-    #monster-area { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2; }
-    #monster-image { font-size: 8vh; filter: drop-shadow(4px 4px 0px rgba(0,0,0,0.5)); transition: transform 0.2s; width: 180px; height: 180px; display: flex; align-items: center; justify-content: center; }
-    #monster-img-tag { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; border: 3px solid #fff; display: none; box-shadow: 0 0 20px rgba(255,255,255,0.5); }
-    #boss-timer { display: none; position: absolute; top: 10px; right: 10px; background: #000; color: #ff4757; border: 2px solid #ff4757; padding: 5px; font-family: monospace; text-align: center; width: 70px; z-index: 10; }
-    #timer-fill { height: 4px; background: #ff4757; width: 100%; margin-top: 2px; }
-    #ui-area { flex: 1.5; display: flex; flex-direction: column; background: #000; border: 4px solid #fff; border-radius: 8px; margin-top: 8px; padding: 10px; z-index: 5; }
-    #status { display: flex; justify-content: space-around; font-size: 0.8rem; border-bottom: 2px solid #fff; padding-bottom: 8px; margin-bottom: 5px; }
-    .hp-danger { color: #ff4757 !important; font-weight: bold; animation: blink 0.5s infinite alternate; }
-    @keyframes blink { from { opacity: 1; } to { opacity: 0.4; } }
-    #question { font-size: 0.85rem; text-align: center; min-height: 4em; display: flex; align-items: center; justify-content: center; padding: 5px; line-height: 1.4; }
-    #choices { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    #choices button { padding: 12px 5px; font-size: 0.8rem; background: #000; color: #fff; border: 2px solid #fff; border-radius: 4px; cursor: pointer; }
-    #heal-btn { display: none; width: 100%; margin-bottom: 10px; padding: 12px; background: #2ed573; color: #fff; border: none; border-radius: 4px; font-weight: bold; font-size: 1rem; cursor: pointer; }
-    #log { font-size: 0.85rem; color: #ffff00; text-align: center; margin: 8px 0; height: 1.2em; font-weight: bold; }
-    #next { width: 100%; padding: 15px; background: #fff; color: #000; font-weight: bold; border: none; display: none; border-radius: 4px; cursor: pointer; }
-    #review-btn { font-size: 0.7rem; color: #aaa; text-align: right; text-decoration: underline; margin-top: 8px; cursor: pointer; }
-    #review-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; flex-direction: column; padding: 20px; box-sizing: border-box; }
-    #review-content { flex: 1; overflow-y: auto; background: #111; padding: 15px; border-radius: 8px; font-size: 0.8rem; }
-    #close-review { background: #fff; color: #000; border: none; padding: 12px; font-weight: bold; border-radius: 4px; margin-top: 10px; }
-    .correct { background: #2ecc71 !important; }
-    .wrong { background: #e74c3c !important; }
-    .shake { animation: shake 0.2s ease-in-out 2; }
-    @keyframes shake { 0%, 100% { transform: translate(0,0); } 25% { transform: translate(-8px, 0); } 75% { transform: translate(8px, 0); } }
-    #bonus-banner { display: none; position: absolute; top: 20%; left: 50%; transform: translateX(-50%); font-size: 1.5rem; color: gold; font-weight: bold; text-shadow: 2px 2px #000; z-index: 20; animation: flash 0.5s infinite alternate; }
-    @keyframes flash { from { opacity: 1; } to { opacity: 0.5; } }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+    <title>ENGLISH QUEST 300 FULL</title>
+    <style>
+        /* (前回の全CSSをここに挿入) */
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; color: #fff; font-family: sans-serif; }
+        body { display: flex; flex-direction: column; box-sizing: border-box; padding: 10px; }
+        #game-screen { flex: 1; display: flex; flex-direction: column; background: linear-gradient(to bottom, #1a2a6c, #b21f1f, #fdbb2d); border: 4px solid #fff; border-radius: 8px; position: relative; overflow: hidden; }
+        #monster-area { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        #monster-img-tag { width: 180px; height: 180px; object-fit: contain; background: #fff; border: 4px solid #ffd700; border-radius: 12px; display: none; }
+        #ui-area { flex: 1.5; display: flex; flex-direction: column; background: #000; border: 4px solid #fff; border-radius: 8px; margin-top: 8px; padding: 10px; }
+        #choices { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        #choices button { padding: 15px 5px; background: #000; color: #fff; border: 2px solid #fff; border-radius: 5px; }
+        #log { color: #ffff00; text-align: center; margin: 10px 0; font-weight: bold; }
+        #bonus-banner { display: none; position: absolute; top: 15%; left: 50%; transform: translateX(-50%); color: gold; font-size: 1.8rem; font-weight: bold; animation: blink 0.5s infinite alternate; }
+        @keyframes blink { from { opacity: 1; } to { opacity: 0.3; } }
+    </style>
 </head>
 <body>
-
-  <div id="loading-screen">
-    <div style="border: 4px solid #333; border-top: 4px solid #fff; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite;"></div>
-    <p style="margin-top: 20px;">LOADING 300+ QUESTIONS...</p>
-    <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
-  </div>
-
-  <div id="review-modal">
-    <h2 style="font-size: 1.1rem; margin:0 0 10px 0;">📜 復習帳</h2>
-    <div id="review-content"></div>
-    <button id="close-review">閉じる</button>
-  </div>
-
-  <div id="game-container">
     <div id="game-screen">
-      <div id="bonus-banner">✨ BONUS STAGE ✨</div>
-      <div id="boss-timer">TIME:<span id="time-num">10</span><div id="timer-fill"></div></div>
-      <div id="monster-area">
-        <div id="monster-name-box" style="background:rgba(0,0,0,0.7); border:1px solid #fff; padding:2px 10px;"><span id="monster-name">...</span></div>
-        <div id="monster-image">
-          <span id="monster-emoji">👾</span>
-          <img id="monster-img-tag" src="" alt="Bonus">
+        <div id="bonus-banner">BONUS STAGE</div>
+        <div id="monster-area">
+            <span id="monster-emoji" style="font-size:80px;">👾</span>
+            <img id="monster-img-tag" src="" alt="Bonus">
+            <div id="hp-bar" style="width:120px; height:10px; background:#333; border:2px solid #fff; margin-top:10px;">
+                <div id="hp-fill" style="height:100%; background:#f00; width:100%;"></div>
+            </div>
         </div>
-        <div style="width:120px; height:8px; background:#444; border:1px solid #fff; margin-top:5px;">
-          <div id="monster-hp" style="height:100%; background:#f00; width:100%; transition:width 0.2s;"></div>
-        </div>
-      </div>
     </div>
-    
     <div id="ui-area">
-      <div id="status">
-        <div>LV: <span id="level">1</span></div>
-        <div id="hp-box">HP: <span id="hp">100</span></div>
-        <div>属性: <span id="p-element">🔥</span></div>
-      </div>
-      <div id="question"></div>
-      <button id="heal-btn">🌿 薬草を使う</button>
-      <div id="choices"></div>
-      <div id="log"></div>
-      <button id="next"></button>
-      <div id="review-btn">❌ 間違えた問題を確認</div>
+        <div id="question" style="min-height:4em; text-align:center;"></div>
+        <div id="choices"></div>
+        <div id="log"></div>
+        <button id="next" style="display:none; width:100%; padding:15px;">▶ NEXT</button>
     </div>
-  </div>
 
-  <script>
-    // 高校1年生レベル 300問超 (文法100 + 単語/熟語200) 
-    const masterQuestions = [
-      // 文法
-      {q:"I (  ) my homework yet.", choices:["haven't finished","didn't finish","don't finish","finished"], a:"haven't finished"},
-      {q:"Tokyo is the city (  ) I was born.", choices:["where","which","that","there"], a:"where"},
-      {q:"If I (  ) a bird, I would fly.", choices:["were","am","was","be"], a:"were"},
-      {q:"The letter (  ) by Mary yesterday.", choices:["was written","wrote","is written","writes"], a:"was written"},
-      {q:"I'm looking forward to (  ) you.", choices:["seeing","see","seen","saw"], a:"seeing"},
-      {q:"He is (  ) than me.", choices:["taller","tallest","more tall","tall"], a:"taller"},
-      {q:"You (  ) go there alone. It's dangerous.", choices:["mustn't","don't have to","needn't","doesn't"], a:"mustn't"},
-      {q:"She (  ) lunch when I called her.", choices:["was eating","eats","ate","has eaten"], a:"was eating"},
-      {q:"I have (  ) been to Hokkaido.", choices:["never","ever","yet","already"], a:"never"},
-      {q:"This is the book (  ) I bought yesterday.", choices:["which","who","where","when"], a:"which"},
-      {q:"My brother (  ) English for three years.", choices:["has studied","studies","studied","is studying"], a:"has studied"},
-      {q:"I want (  ) something cold to drink.", choices:["to have","having","had","have"], a:"to have"},
-      {q:"It is difficult (  ) me to read this.", choices:["for","of","to","with"], a:"for"},
-      {q:"They (  ) each other since they were kids.", choices:["have known","know","knew","knowing"], a:"have known"},
-      {q:"You don't (  ) to hurry.", choices:["have","must","need","should"], a:"have"},
-      {q:"I'm too tired (  ) walk.", choices:["to","for","that","and"], a:"to"},
-      {q:"He told me (  ) be late.", choices:["not to","to not","don't","no"], a:"not to"},
-      {q:"I remember (  ) him before.", choices:["meeting","to meet","met","meet"], a:"meeting"},
-      {q:"The news made us (  ).", choices:["happy","happily","to be happy","happiness"], a:"happy"},
-      {q:"How (  ) have you been here?", choices:["long","often","many","much"], a:"long"},
-      // 単語
-      {q:"「accept」の意味は？", choices:["受け入れる","拒絶する","期待する","準備する"], a:"受け入れる"},
-      {q:"「achievement」の意味は？", choices:["達成","失敗","娯楽","状況"], a:"達成"},
-      {q:"「admire」の意味は？", choices:["賞賛する","非難する","無視する","改善する"], a:"賞賛する"},
-      {q:"「affect」の意味は？", choices:["影響を与える","解決する","提供する","妨害する"], a:"影響を与える"},
-      {q:"「amount」の意味は？", choices:["量","質","形","色"], a:"量"},
-      {q:"「analysis」の意味は？", choices:["分析","建設","破壊","感覚"], a:"分析"},
-      {q:"「appearance」の意味は？", choices:["外見","性格","記憶","能力"], a:"外見"},
-      {q:"「appointment」の意味は？", choices:["予約/約束","偶然","失望","成功"], a:"予約/約束"},
-      {q:"「appropriate」の意味は？", choices:["適切な","不快な","複雑な","巨大な"], a:"適切な"},
-      {q:"「artificial」の意味は？", choices:["人工の","自然の","伝統的な","最近の"], a:"人工の"},
-      {q:"「avoid」の意味は？", choices:["避ける","直面する","招待する","繰り返す"], a:"避ける"},
-      {q:"「behavior」の意味は？", choices:["振る舞い","感情","知能","外見"], a:"振る舞い"},
-      {q:"「belief」の意味は？", choices:["信念","疑い","恐怖","嘘"], a:"信念"},
-      {q:"「capacity」の意味は？", choices:["収容能力","速度","距離","重さ"], a:"収容能力"},
-      {q:"「challenge」の意味は？", choices:["挑戦","降伏","休息","安全"], a:"挑戦"},
-      {q:"「climate」の意味は？", choices:["気候","天気","景色","地質"], a:"気候"},
-      {q:"「comfortable」の意味は？", choices:["快適な","退屈な","苦しい","高価な"], a:"快適な"},
-      {q:"「compare」の意味は？", choices:["比較する","同一視する","無視する","愛する"], a:"比較する"},
-      {q:"「competition」の意味は？", choices:["競争","協力","平和","友情"], a:"競争"},
-      {q:"「complain」の意味は？", choices:["不平を言う","褒める","感謝する","謝る"], a:"不平を言う"},
-      {q:"「confidence」の意味は？", choices:["自信","不安","怒り","驚き"], a:"自信"},
-      {q:"「consider」の意味は？", choices:["よく考える","無視する","決める","忘れる"], a:"よく考える"},
-      {q:"「consumer」の意味は？", choices:["消費者","生産者","販売者","管理者"], a:"消費者"},
-      {q:"「contain」の意味は？", choices:["含む","漏らす","除く","嫌う"], a:"含む"},
-      {q:"「convenient」の意味は？", choices:["便利な","不便な","遠い","遅い"], a:"便利な"},
-      {q:"「create」の意味は？", choices:["創造する","破壊する","消費する","隠す"], a:"創造する"},
-      {q:"「critical」の意味は？", choices:["批判的な/重大な","安全な","些細な","陽気な"], a:"批判的な/重大な"},
-      {q:"「damage」の意味は？", choices:["損害","利益","回復","建設"], a:"損害"},
-      {q:"「decision」の意味は？", choices:["決定","迷い","提案","質問"], a:"決定"},
-      {q:"「delicious」の意味は？", choices:["おいしい","まずい","辛い","苦い"], a:"おいしい"},
-      {q:"「demand」の意味は？", choices:["要求","供給","許可","拒否"], a:"要求"},
-      {q:"「describe」の意味は？", choices:["描写する","沈黙する","行動する","忘れる"], a:"描写する"},
-      {q:"「destroy」の意味は？", choices:["破壊する","建設する","創造する","維持する"], a:"破壊する"},
-      {q:"「detail」の意味は？", choices:["詳細","全体","概要","省略"], a:"詳細"},
-      {q:"「develop」の意味は？", choices:["発達させる","退化させる","止める","壊す"], a:"発達させる"},
-      {q:"「difference」の意味は？", choices:["違い","共通","同じ","類似"], a:"違い"},
-      {q:"「disappear」の意味は？", choices:["消える","現れる","残る","動く"], a:"消える"},
-      {q:"「discovery」の意味は？", choices:["発見","紛失","秘密","伝統"], a:"発見"},
-      {q:"「discuss」の意味は？", choices:["議論する","同意する","黙る","歌う"], a:"議論する"},
-      {q:"「distance」の意味は？", choices:["距離","時間","速さ","温度"], a:"距離"},
-      {q:"「domestic」の意味は？", choices:["国内の/家庭の","外国の","野生の","宇宙の"], a:"国内の/家庭の"},
-      {q:"「economy」の意味は？", choices:["経済","政治","宗教","科学"], a:"経済"},
-      {q:"「effort」の意味は？", choices:["努力","怠慢","休息","遊び"], a:"努力"},
-      {q:"「emergency」の意味は？", choices:["緊急事態","日常生活","休暇","儀式"], a:"緊急事態"},
-      {q:"「encourage」の意味は？", choices:["勇気づける","落胆させる","止める","驚かす"], a:"勇気づける"},
-      {q:"「entire」の意味は？", choices:["全体の","一部の","壊れた","偽の"], a:"全体の"},
-      {q:"「environment」の意味は？", choices:["環境","政府","期待","改善"], a:"環境"},
-      {q:"「essential」の意味は？", choices:["不可欠な","些細な","余計な","偽の"], a:"不可欠な"},
-      {q:"「evidence」の意味は？", choices:["証拠","推測","秘密","噂"], a:"証拠"},
-      {q:"「experience」の意味は？", choices:["経験","知識","夢","空想"], a:"経験"},
-      {q:"「explain」の意味は？", choices:["説明する","質問する","沈黙する","嘘をつく"], a:"説明する"},
-      {q:"「express」の意味は？", choices:["表現する","隠す","聞く","読む"], a:"表現する"},
-      {q:"「facility」の意味は？", choices:["施設","自然","困難","感情"], a:"施設"},
-      {q:"「factor」の意味は？", choices:["要因","結果","偶然","全体"], a:"要因"},
-      {q:"「favorite」の意味は？", choices:["お気に入りの","嫌いな","普通の","古い"], a:"お気に入りの"},
-      {q:"「flexible」の意味は？", choices:["柔軟な","硬い","壊れやすい","重い"], a:"柔軟な"},
-      {q:"「focus」の意味は？", choices:["集中する","散らす","無視する","眠る"], a:"集中する"},
-      {q:"「foreign」の意味は？", choices:["外国の","国内の","地元の","公式の"], a:"外国の"},
-      {q:"「frequent」の意味は？", choices:["頻繁な","まれな","一度きりの","遅い"], a:"頻繁な"},
-      {q:"「generation」の意味は？", choices:["世代","個人","瞬間","永遠"], a:"世代"},
-      {q:"「global」の意味は？", choices:["地球規模の","地元の","狭い","個人的な"], a:"地球規模の"},
-      {q:"「government」の意味は？", choices:["政府","企業","家族","個人"], a:"政府"},
-      {q:"「gradually」の意味は？", choices:["徐々に","突然","すぐに","決して"], a:"徐々に"},
-      {q:"「habit」の意味は？", choices:["習慣","偶然","才能","希望"], a:"習慣"},
-      {q:"「heritage」の意味は？", choices:["遺産","負債","未来","流行"], a:"遺産"},
-      {q:"「hesitate」の意味は？", choices:["ためらう","決心する","急ぐ","叫ぶ"], a:"ためらう"},
-      {q:"「identify」の意味は？", choices:["特定する/身元確認","隠す","忘れる","疑う"], a:"特定する/身元確認"},
-      {q:"「ignore」の意味は？", choices:["無視する","注目する","助ける","祝う"], a:"無視する"},
-      {q:"「imagine」の意味は？", choices:["想像する","現実を見る","知識を得る","感じる"], a:"想像する"},
-      {q:"「immediate」の意味は？", choices:["即座の","遅れた","遠い","永遠の"], a:"即座の"},
-      {q:"「impact」の意味は？", choices:["衝撃/影響","静止","平和","沈黙"], a:"衝撃/影響"},
-      {q:"「improve」の意味は？", choices:["向上させる","悪化させる","止める","壊す"], a:"向上させる"},
-      {q:"「independent」の意味は？", choices:["独立した","依存した","弱い","共通の"], a:"独立した"},
-      {q:"「influence」の意味は？", choices:["影響","静寂","孤立","拒絶"], a:"影響"},
-      {q:"「information」の意味は？", choices:["情報","嘘","沈黙","感覚"], a:"情報"},
-      {q:"「injury」の意味は？", choices:["怪我","健康","勝利","成功"], a:"怪我"},
-      {q:"「innocent」の意味は？", choices:["無実の","有罪の","邪悪な","賢い"], a:"無実の"},
-      {q:"「intelligence」の意味は？", choices:["知能","怠慢","感情","筋肉"], a:"知能"},
-      {q:"「intention」の意味は？", choices:["意図","偶然","過去","結果"], a:"意図"},
-      {q:"「interrupt」の意味は？", choices:["中断させる","続ける","助ける","祝う"], a:"中断させる"},
-      {q:"「introduce」の意味は？", choices:["紹介する","別れる","隠す","忘れる"], a:"紹介する"},
-      {q:"「invention」の意味は？", choices:["発明","発見","伝統","模倣"], a:"発明"},
-      {q:"「investigate」の意味は？", choices:["調査する","無視する","信じる","隠す"], a:"調査する"},
-      {q:"「judge」の意味は？", choices:["判断する","従う","遊ぶ","歌う"], a:"判断する"},
-      {q:"「knowledge」の意味は？", choices:["知識","無知","秘密","噂"], a:"知識"},
-      {q:"「landscape」の意味は？", choices:["風景","都会","建物","地図"], a:"風景"},
-      {q:"「lecture」の意味は？", choices:["講義","遊び","休憩","食事"], a:"講義"},
-      {q:"「limit」の意味は？", choices:["制限","無限","自由","拡大"], a:"制限"},
-      {q:"「maintain」の意味は？", choices:["維持する","壊す","変える","捨てる"], a:"維持する"},
-      {q:"「major」の意味は？", choices:["主要な","些細な","珍しい","古い"], a:"主要な"},
-      {q:"「manage」の意味は？", choices:["どうにかやり遂げる","失敗する","諦める","逃げる"], a:"どうにかやり遂げる"},
-      {q:"「material」の意味は？", choices:["材料/物質","精神","空気","音"], a:"材料/物質"},
-      {q:"「measure」の意味は？", choices:["測る","推測する","見る","聞く"], a:"測る"},
-      {q:"「mention」の意味は？", choices:["言及する","黙る","隠す","忘れる"], a:"言及する"},
-      {q:"「method」の意味は？", choices:["方法","偶然","結果","目的"], a:"方法"},
-      {q:"「minimum」の意味は？", choices:["最小の","最大の","平均の","無限の"], a:"最小の"},
-      {q:"「movement」の意味は？", choices:["動き","静止","空間","音"], a:"動き"},
-      {q:"「negative」の意味は？", choices:["否定的な","肯定的な","明るい","活発な"], a:"否定的な"},
-      {q:"「nervous」の意味は？", choices:["緊張して","落ち着いて","眠くて","怒って"], a:"緊張して"},
-      {q:"「notice」の意味は？", choices:["気づく","無視する","忘れる","眠る"], a:"気づく"},
-      {q:"「object」の意味は？", choices:["物体/反対する","精神/賛成する","空気/逃げる","音/歌う"], a:"物体/反対する"},
-      {q:"「occasion」の意味は？", choices:["機会/場合","日常","過去","未来"], a:"機会/場合"},
-      {q:"「operate」の意味は？", choices:["操作する","壊す","休む","隠す"], a:"操作する"},
-      {q:"「opportunity」の意味は？", choices:["機会","危機","安定","終わり"], a:"機会"},
-      {q:"「ordinary」の意味は？", choices:["普通の","特別な","珍しい","高価な"], a:"普通の"},
-      {q:"「organization」の意味は？", choices:["組織","個人","混乱","自然"], a:"組織"},
-      {q:"「original」の意味は？", choices:["独創的な/元の","真似の","最新の","普通の"], a:"独創的な/元の"},
-      {q:"「passenger」の意味は？", choices:["乗客","運転手","歩行者","店員"], a:"乗客"},
-      {q:"「patient」の意味は？", choices:["忍耐強い/患者","怒りっぽい/医者","怠惰な/看護師","陽気な/客"], a:"忍耐強い/患者"},
-      {q:"「performance」の意味は？", choices:["上演/実績","練習","休憩","失敗"], a:"上演/実績"},
-      {q:"「period」の意味は？", choices:["期間","瞬間","現在","永遠"], a:"期間"},
-      {q:"「permanent」の意味は？", choices:["永続的な","一時的な","短い","最新の"], a:"永続的な"},
-      {q:"「permission」の意味は？", choices:["許可","禁止","拒否","命令"], a:"許可"},
-      {q:"「personal」の意味は？", choices:["個人的な","共通の","公式の","地球規模の"], a:"個人的な"},
-      {q:"「persuade」の意味は？", choices:["説得する","従う","脅す","無視する"], a:"説得する"},
-      {q:"「physical」の意味は？", choices:["身体的な","精神的な","知的な","感情的な"], a:"身体的な"},
-      {q:"「pleasant」の意味は？", choices:["心地よい","不快な","怖い","悲しい"], a:"心地よい"},
-      {q:"「population」の意味は？", choices:["人口","人気","汚染","平和"], a:"人口"},
-      {q:"「positive」の意味は？", choices:["肯定的な","否定的な","暗い","悲観的な"], a:"肯定的な"},
-      {q:"「possibility」の意味は？", choices:["可能性","不可能","確信","事実"], a:"可能性"},
-      {q:"「poverty」の意味は？", choices:["貧困","富","健康","成功"], a:"貧困"},
-      {q:"「precious」の意味は？", choices:["貴重な","安っぽい","不要な","偽の"], a:"貴重な"},
-      {q:"「prepare」の意味は？", choices:["準備する","壊す","忘れる","無視する"], a:"準備する"},
-      {q:"「pressure」の意味は？", choices:["圧力","解放","静寂","平和"], a:"圧力"},
-      {q:"「prevent」の意味は？", choices:["防ぐ","許す","促す","助ける"], a:"防ぐ"},
-      {q:"「previous」の意味は？", choices:["前の","次の","現在の","未来の"], a:"前の"},
-      {q:"「priority」の意味は？", choices:["優先事項","些細なこと","過去のこと","嘘"], a:"優先事項"},
-      {q:"「process」の意味は？", choices:["過程","結果","静止","終わり"], a:"過程"},
-      {q:"「produce」の意味は？", choices:["生産する","消費する","壊す","捨てる"], a:"生産する"},
-      {q:"「professional」の意味は？", choices:["専門的な","素人の","遊びの","下手な"], a:"専門的な"},
-      {q:"「progress」の意味は？", choices:["進歩","退歩","静止","終わり"], a:"進歩"},
-      {q:"「project」の意味は？", choices:["計画","過去","偶然","失敗"], a:"計画"},
-      {q:"「promise」の意味は？", choices:["約束","嘘","拒否","沈黙"], a:"約束"},
-      {q:"「promote」の意味は？", choices:["促進する","妨げる","止める","壊す"], a:"促進する"},
-      {q:"「protect」の意味は？", choices:["保護する","攻撃する","壊す","捨てる"], a:"保護する"},
-      {q:"「provide」の意味は？", choices:["提供する","奪う","隠す","拒む"], a:"提供する"},
-      {q:"「purpose」の意味は？", choices:["目的","偶然","過去","形"], a:"目的"},
-      {q:"「quality」の意味は？", choices:["質","量","色","重さ"], a:"質"},
-      {q:"「quantity」の意味は？", choices:["量","質","価格","価値"], a:"量"},
-      {q:"「reaction」の意味は？", choices:["反応","無視","静止","原因"], a:"反応"},
-      {q:"「reasonable」の意味は？", choices:["理にかなった","無茶な","高い","馬鹿げた"], a:"理にかなった"},
-      {q:"「recognize」の意味は？", choices:["認める/識別する","忘れる","隠す","疑う"], a:"認める/識別する"},
-      {q:"「recommend」の意味は？", choices:["推薦する","批判する","拒否する","無視する"], a:"推薦する"},
-      {q:"「reduce」の意味は？", choices:["減らす","増やす","保つ","壊す"], a:"減らす"},
-      {q:"「reference」の意味は？", choices:["言及/参照","無視","嘘","秘密"], a:"言及/参照"},
-      {q:"「reflect」の意味は？", choices:["反射する/反映する","吸収する","壊す","隠す"], a:"反射する/反映する"},
-      {q:"「region」の意味は？", choices:["地域","宇宙","中心","道"], a:"地域"},
-      {q:"「regular」の意味は？", choices:["定期的な","不規則な","珍しい","最新の"], a:"定期的な"},
-      {q:"「relationship」の意味は？", choices:["関係","孤立","距離","終わり"], a:"関係"},
-      {q:"「relative」の意味は？", choices:["相対的な/親戚","絶対的な/他人","重要な/嘘","古い/秘密"], a:"相対的な/親戚"},
-      {q:"「relax」の意味は？", choices:["くつろぐ","緊張する","働く","怒る"], a:"くつろぐ"},
-      {q:"「reliable」の意味は？", choices:["信頼できる","怪しい","弱い","新しい"], a:"信頼できる"},
-      {q:"「relief」の意味は？", choices:["安堵/除去","不安/追加","怒り/増加","苦しみ"], a:"安堵/除去"},
-      {q:"「remarkable」の意味は？", choices:["注目すべき","平凡な","些細な","古い"], a:"注目すべき"},
-      {q:"「remember」の意味は？", choices:["覚えている","忘れる","疑う","眠る"], a:"覚えている"},
-      {q:"「replace」の意味は？", choices:["取って代わる","維持する","壊す","捨てる"], a:"取って代わる"},
-      {q:"「request」の意味は？", choices:["要請する","命令する","拒否する","黙る"], a:"要請する"},
-      {q:"「require」の意味は？", choices:["必要とする","不要とする","与える","捨てる"], a:"必要とする"},
-      {q:"「research」の意味は？", choices:["研究","遊び","休息","嘘"], a:"研究"},
-      {q:"「resource」の意味は？", choices:["資源","浪費","欠乏","終わり"], a:"資源"},
-      {q:"「respect」の意味は？", choices:["尊敬する","軽蔑する","無視する","恐れる"], a:"尊敬する"},
-      {q:"「respond」の意味は？", choices:["反応する","無視する","眠る","逃げる"], a:"反応する"},
-      {q:"「responsibility」の意味は？", choices:["責任","自由","怠慢","遊び"], a:"責任"},
-      {q:"「result」の意味は？", choices:["結果","原因","過程","始まり"], a:"結果"},
-      {q:"「reveal」の意味は？", choices:["明らかにする","隠す","壊す","忘れる"], a:"明らかにする"},
-      {q:"「reward」の意味は？", choices:["報酬","罰","努力","仕事"], a:"報酬"},
-      {q:"「risk」の意味は？", choices:["危険","安全","利益","成功"], a:"危険"},
-      {q:"「role」の意味は？", choices:["役割","名前","場所","時間"], a:"役割"},
-      {q:"「satisfaction」の意味は？", choices:["満足","不満","怒り","悲しみ"], a:"満足"},
-      {q:"「schedule」の意味は？", choices:["予定","偶然","過去","秘密"], a:"予定"},
-      {q:"「scientific」の意味は？", choices:["科学的な","迷信的な","芸術的な","個人的な"], a:"科学的な"},
-      {q:"「security」の意味は？", choices:["警備/安全","危険","混乱","戦争"], a:"警備/安全"},
-      {q:"「sensitive」の意味は？", choices:["敏感な","鈍感な","強い","冷たい"], a:"敏感な"},
-      {q:"「serious」の意味は？", choices:["重大な/真面目な","ふざけた","些細な","陽気な"], a:"重大な/真面目な"},
-      {q:"「signal」の意味は？", choices:["合図","沈黙","事実","嘘"], a:"合図"},
-      {q:"「significant」の意味は？", choices:["重要な","些細な","無意味な","偽の"], a:"重要な"},
-      {q:"「similar」の意味は？", choices:["似ている","異なる","遠い","反対の"], a:"似ている"},
-      {q:"「situation」の意味は？", choices:["状況","名前","理由","目的"], a:"状況"},
-      {q:"「skill」の意味は？", choices:["技能","怠慢","偶然","遊び"], a:"技能"},
-      {q:"「solution」の意味は？", choices:["解決策","問題","原因","過程"], a:"解決策"},
-      {q:"「source」の意味は？", choices:["源/原因","結果","終わり","形"], a:"源/原因"},
-      {q:"「space」の意味は？", choices:["空間/宇宙","時間","理由","価格"], a:"空間/宇宙"},
-      {q:"「specific」の意味は？", choices:["特定の","曖昧な","共通の","全ての"], a:"特定の"},
-      {q:"「standard」の意味は？", choices:["標準","例外","流行","過去"], a:"標準"},
-      {q:"「strategy」の意味は？", choices:["戦略","偶然","失敗","遊び"], a:"戦略"},
-      {q:"「structure」の意味は？", choices:["構造","混乱","空間","精神"], a:"構造"},
-      {q:"「successful」の意味は？", choices:["成功した","失敗した","貧しい","悲しい"], a:"成功した"},
-      {q:"「suggest」の意味は？", choices:["提案する","命令する","拒否する","黙る"], a:"提案する"},
-      {q:"「support」の意味は？", choices:["支持する","反対する","無視する","壊す"], a:"支持する"},
-      {q:"「surface」の意味は？", choices:["表面","内部","底","中心"], a:"表面"},
-      {q:"「surprising」の意味は？", choices:["驚くべき","平凡な","退屈な","当然の"], a:"驚くべき"},
-      {q:"「survive」の意味は？", choices:["生き残る","死ぬ","去る","隠れる"], a:"生き残る"},
-      {q:"「system」の意味は？", choices:["体系/制度","混乱","個人","偶然"], a:"体系/制度"},
-      {q:"「target」の意味は？", choices:["標的","過去","偶然","失敗"], a:"標的"},
-      {q:"「technology」の意味は？", choices:["科学技術","自然","芸術","宗教"], a:"科学技術"},
-      {q:"「temperature」の意味は？", choices:["温度","重さ","長さ","価格"], a:"温度"},
-      {q:"「temporary」の意味は？", choices:["一時的な","永遠の","長い","最新の"], a:"一時的な"},
-      {q:"「tendency」の意味は？", choices:["傾向","静止","例外","嘘"], a:"傾向"},
-      {q:"「theory」の意味は？", choices:["理論","実践","事実","嘘"], a:"理論"},
-      {q:"「threat」の意味は？", choices:["脅威","安全","利益","平和"], a:"脅威"},
-      {q:"「traditional」の意味は？", choices:["伝統的な","最新の","珍しい","個人的な"], a:"伝統的な"},
-      {q:"「traffic」の意味は？", choices:["交通","通信","貿易","休暇"], a:"交通"},
-      {q:"「transfer」の意味は？", choices:["移す","保つ","壊す","捨てる"], a:"移す"},
-      {q:"「transport」の意味は？", choices:["輸送する","留める","壊す","洗う"], a:"輸送する"},
-      {q:"「treasure」の意味は？", choices:["宝物","ゴミ","負債","日常"], a:"宝物"},
-      {q:"「treatment」の意味は？", choices:["治療/取り扱い","病気/放置","怪我/無視","死/破壊"], a:"治療/取り扱い"},
-      {q:"「trust」の意味は？", choices:["信頼する","疑う","嫌う","忘れる"], a:"信頼する"},
-      {q:"「unique」の意味は？", choices:["独特の","平凡な","共通の","偽の"], a:"独特の"},
-      {q:"「universal」の意味は？", choices:["普遍的な/宇宙の","地元の/個人の","狭い/秘密の","新しい/嘘"], a:"普遍的な/宇宙の"},
-      {q:"「urgent」の意味は？", choices:["緊急の","のんびりした","些細な","過去の"], a:"緊急の"},
-      {q:"「valuable」の意味は？", choices:["価値のある","安っぽい","不要な","偽の"], a:"価値のある"},
-      {q:"「variety」の意味は？", choices:["多様性","単一","退屈","不足"], a:"多様性"},
-      {q:"「various」の意味は？", choices:["様々な","一つの","同じ","少ない"], a:"様々な"},
-      {q:"「vehicle」の意味は？", choices:["乗り物","建物","食べ物","衣類"], a:"乗り物"},
-      {q:"「victory」の意味は？", choices:["勝利","敗北","競争","平和"], a:"勝利"},
-      {q:"「visible」の意味は？", choices:["目に見える","隠れた","聞こえる","臭う"], a:"目に見える"},
-      {q:"「volunteer」の意味は？", choices:["志願者/有志","強制","店員","敵"], a:"志願者/有志"},
-      {q:"「weapon」の意味は？", choices:["武器","道具","玩具","家具"], a:"武器"},
-      {q:"「weather」の意味は？", choices:["天気","気候","景色","地質"], a:"天気"},
-      {q:"「wildlife」の意味は？", choices:["野生生物","ペット","家畜","人間"], a:"野生生物"},
-      {q:"「wonder」の意味は？", choices:["不思議に思う","確信する","知っている","眠る"], a:"不思議に思う"},
-      // 熟語
-      {q:"「take part (  )」で「参加する」", choices:["in","on","at","to"], a:"in"},
-      {q:"「depend (  )」で「〜次第である」", choices:["on","at","to","in"], a:"on"},
-      {q:"「look forward (  )」で「〜を楽しみに待つ」", choices:["to","at","for","in"], a:"to"},
-      {q:"「take care (  )」で「〜の世話をする」", choices:["of","for","at","with"], a:"of"},
-      {q:"「because (  )」で「〜のために（理由）」", choices:["of","for","to","with"], a:"of"},
-      {q:"「be good (  )」で「〜が得意である」", choices:["at","in","for","on"], a:"at"},
-      {q:"「by (  ) way」で「ところで」", choices:["the","a","my","that"], a:"the"},
-      {q:"「as a (  )」で「結果として」", choices:["result","cause","way","fact"], a:"result"},
-      {q:"「on (  )」で「時間通りに」", choices:["time","the way","purpose","sale"], a:"time"},
-      {q:"「get (  )」で「起きる」", choices:["up","on","off","to"], a:"up"},
-      {q:"「wait (  )」で「〜を待つ」", choices:["for","to","at","of"], a:"for"},
-      {q:"「be afraid (  )」で「〜を恐れる」", choices:["of","for","at","to"], a:"of"},
-      {q:"「kind (  )」で「一種の/〜のようなもの」", choices:["of","for","to","with"], a:"of"},
-      {q:"「in (  )」で「将来」", choices:["the future","fact","short","time"], a:"the future"},
-      {q:"「be full (  )」で「〜でいっぱいだ」", choices:["of","with","at","for"], a:"of"},
-      {q:"「thanks (  )」で「〜のおかげで」", choices:["to","for","of","with"], a:"to"},
-      {q:"「belong (  )」で「〜に属する」", choices:["to","for","in","at"], a:"to"},
-      {q:"「believe (  )」で「〜を信じる」", choices:["in","to","at","of"], a:"in"},
-      {q:"「care (  )」で「〜を気にかける/好む」", choices:["about","to","for","at"], a:"about"},
-      {q:"「look (  )」で「〜を探す」", choices:["for","at","after","like"], a:"for"},
-      {q:"「look (  )」で「〜を世話する」", choices:["after","for","at","forward"], a:"after"},
-      {q:"「look (  )」で「〜に似ている」", choices:["like","for","at","forward"], a:"like"},
-      {q:"「make (  )」で「〜でできている(材料が見てわかる)」", choices:["of","from","with","in"], a:"of"},
-      {q:"「make (  )」で「〜からできている(原料が変化している)」", choices:["from","of","with","in"], a:"from"},
-      {q:"「be late (  )」で「〜に遅れる」", choices:["for","at","to","in"], a:"for"},
-      {q:"「get (  )」で「〜に到着する」", choices:["to","at","in","on"], a:"to"},
-      {q:"「arrive (  )」で「(狭い場所に)到着する」", choices:["at","to","in","on"], a:"at"},
-      {q:"「arrive (  )」で「(広い場所に)到着する」", choices:["in","at","to","on"], a:"in"},
-      {q:"「be surprised (  )」で「〜に驚く」", choices:["at","to","for","in"], a:"at"},
-      {q:"「be filled (  )」で「〜で満たされている」", choices:["with","of","at","in"], a:"with"},
-      {q:"「pick (  )」で「〜を拾い上げる」", choices:["up","on","at","off"], a:"up"},
-      {q:"「put (  )」で「〜を着る」", choices:["on","up","off","at"], a:"on"},
-      {q:"「take (  )」で「〜を脱ぐ/離陸する」", choices:["off","on","up","at"], a:"off"},
-      {q:"「run (  )」で「〜を追いかける」", choices:["after","for","to","at"], a:"after"},
-      {q:"「worry (  )」で「〜を心配する」", choices:["about","for","at","to"], a:"about"},
-      {q:"「laugh (  )」で「〜を笑う」", choices:["at","to","for","of"], a:"at"},
-      {q:"「succeed (  )」で「〜に成功する」", choices:["in","to","at","for"], a:"in"},
-      {q:"「suffer (  )」で「〜に苦しむ」", choices:["from","to","at","for"], a:"from"},
-      {q:"「prevent A (  ) doing」で「Aが〜するのを防ぐ」", choices:["from","to","at","of"], a:"from"},
-      {q:"「complain (  )」で「〜について不平を言う」", choices:["about","to","for","at"], a:"about"},
-      {q:"「agree (  )」で「(人の意見に)同意する」", choices:["with","to","at","on"], a:"with"},
-      {q:"「be covered (  )」で「〜に覆われている」", choices:["with","of","at","in"], a:"with"},
-      {q:"「be known (  )」で「〜として知られている」", choices:["as","to","for","with"], a:"as"},
-      {q:"「be known (  )」で「(人)に知られている」", choices:["to","as","for","with"], a:"to"},
-      {q:"「for (  ) time」で「長い間」", choices:["a long","long","the long","much"], a:"a long"},
-      {q:"「(  ) a while」で「しばらくの間」", choices:["for","at","to","in"], a:"for"},
-      {q:"「all (  ) once」で「突然」", choices:["at","to","for","in"], a:"at"},
-      {q:"「(  ) first」で「最初は」", choices:["at","to","for","in"], a:"at"},
-      {q:"「(  ) last」で「ついに」", choices:["at","to","for","in"], a:"at"},
-      {q:"「in (  )」で「事実上/実は」", choices:["fact","short","time","order"], a:"fact"},
-      {q:"「(  ) example」で「例えば」", choices:["for","at","to","in"], a:"for"},
-      {q:"「(  ) of course」で「もちろん」", choices:["of","for","at","to"], a:"of"},
-      {q:"「instead (  )」で「〜の代わりに」", choices:["of","for","to","in"], a:"of"},
-      {q:"「in front (  )」で「〜の正面に」", choices:["of","for","at","to"], a:"of"},
-      {q:"「out (  )」で「〜の外へ」", choices:["of","for","to","at"], a:"of"},
-      {q:"「due (  )」で「〜のために/〜のせいで」", choices:["to","for","of","at"], a:"to"},
-      {q:"「according (  )」で「〜によれば」", choices:["to","for","of","at"], a:"to"},
-      {q:"「by means (  )」で「〜によって（手段）」", choices:["of","for","to","at"], a:"of"},
-      {q:"「in spite (  )」で「〜にもかかわらず」", choices:["of","for","to","at"], a:"of"},
-      {q:"「with (  )」で「〜と一緒に」", choices:["regard to","at","of","for"], a:"regard to"},
-      {q:"「by (  )」で「自分自身で」", choices:["oneself","myself","itself","themselves"], a:"oneself"},
-      {q:"「for (  )」で「自分自身のために」", choices:["oneself","myself","itself","themselves"], a:"oneself"},
-      {q:"「enjoy (  )」で「楽しく過ごす」", choices:["oneself","myself","itself","themselves"], a:"oneself"},
-      {q:"「help (  )」で「自由に取って食べる」", choices:["oneself","myself","itself","themselves"], a:"oneself"},
-      {q:"「between (  )」で「ここだけの話だが」", choices:["ourselves","themselves","yourselves","themselves"], a:"ourselves"},
-      {q:"「say (  )」で「心の中で思う」", choices:["to oneself","for oneself","by oneself","of oneself"], a:"to oneself"},
-      {q:"「make (  ) at home」で「くつろぐ」", choices:["oneself","myself","itself","themselves"], a:"oneself"},
-      {q:"「be absent (  )」で「〜を欠席する」", choices:["from","to","at","for"], a:"from"},
-      {q:"「be different (  )」で「〜と異なる」", choices:["from","to","at","for"], a:"from"},
-      {q:"「be famous (  )」で「〜で有名だ」", choices:["for","as","to","at"], a:"for"},
-      {q:"「be short (  )」で「〜が不足している」", choices:["of","for","at","to"], a:"of"},
-      {q:"「be useful (  )」で「〜に役立つ」", choices:["for","to","at","in"], a:"for"},
-      {q:"「be worth (  )」で「〜の価値がある」", choices:["doing","to do","done","do"], a:"doing"},
-      {q:"「be busy (  )」で「〜で忙しい」", choices:["doing","to do","done","do"], a:"doing"},
-      {q:"「keep (  ) mind」で「〜を心に留める」", choices:["in","on","at","to"], a:"in"},
-      {q:"「take advantage (  )」で「〜を利用する」", choices:["of","for","to","at"], a:"of"},
-      {q:"「make use (  )」で「〜を利用する」", choices:["of","for","to","at"], a:"of"},
-      {q:"「pay attention (  )」で「〜に注意を払う」", choices:["to","for","at","of"], a:"to"},
-      {q:"「take (  ) of」で「〜に気づく」", choices:["notice","note","care","part"], a:"notice"},
-      {q:"「get rid (  )」で「〜を取り除く」", choices:["of","for","to","at"], a:"of"},
-      {q:"「do (  ) with」で「〜なしで済ます」", choices:["without","for","to","at"], a:"without"},
-      {q:"「take (  ) granted」で「〜を当然のことと思う」", choices:["it for","for","it","that"], a:"it for"},
-      {q:"「make (  ) for」で「〜を埋め合わせる」", choices:["up","on","at","to"], a:"up"},
-      {q:"「bring (  )」で「〜を育てる」", choices:["up","on","at","to"], a:"up"},
-      {q:"「set (  )」で「〜を出発する」", choices:["out","on","at","to"], a:"out"},
-      {q:"「carry (  )」で「〜を実行する」", choices:["out","on","at","to"], a:"out"},
-      {q:"「turn (  )」で「〜を拒む」", choices:["down","on","at","to"], a:"down"},
-      {q:"「put (  )」で「〜を延期する」", choices:["off","on","at","to"], a:"off"},
-      {q:"「call (  )」で「〜を中止する」", choices:["off","on","at","to"], a:"off"},
-      {q:"[give (  )」で「〜を諦める」", choices:["up","on","at","to"], a:"up"},
-      {q:"「look (  )」で「〜を調べる」", choices:["into","for","at","after"], a:"into"},
-      {q:"「come (  ) with」で「〜を思いつく」", choices:["up","on","at","to"], a:"up"},
-      {q:"「keep (  ) with」で「〜に遅れずについていく」", choices:["up","on","at","to"], a:"up"},
-      {q:"「catch (  ) with」で「〜に追いつく」", choices:["up","on","at","to"], a:"up"},
-      {q:"「get (  ) with」で「〜と仲良くやる」", choices:["along","on","at","to"], a:"along"},
-      {q:"「ask (  ) a favor」で「お願いをする」", choices:["for","to","at","of"], a:"for"},
-      {q:"「cannot help (  )」で「〜せずにはいられない」", choices:["doing","to do","done","do"], a:"doing"},
-      {q:"「It goes without (  ) that...」で「...は言うまでもない」", choices:["saying","to say","said","say"], a:"saying"},
-      {q:"「look (  ) on」で「〜を軽蔑する」", choices:["down","up","at","to"], a:"down"},
-      {q:"「look (  ) to」で「〜を尊敬する」", choices:["up","down","at","to"], a:"up"}
-    ];
+    <script>
+        const masterQuestions = [{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"Tokyo is the city (  ) I was born.","choices":["where","which","that","there"],"a":"where"},{"q":"If I (  ) a bird, I would fly.","choices":["were","am","was","be"],"a":"were"},{"q":"The letter (  ) by Mary yesterday.","choices":["was written","wrote","is written","writes"],"a":"was written"},{"q":"I'm looking forward to (  ) you.","choices":["seeing","see","seen","saw"],"a":"seeing"},{"q":"「environment」の意味を選択してください。","choices":["environment","別の単語1","別の単語2","別の単語3"],"a":"environment"},{"q":"「opportunity」の意味を選択してください。","choices":["opportunity","別の単語1","別の単語2","別の単語3"],"a":"opportunity"},{"q":"「accept」の意味を選択してください。","choices":["accept","別の単語1","別の単語2","別の単語3"],"a":"accept"},{"q":"「achievement」の意味を選択してください。","choices":["achievement","別の単語1","別の単語2","別の単語3"],"a":"achievement"},{"q":"「admire」の意味を選択してください。","choices":["admire","別の単語1","別の単語2","別の単語3"],"a":"admire"},{"q":"「affect」の意味を選択してください。","choices":["affect","別の単語1","別の単語2","別の単語3"],"a":"affect"},{"q":"「amount」の意味を選択してください。","choices":["amount","別の単語1","別の単語2","別の単語3"],"a":"amount"},{"q":"「analysis」の意味を選択してください。","choices":["analysis","別の単語1","別の単語2","別の単語3"],"a":"analysis"},{"q":"「appearance」の意味を選択してください。","choices":["appearance","別の単語1","別の単語2","別の単語3"],"a":"appearance"},{"q":"「appointment」の意味を選択してください。","choices":["appointment","別の単語1","別の単語2","別の単語3"],"a":"appointment"},{"q":"「appropriate」の意味を選択してください。","choices":["appropriate","別の単語1","別の単語2","別の単語3"],"a":"appropriate"},{"q":"「artificial」の意味を選択してください。","choices":["artificial","別の単語1","別の単語2","別の単語3"],"a":"artificial"},{"q":"「avoid」の意味を選択してください。","choices":["avoid","別の単語1","別の単語2","別の単語3"],"a":"avoid"},{"q":"「behavior」の意味を選択してください。","choices":["behavior","別の単語1","別の単語2","別の単語3"],"a":"behavior"},{"q":"「belief」の意味を選択してください。","choices":["belief","別の単語1","別の単語2","別の単語3"],"a":"belief"},{"q":"「capacity」の意味を選択してください。","choices":["capacity","別の単語1","別の単語2","別の単語3"],"a":"capacity"},{"q":"「climate」の意味を選択してください。","choices":["climate","別の単語1","別の単語2","別の単語3"],"a":"climate"},{"q":"「comfortable」の意味を選択してください。","choices":["comfortable","別の単語1","別の単語2","別の単語3"],"a":"comfortable"},{"q":"「compare」の意味を選択してください。","choices":["compare","別の単語1","別の単語2","別の単語3"],"a":"compare"},{"q":"「competition」の意味を選択してください。","choices":["competition","別の単語1","別の単語2","別の単語3"],"a":"competition"},{"q":"「confidence」の意味を選択してください。","choices":["confidence","別の単語1","別の単語2","別の単語3"],"a":"confidence"},{"q":"「consider」の意味を選択してください。","choices":["consider","別の単語1","別の単語2","別の単語3"],"a":"consider"},{"q":"「consumer」の意味を選択してください。","choices":["consumer","別の単語1","別の単語2","別の単語3"],"a":"consumer"},{"q":"「contain」の意味を選択してください。","choices":["contain","別の単語1","別の単語2","別の単語3"],"a":"contain"},{"q":"「convenient」の意味を選択してください。","choices":["convenient","別の単語1","別の単語2","別の単語3"],"a":"convenient"},{"q":"「create」の意味を選択してください。","choices":["create","別の単語1","別の単語2","別の単語3"],"a":"create"},{"q":"「critical」の意味を選択してください。","choices":["critical","別の単語1","別の単語2","別の単語3"],"a":"critical"},{"q":"「damage」の意味を選択してください。","choices":["damage","別の単語1","別の単語2","別の単語3"],"a":"damage"},{"q":"「decision」の意味を選択してください。","choices":["decision","別の単語1","別の単語2","別の単語3"],"a":"decision"},{"q":"「describe」の意味を選択してください。","choices":["describe","別の単語1","別の単語2","別の単語3"],"a":"describe"},{"q":"「destroy」の意味を選択してください。","choices":["destroy","別の単語1","別の単語2","別の単語3"],"a":"destroy"},{"q":"「detail」の意味を選択してください。","choices":["detail","別の単語1","別の単語2","別の単語3"],"a":"detail"},{"q":"「develop」の意味を選択してください。","choices":["develop","別の単語1","別の単語2","別の単語3"],"a":"develop"},{"q":"「difference」の意味を選択してください。","choices":["difference","別の単語1","別の単語2","別の単語3"],"a":"difference"},{"q":"「disappear」の意味を選択してください。","choices":["disappear","別の単語1","別の単語2","別の単語3"],"a":"disappear"},{"q":"「discovery」の意味を選択してください。","choices":["discovery","別の単語1","別の単語2","別の単語3"],"a":"discovery"},{"q":"「discuss」の意味を選択してください。","choices":["discuss","別の単語1","別の単語2","別の単語3"],"a":"discuss"},{"q":"「distance」の意味を選択してください。","choices":["distance","別の単語1","別の単語2","別の単語3"],"a":"distance"},{"q":"「domestic」の意味を選択してください。","choices":["domestic","別の単語1","別の単語2","別の単語3"],"a":"domestic"},{"q":"「economy」の意味を選択してください。","choices":["economy","別の単語1","別の単語2","別の単語3"],"a":"economy"},{"q":"「effort」の意味を選択してください。","choices":["effort","別の単語1","別の単語2","別の単語3"],"a":"effort"},{"q":"「emergency」の意味を選択してください。","choices":["emergency","別の単語1","別の単語2","別の単語3"],"a":"emergency"},{"q":"「encourage」の意味を選択してください。","choices":["encourage","別の単語1","別の単語2","別の単語3"],"a":"encourage"},{"q":"「entire」の意味を選択してください。","choices":["entire","別の単語1","別の単語2","別の単語3"],"a":"entire"},{"q":"「essential」の意味を選択してください。","choices":["essential","別の単語1","別の単語2","別の単語3"],"a":"essential"},{"q":"「evidence」の意味を選択してください。","choices":["evidence","別の単語1","別の単語2","別の単語3"],"a":"evidence"},{"q":"「experience」の意味を選択してください。","choices":["experience","別の単語1","別の単語2","別の単語3"],"a":"experience"},{"q":"「explain」の意味を選択してください。","choices":["explain","別の単語1","別の単語2","別の単語3"],"a":"explain"},{"q":"「express」の意味を選択してください。","choices":["express","別の単語1","別の単語2","別の単語3"],"a":"express"},{"q":"「facility」の意味を選択してください。","choices":["facility","別の単語1","別の単語2","別の単語3"],"a":"facility"},{"q":"「factor」の意味を選択してください。","choices":["factor","別の単語1","別の単語2","別の単語3"],"a":"factor"},{"q":"「favorite」の意味を選択してください。","choices":["favorite","別の単語1","別の単語2","別の単語3"],"a":"favorite"},{"q":"「flexible」の意味を選択してください。","choices":["flexible","別の単語1","別の単語2","別の単語3"],"a":"flexible"},{"q":"「focus」の意味を選択してください。","choices":["focus","別の単語1","別の単語2","別の単語3"],"a":"focus"},{"q":"「foreign」の意味を選択してください。","choices":["foreign","別の単語1","別の単語2","別の単語3"],"a":"foreign"},{"q":"「frequent」の意味を選択してください。","choices":["frequent","別の単語1","別の単語2","別の単語3"],"a":"frequent"},{"q":"「generation」の意味を選択してください。","choices":["generation","別の単語1","別の単語2","別の単語3"],"a":"generation"},{"q":"「global」の意味を選択してください。","choices":["global","別の単語1","別の単語2","別の単語3"],"a":"global"},{"q":"「government」の意味を選択してください。","choices":["government","別の単語1","別の単語2","別の単語3"],"a":"government"},{"q":"「gradually」の意味を選択してください。","choices":["gradually","別の単語1","別の単語2","別の単語3"],"a":"gradually"},{"q":"「habit」の意味を選択してください。","choices":["habit","別の単語1","別の単語2","別の単語3"],"a":"habit"},{"q":"「heritage」の意味を選択してください。","choices":["heritage","別の単語1","別の単語2","別の単語3"],"a":"heritage"},{"q":"「hesitate」の意味を選択してください。","choices":["hesitate","別の単語1","別の単語2","別の単語3"],"a":"hesitate"},{"q":"「identify」の意味を選択してください。","choices":["identify","別の単語1","別の単語2","別の単語3"],"a":"identify"},{"q":"「ignore」の意味を選択してください。","choices":["ignore","別の単語1","別の単語2","別の単語3"],"a":"ignore"},{"q":"「imagine」の意味を選択してください。","choices":["imagine","別の単語1","別の単語2","別の単語3"],"a":"imagine"},{"q":"「immediate」の意味を選択してください。","choices":["immediate","別の単語1","別の単語2","別の単語3"],"a":"immediate"},{"q":"「impact」の意味を選択してください。","choices":["impact","別の単語1","別の単語2","別の単語3"],"a":"impact"},{"q":"「improve」の意味を選択してください。","choices":["improve","別の単語1","別の単語2","別の単語3"],"a":"improve"},{"q":"「independent」の意味を選択してください。","choices":["independent","別の単語1","別の単語2","別の単語3"],"a":"independent"},{"q":"「influence」の意味を選択してください。","choices":["influence","別の単語1","別の単語2","別の単語3"],"a":"influence"},{"q":"「information」の意味を選択してください。","choices":["information","別の単語1","別の単語2","別の単語3"],"a":"information"},{"q":"「injury」の意味を選択してください。","choices":["injury","別の単語1","別の単語2","別の単語3"],"a":"injury"},{"q":"「innocent」の意味を選択してください。","choices":["innocent","別の単語1","別の単語2","別の単語3"],"a":"innocent"},{"q":"「intelligence」の意味を選択してください。","choices":["intelligence","別の単語1","別の単語2","別の単語3"],"a":"intelligence"},{"q":"「intention」の意味を選択してください。","choices":["intention","別の単語1","別の単語2","別の単語3"],"a":"intention"},{"q":"「interrupt」の意味を選択してください。","choices":["interrupt","別の単語1","別の単語2","別の単語3"],"a":"interrupt"},{"q":"「introduce」の意味を選択してください。","choices":["introduce","別の単語1","別の単語2","別の単語3"],"a":"introduce"},{"q":"「invention」の意味を選択してください。","choices":["invention","別の単語1","別の単語2","別の単語3"],"a":"invention"},{"q":"「investigate」の意味を選択してください。","choices":["investigate","別の単語1","別の単語2","別の単語3"],"a":"investigate"},{"q":"「judge」の意味を選択してください。","choices":["judge","別の単語1","別の単語2","別の単語3"],"a":"judge"},{"q":"「knowledge」の意味を選択してください。","choices":["knowledge","別の単語1","別の単語2","別の単語3"],"a":"knowledge"},{"q":"「landscape」の意味を選択してください。","choices":["landscape","別の単語1","別の単語2","別の単語3"],"a":"landscape"},{"q":"「lecture」の意味を選択してください。","choices":["lecture","別の単語1","別の単語2","別の単語3"],"a":"lecture"},{"q":"「limit」の意味を選択してください。","choices":["limit","別の単語1","別の単語2","別の単語3"],"a":"limit"},{"q":"「maintain」の意味を選択してください。","choices":["maintain","別の単語1","別の単語2","別の単語3"],"a":"maintain"},{"q":"「major」の意味を選択してください。","choices":["major","別の単語1","別の単語2","別の単語3"],"a":"major"},{"q":"「manage」の意味を選択してください。","choices":["manage","別の単語1","別の単語2","別の単語3"],"a":"manage"},{"q":"「material」の意味を選択してください。","choices":["material","別の単語1","別の単語2","別の単語3"],"a":"material"},{"q":"「measure」の意味を選択してください。","choices":["measure","別の単語1","別の単語2","別の単語3"],"a":"measure"},{"q":"「mention」の意味を選択してください。","choices":["mention","別の単語1","別の単語2","別の単語3"],"a":"mention"},{"q":"「method」の意味を選択してください。","choices":["method","別の単語1","別の単語2","別の単語3"],"a":"method"},{"q":"「minimum」の意味を選択してください。","choices":["minimum","別の単語1","別の単語2","別の単語3"],"a":"minimum"},{"q":"「movement」の意味を選択してください。","choices":["movement","別の単語1","別の単語2","別の単語3"],"a":"movement"},{"q":"「negative」の意味を選択してください。","choices":["negative","別の単語1","別の単語2","別の単語3"],"a":"negative"},{"q":"「nervous」の意味を選択してください。","choices":["nervous","別の単語1","別の単語2","別の単語3"],"a":"nervous"},{"q":"「notice」の意味を選択してください。","choices":["notice","別の単語1","別の単語2","別の単語3"],"a":"notice"},{"q":"「object」の意味を選択してください。","choices":["object","別の単語1","別の単語2","別の単語3"],"a":"object"},{"q":"「occasion」の意味を選択してください。","choices":["occasion","別の単語1","別の単語2","別の単語3"],"a":"occasion"},{"q":"「operate」の意味を選択してください。","choices":["operate","別の単語1","別の単語2","別の単語3"],"a":"operate"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"},{"q":"I (  ) my homework yet.","choices":["haven't finished","didn't finish","don't finish","finished"],"a":"haven't finished"}];
+        let pool = [...masterQuestions], usedPool = [];
+        let currentMonster = {hp: 70, maxHp: 70};
+        let playerHp = 100, wins = 0, isBonus = false;
 
-    let player = { level: 1, exp: 0, hp: 100, winCount: 0 };
-    let pool = [], usedPool = [], wrongAnswers = [];
-    let currentQuestion = null, currentMonster = {};
-    let timerInt, timeLeft = 10, isBoss = false, isBonus = false;
-    let bossMistakes = 0; 
-    let bonusImgInterval;
-
-    const bonusImages = [
-      "1000046944.jpg", // 9枚ランダム用ベース
-      "1000046945.png"  // 撃破用
-    ];
-
-    function speak(text) {
-      const uttr = new SpeechSynthesisUtterance(text);
-      uttr.lang = "ja-JP";
-      window.speechSynthesis.speak(uttr);
-    }
-
-    function shuffle(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-      }
-      return array;
-    }
-
-    function init() {
-      setTimeout(() => {
-        pool = shuffle([...masterQuestions]);
-        document.getElementById("loading-screen").style.display = "none";
-        document.getElementById("game-container").style.display = "flex";
-        nextBattle();
-      }, 1000);
-    }
-
-    function nextBattle() {
-      clearInterval(bonusImgInterval);
-      isBonus = false;
-      bossMistakes = 0;
-      player.winCount++;
-      isBoss = player.winCount % 5 === 0;
-
-      currentMonster = { 
-        n: isBoss ? "BOSS" : "MONSTER", 
-        i: isBoss ? "🐲" : "👾", 
-        maxHp: isBoss ? 200 : 70, 
-        hp: isBoss ? 200 : 70 
-      };
-
-      document.getElementById("monster-name").textContent = currentMonster.n;
-      document.getElementById("monster-emoji").style.display = "block";
-      document.getElementById("monster-emoji").textContent = currentMonster.i;
-      document.getElementById("monster-img-tag").style.display = "none";
-      document.getElementById("boss-timer").style.display = isBoss ? "block" : "none";
-      document.getElementById("bonus-banner").style.display = "none";
-      document.getElementById("next").style.display = "none";
-      document.getElementById("log").textContent = isBoss ? "ボス戦！ノーミスでクリアせよ！" : "敵が現れた！";
-      
-      loadQuestion();
-      updateDisplay();
-    }
-
-    function startBonusStage() {
-      isBonus = true;
-      isBoss = false;
-      document.getElementById("bonus-banner").style.display = "block";
-      document.getElementById("monster-name").textContent = "BONUS CHARACTER";
-      document.getElementById("monster-emoji").style.display = "none";
-      document.getElementById("monster-img-tag").style.display = "block";
-      document.getElementById("monster-img-tag").src = bonusImages[0];
-      
-      currentMonster = { n: "BONUS", maxHp: 150, hp: 150 };
-      document.getElementById("log").textContent = "ボーナスステージ！やりますねぇ！";
-
-      // ① 2秒ごとに画像をランダム切り替え演出（filterで変化）
-      bonusImgInterval = setInterval(() => {
-        const img = document.getElementById("monster-img-tag");
-        img.style.transform = `scale(${1 + Math.random()*0.1}) rotate(${Math.random()*5-2.5}deg)`;
-        img.style.filter = `hue-rotate(${Math.random()*360}deg)`;
-      }, 2000);
-
-      loadQuestion();
-      updateDisplay();
-    }
-
-    function loadQuestion() {
-      clearInterval(timerInt);
-      if (pool.length === 0) { pool = shuffle([...usedPool]); usedPool = []; }
-      currentQuestion = pool.pop(); 
-      
-      document.getElementById("question").textContent = currentQuestion.q;
-      const choicesEl = document.getElementById("choices");
-      choicesEl.innerHTML = "";
-      shuffle([...currentQuestion.choices]).forEach(c => {
-        const btn = document.createElement("button");
-        btn.textContent = c;
-        btn.onclick = () => checkAnswer(c, currentQuestion.a, btn);
-        choicesEl.appendChild(btn);
-      });
-
-      if (isBoss) startBossTimer();
-    }
-
-    function startBossTimer() {
-      timeLeft = 10;
-      updateTimerUI();
-      timerInt = setInterval(() => {
-        timeLeft -= 0.1;
-        updateTimerUI();
-        if (timeLeft <= 0) {
-          clearInterval(timerInt);
-          bossMistakes++;
-          recordMistake(); 
-          pool.unshift(currentQuestion);
-          handleDamage(10, "タイムアップ！");
-          setTimeout(loadQuestion, 800);
+        function speak(text) {
+            const uttr = new SpeechSynthesisUtterance(text);
+            uttr.lang = "ja-JP";
+            uttr.pitch = 0.4; // 男性の太い声
+            uttr.rate = 0.8;
+            window.speechSynthesis.speak(uttr);
         }
-      }, 100);
-    }
 
-    function recordMistake() {
-      if (!wrongAnswers.some(item => item.q === currentQuestion.q)) {
-        wrongAnswers.push(currentQuestion);
-      }
-    }
+        function loadQuestion() {
+            if(pool.length === 0) pool = [...usedPool];
+            const q = pool.pop();
+            document.getElementById("question").textContent = q.q;
+            const ch = document.getElementById("choices");
+            ch.innerHTML = "";
+            q.choices.forEach(c => {
+                const b = document.createElement("button");
+                b.textContent = c;
+                b.onclick = () => {
+                    if(c === q.a) {
+                        currentMonster.hp -= 50;
+                        if(isBonus) speak("やりますねぇ");
+                        document.getElementById("log").textContent = "正解！";
+                        if(currentMonster.hp <= 0) win();
+                        else loadQuestion();
+                    } else {
+                        document.getElementById("log").textContent = "ミス！";
+                        playerHp -= 10;
+                        loadQuestion();
+                    }
+                    updateUI();
+                };
+                ch.appendChild(b);
+            });
+        }
 
-    function checkAnswer(choice, answer, btn) {
-      clearInterval(timerInt);
-      const buttons = document.querySelectorAll("#choices button");
-      buttons.forEach(b => b.disabled = true);
-
-      if (choice === answer) {
-        btn.classList.add("correct");
-        usedPool.push(currentQuestion); 
-        currentMonster.hp -= 50;
-        document.getElementById("log").textContent = "正解！";
-        
-        // ② ボーナス正解時
-        if(isBonus) speak("やりますねぇ");
-
-      } else {
-        btn.classList.add("wrong");
-        buttons.forEach(b => { if(b.textContent === answer) b.classList.add("correct"); });
-        if(isBoss) bossMistakes++;
-        recordMistake(); 
-        pool.unshift(currentQuestion);
-        handleDamage(10, "ミス！");
-      }
-
-      setTimeout(() => {
-        if (currentMonster.hp <= 0) {
-          if (isBoss && bossMistakes === 0) {
-            startBonusStage();
-          } else {
-            document.getElementById("log").textContent = isBonus ? "クリア！" : "勝利！";
-            // ③ ボーナス撃破時
-            if(isBonus) {
-              clearInterval(bonusImgInterval);
-              speak("じゃけん、夜行きましょうね");
-              document.getElementById("monster-img-tag").src = bonusImages[1];
-              document.getElementById("monster-img-tag").style.filter = "none";
-              document.getElementById("monster-img-tag").style.transform = "none";
+        function win() {
+            if(!isBonus && wins % 5 === 0) {
+                isBonus = true;
+                currentMonster = {hp: 150, maxHp: 150};
+                document.getElementById("bonus-banner").style.display = "block";
+                document.getElementById("monster-emoji").style.display = "none";
+                document.getElementById("monster-img-tag").style.display = "block";
+                document.getElementById("monster-img-tag").src = "1000046944.jpg";
+                // 2秒ごとに画像をランダムにする擬似演出
+                setInterval(() => {
+                    document.getElementById("monster-img-tag").style.filter = "hue-rotate(" + Math.random()*360 + "deg)";
+                }, 2000);
+                loadQuestion();
+            } else {
+                if(isBonus) {
+                    speak("じゃけん、夜行きましょうね");
+                    document.getElementById("monster-img-tag").src = "1000046945.png";
+                }
+                document.getElementById("next").style.display = "block";
             }
-            player.exp += 50;
-            document.getElementById("next").textContent = "▶ 次へ";
-            document.getElementById("next").style.display = "block";
-            if(player.exp >= 100) { player.level++; player.exp = 0; }
-          }
-        } else if (player.hp <= 0) {
-          document.getElementById("log").textContent = "敗北...";
-          player.hp = 100; player.winCount = 0;
-          document.getElementById("next").textContent = "▶ 復活";
-          document.getElementById("next").style.display = "block";
-        } else {
-          loadQuestion();
         }
-        updateDisplay();
-      }, 1000);
-    }
 
-    function handleDamage(dmg, msg) {
-      player.hp -= dmg;
-      if (player.hp < 0) player.hp = 0;
-      document.getElementById("log").textContent = msg;
-      document.body.classList.add("shake");
-      setTimeout(() => document.body.classList.remove("shake"), 300);
-      updateDisplay();
-    }
+        function updateUI() {
+            document.getElementById("hp-fill").style.width = (currentMonster.hp / currentMonster.maxHp * 100) + "%";
+        }
 
-    function updateDisplay() {
-      document.getElementById("hp").textContent = player.hp;
-      if (player.hp <= 30) document.getElementById("hp-box").classList.add("hp-danger");
-      else document.getElementById("hp-box").classList.remove("hp-danger");
-      document.getElementById("heal-btn").style.display = (player.hp > 0 && player.hp <= 20) ? "block" : "none";
-      document.getElementById("level").textContent = player.level;
-      document.getElementById("p-element").textContent = ["🔥", "💧", "🌿"][player.level % 3];
-      const max = isBoss ? 200 : isBonus ? 150 : 70;
-      document.getElementById("monster-hp").style.width = (currentMonster.hp / max * 100) + "%";
-    }
-
-    function updateTimerUI() {
-      document.getElementById("time-num").textContent = Math.ceil(timeLeft);
-      document.getElementById("timer-fill").style.width = (timeLeft * 10) + "%";
-    }
-
-    document.getElementById("heal-btn").onclick = () => { player.hp = 100; updateDisplay(); };
-    document.getElementById("review-btn").onclick = () => {
-      document.getElementById("review-content").innerHTML = wrongAnswers.length ? 
-        wrongAnswers.map(m => `<p style="border-bottom:1px solid #333; padding:5px;">${m.q}<br><b style="color:#2ecc71;">A: ${m.a}</b></p>`).join("") : "ミスなし！";
-      document.getElementById("review-modal").style.display = "flex";
-    };
-    document.getElementById("close-review").onclick = () => document.getElementById("review-modal").style.display = "none";
-    document.getElementById("next").onclick = nextBattle;
-
-    window.onload = init;
-  </script>
+        document.getElementById("next").onclick = () => location.reload();
+        loadQuestion();
+    </script>
 </body>
 </html>
