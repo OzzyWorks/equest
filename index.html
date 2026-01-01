@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>ENGLISH QUEST - HIGH SCHOOL 300+ ULTIMATE</title>
+  <title>ENGLISH QUEST - 300+ BONUS EDITION</title>
   <style>
     html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; color: #fff; font-family: sans-serif; }
     body { display: flex; flex-direction: column; box-sizing: border-box; padding: 10px; }
@@ -11,7 +11,8 @@
     #game-container { display: none; flex: 1; flex-direction: column; }
     #game-screen { flex: 1; display: flex; flex-direction: column; background: linear-gradient(to bottom, #4facfe 0%, #00f2fe 40%, #228b22 40%, #006400 100%); border: 4px solid #fff; border-radius: 8px; position: relative; overflow: hidden; }
     #monster-area { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2; }
-    #monster-image { font-size: 8vh; filter: drop-shadow(4px 4px 0px rgba(0,0,0,0.5)); transition: transform 0.2s; }
+    #monster-image { font-size: 8vh; filter: drop-shadow(4px 4px 0px rgba(0,0,0,0.5)); transition: transform 0.2s; width: 180px; height: 180px; display: flex; align-items: center; justify-content: center; }
+    #monster-img-tag { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; border: 3px solid #fff; display: none; box-shadow: 0 0 20px rgba(255,255,255,0.5); }
     #boss-timer { display: none; position: absolute; top: 10px; right: 10px; background: #000; color: #ff4757; border: 2px solid #ff4757; padding: 5px; font-family: monospace; text-align: center; width: 70px; z-index: 10; }
     #timer-fill { height: 4px; background: #ff4757; width: 100%; margin-top: 2px; }
     #ui-area { flex: 1.5; display: flex; flex-direction: column; background: #000; border: 4px solid #fff; border-radius: 8px; margin-top: 8px; padding: 10px; z-index: 5; }
@@ -32,27 +33,34 @@
     .wrong { background: #e74c3c !important; }
     .shake { animation: shake 0.2s ease-in-out 2; }
     @keyframes shake { 0%, 100% { transform: translate(0,0); } 25% { transform: translate(-8px, 0); } 75% { transform: translate(8px, 0); } }
+    #bonus-banner { display: none; position: absolute; top: 20%; left: 50%; transform: translateX(-50%); font-size: 1.5rem; color: gold; font-weight: bold; text-shadow: 2px 2px #000; z-index: 20; animation: flash 0.5s infinite alternate; }
+    @keyframes flash { from { opacity: 1; } to { opacity: 0.5; } }
   </style>
 </head>
-<body id="main-body">
+<body>
 
   <div id="loading-screen">
     <div style="border: 4px solid #333; border-top: 4px solid #fff; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite;"></div>
     <p style="margin-top: 20px;">LOADING 300+ QUESTIONS...</p>
+    <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
   </div>
 
   <div id="review-modal">
-    <h2 style="font-size: 1.1rem; margin:0 0 10px 0;">📜 復習帳 (全エラー記録)</h2>
+    <h2 style="font-size: 1.1rem; margin:0 0 10px 0;">📜 復習帳</h2>
     <div id="review-content"></div>
     <button id="close-review">閉じる</button>
   </div>
 
   <div id="game-container">
     <div id="game-screen">
+      <div id="bonus-banner">✨ BONUS STAGE ✨</div>
       <div id="boss-timer">TIME:<span id="time-num">10</span><div id="timer-fill"></div></div>
       <div id="monster-area">
         <div id="monster-name-box" style="background:rgba(0,0,0,0.7); border:1px solid #fff; padding:2px 10px;"><span id="monster-name">...</span></div>
-        <div id="monster-image">🐾</div>
+        <div id="monster-image">
+          <span id="monster-emoji">👾</span>
+          <img id="monster-img-tag" src="" alt="Bonus">
+        </div>
         <div style="width:120px; height:8px; background:#444; border:1px solid #fff; margin-top:5px;">
           <div id="monster-hp" style="height:100%; background:#f00; width:100%; transition:width 0.2s;"></div>
         </div>
@@ -66,149 +74,116 @@
         <div>属性: <span id="p-element">🔥</span></div>
       </div>
       <div id="question"></div>
-      <button id="heal-btn">🌿 薬草を使う (HP全回復)</button>
+      <button id="heal-btn">🌿 薬草を使う</button>
       <div id="choices"></div>
       <div id="log"></div>
       <button id="next"></button>
-      <div id="review-btn">❌ 間違えた問題を確認する</div>
+      <div id="review-btn">❌ 間違えた問題を確認</div>
     </div>
   </div>
 
   <script>
-    // 高校1年生レベル 300問超 (文法100 + 単語・熟語200)
+    // 高校1年生レベル 300問超 (文法100 + 単語/熟語200) 
     const masterQuestions = [
-      // --- 文法セクション (代表例) ---
+      // 文法
       {q:"I (  ) my homework yet.", choices:["haven't finished","didn't finish","don't finish","finished"], a:"haven't finished"},
       {q:"Tokyo is the city (  ) I was born.", choices:["where","which","that","there"], a:"where"},
       {q:"If I (  ) a bird, I would fly.", choices:["were","am","was","be"], a:"were"},
       {q:"The letter (  ) by Mary yesterday.", choices:["was written","wrote","is written","writes"], a:"was written"},
       {q:"I'm looking forward to (  ) you.", choices:["seeing","see","seen","saw"], a:"seeing"},
-      // --- 単語増量セクション ---
+      {q:"He is (  ) than me.", choices:["taller","tallest","more tall","tall"], a:"taller"},
+      {q:"You (  ) go there alone. It's dangerous.", choices:["mustn't","don't have to","needn't","doesn't"], a:"mustn't"},
+      {q:"She (  ) lunch when I called her.", choices:["was eating","eats","ate","has eaten"], a:"was eating"},
+      {q:"I have (  ) been to Hokkaido.", choices:["never","ever","yet","already"], a:"never"},
+      {q:"This is the book (  ) I bought yesterday.", choices:["which","who","where","when"], a:"which"},
+      {q:"My brother (  ) English for three years.", choices:["has studied","studies","studied","is studying"], a:"has studied"},
+      {q:"I want (  ) something cold to drink.", choices:["to have","having","had","have"], a:"to have"},
+      {q:"It is difficult (  ) me to read this.", choices:["for","of","to","with"], a:"for"},
+      {q:"They (  ) each other since they were kids.", choices:["have known","know","knew","knowing"], a:"have known"},
+      {q:"You don't (  ) to hurry.", choices:["have","must","need","should"], a:"have"},
+      {q:"I'm too tired (  ) walk.", choices:["to","for","that","and"], a:"to"},
+      {q:"He told me (  ) be late.", choices:["not to","to not","don't","no"], a:"not to"},
+      {q:"I remember (  ) him before.", choices:["meeting","to meet","met","meet"], a:"meeting"},
+      {q:"The news made us (  ).", choices:["happy","happily","to be happy","happiness"], a:"happy"},
+      {q:"How (  ) have you been here?", choices:["long","often","many","much"], a:"long"},
+      // 単語
       {q:"「accept」の意味は？", choices:["受け入れる","拒絶する","期待する","準備する"], a:"受け入れる"},
       {q:"「achievement」の意味は？", choices:["達成","失敗","娯楽","状況"], a:"達成"},
       {q:"「admire」の意味は？", choices:["賞賛する","非難する","無視する","改善する"], a:"賞賛する"},
-      {q:"「adventure」の意味は？", choices:["冒険","安定","恐怖","歴史"], a:"冒険"},
       {q:"「affect」の意味は？", choices:["影響を与える","解決する","提供する","妨害する"], a:"影響を与える"},
-      {q:"「agreement」の意味は？", choices:["同意","反対","秘密","命令"], a:"同意"},
       {q:"「amount」の意味は？", choices:["量","質","形","色"], a:"量"},
       {q:"「analysis」の意味は？", choices:["分析","建設","破壊","感覚"], a:"分析"},
       {q:"「appearance」の意味は？", choices:["外見","性格","記憶","能力"], a:"外見"},
       {q:"「appointment」の意味は？", choices:["予約/約束","偶然","失望","成功"], a:"予約/約束"},
       {q:"「appropriate」の意味は？", choices:["適切な","不快な","複雑な","巨大な"], a:"適切な"},
       {q:"「artificial」の意味は？", choices:["人工の","自然の","伝統的な","最近の"], a:"人工の"},
-      {q:"「audience」の意味は？", choices:["聴衆","俳優","作者","選手"], a:"聴衆"},
       {q:"「avoid」の意味は？", choices:["避ける","直面する","招待する","繰り返す"], a:"避ける"},
-      {q:"「background」の意味は？", choices:["背景","未来","中心","目的"], a:"背景"},
-      {q:"「barrier」の意味は？", choices:["障壁","入り口","手段","機会"], a:"障壁"},
       {q:"「behavior」の意味は？", choices:["振る舞い","感情","知能","外見"], a:"振る舞い"},
       {q:"「belief」の意味は？", choices:["信念","疑い","恐怖","嘘"], a:"信念"},
       {q:"「capacity」の意味は？", choices:["収容能力","速度","距離","重さ"], a:"収容能力"},
-      {q:"「celebrate」の意味は？", choices:["祝う","嘆く","忘れる","隠す"], a:"祝う"},
       {q:"「challenge」の意味は？", choices:["挑戦","降伏","休息","安全"], a:"挑戦"},
-      {q:"「character」の意味は？", choices:["性格/登場人物","場所","時間","道具"], a:"性格/登場人物"},
-      {q:"「chemical」の意味は？", choices:["化学の","物理の","生物の","数学の"], a:"化学の"},
       {q:"「climate」の意味は？", choices:["気候","天気","景色","地質"], a:"気候"},
-      {q:"「combination」の意味は？", choices:["組み合わせ","分離","単純","単一"], a:"組み合わせ"},
       {q:"「comfortable」の意味は？", choices:["快適な","退屈な","苦しい","高価な"], a:"快適な"},
-      {q:"「communicate」の意味は？", choices:["伝える","隠す","壊す","盗む"], a:"伝える"},
-      {q:"「community」の意味は？", choices:["地域社会","個室","秘密","競争"], a:"地域社会"},
       {q:"「compare」の意味は？", choices:["比較する","同一視する","無視する","愛する"], a:"比較する"},
       {q:"「competition」の意味は？", choices:["競争","協力","平和","友情"], a:"競争"},
       {q:"「complain」の意味は？", choices:["不平を言う","褒める","感謝する","謝る"], a:"不平を言う"},
-      {q:"「complete」の意味は？", choices:["完全な","不足した","危険な","偽の"], a:"完全な"},
-      {q:"「condition」の意味は？", choices:["状態","変化","理由","場所"], a:"状態"},
       {q:"「confidence」の意味は？", choices:["自信","不安","怒り","驚き"], a:"自信"},
-      {q:"「connect」の意味は？", choices:["つなぐ","切る","捨てる","探す"], a:"つなぐ"},
       {q:"「consider」の意味は？", choices:["よく考える","無視する","決める","忘れる"], a:"よく考える"},
       {q:"「consumer」の意味は？", choices:["消費者","生産者","販売者","管理者"], a:"消費者"},
       {q:"「contain」の意味は？", choices:["含む","漏らす","除く","嫌う"], a:"含む"},
-      {q:"「contribution」の意味は？", choices:["貢献","妨害","浪費","沈黙"], a:"貢献"},
       {q:"「convenient」の意味は？", choices:["便利な","不便な","遠い","遅い"], a:"便利な"},
       {q:"「create」の意味は？", choices:["創造する","破壊する","消費する","隠す"], a:"創造する"},
-      {q:"「creative」の意味は？", choices:["独創的な","平凡な","真似の","古い"], a:"独創的な"},
       {q:"「critical」の意味は？", choices:["批判的な/重大な","安全な","些細な","陽気な"], a:"批判的な/重大な"},
-      {q:"「curiosity」の意味は？", choices:["好奇心","無関心","恐怖","怒り"], a:"好奇心"},
       {q:"「damage」の意味は？", choices:["損害","利益","回復","建設"], a:"損害"},
       {q:"「decision」の意味は？", choices:["決定","迷い","提案","質問"], a:"決定"},
-      {q:"「degree」の意味は？", choices:["程度/度","方向","理由","形"], a:"程度/度"},
       {q:"「delicious」の意味は？", choices:["おいしい","まずい","辛い","苦い"], a:"おいしい"},
-      {q:"「delivery」の意味は？", choices:["配達","注文","製造","販売"], a:"配達"},
       {q:"「demand」の意味は？", choices:["要求","供給","許可","拒否"], a:"要求"},
-      {q:"「description」の意味は？", choices:["描写","沈黙","事実","行動"], a:"描写"},
-      {q:"「deserve」の意味は？", choices:["〜に値する","〜を嫌う","〜を疑う","〜を忘れる"], a:"〜に値する"},
-      {q:"「destruction」の意味は？", choices:["破壊","建設","創造","維持"], a:"破壊"},
+      {q:"「describe」の意味は？", choices:["描写する","沈黙する","行動する","忘れる"], a:"描写する"},
+      {q:"「destroy」の意味は？", choices:["破壊する","建設する","創造する","維持する"], a:"破壊する"},
       {q:"「detail」の意味は？", choices:["詳細","全体","概要","省略"], a:"詳細"},
       {q:"「develop」の意味は？", choices:["発達させる","退化させる","止める","壊す"], a:"発達させる"},
       {q:"「difference」の意味は？", choices:["違い","共通","同じ","類似"], a:"違い"},
-      {q:"「difficult」の意味は？", choices:["難しい","簡単な","短い","速い"], a:"難しい"},
-      {q:"「direction」の意味は？", choices:["方向","距離","重さ","価格"], a:"方向"},
       {q:"「disappear」の意味は？", choices:["消える","現れる","残る","動く"], a:"消える"},
       {q:"「discovery」の意味は？", choices:["発見","紛失","秘密","伝統"], a:"発見"},
       {q:"「discuss」の意味は？", choices:["議論する","同意する","黙る","歌う"], a:"議論する"},
-      {q:"「display」の意味は？", choices:["展示する","隠す","壊す","洗う"], a:"展示する"},
       {q:"「distance」の意味は？", choices:["距離","時間","速さ","温度"], a:"距離"},
-      {q:"「distinct」の意味は？", choices:["はっきり異なる","似ている","曖昧な","共通の"], a:"はっきり異なる"},
       {q:"「domestic」の意味は？", choices:["国内の/家庭の","外国の","野生の","宇宙の"], a:"国内の/家庭の"},
-      {q:"「dominate」の意味は？", choices:["支配する","従う","逃げる","助ける"], a:"支配する"},
       {q:"「economy」の意味は？", choices:["経済","政治","宗教","科学"], a:"経済"},
       {q:"「effort」の意味は？", choices:["努力","怠慢","休息","遊び"], a:"努力"},
-      {q:"「election」の意味は？", choices:["選挙","任命","辞任","戦争"], a:"選挙"},
-      {q:"「element」の意味は？", choices:["要素","全体","物体","空間"], a:"要素"},
-      {q:"「embarrassed」の意味は？", choices:["当惑した","誇らしい","怒った","幸せな"], a:"当惑した"},
       {q:"「emergency」の意味は？", choices:["緊急事態","日常生活","休暇","儀式"], a:"緊急事態"},
-      {q:"「emotion」の意味は？", choices:["感情","思考","知覚","行動"], a:"感情"},
-      {q:"「emphasis」の意味は？", choices:["強調","無視","省略","軽蔑"], a:"強調"},
       {q:"「encourage」の意味は？", choices:["勇気づける","落胆させる","止める","驚かす"], a:"勇気づける"},
-      {q:"「energy」の意味は？", choices:["エネルギー","怠惰","静止","物質"], a:"エネルギー"},
       {q:"「entire」の意味は？", choices:["全体の","一部の","壊れた","偽の"], a:"全体の"},
       {q:"「environment」の意味は？", choices:["環境","政府","期待","改善"], a:"環境"},
-      {q:"「escape」の意味は？", choices:["逃げる","入る","留まる","待つ"], a:"逃げる"},
       {q:"「essential」の意味は？", choices:["不可欠な","些細な","余計な","偽の"], a:"不可欠な"},
-      {q:"「establish」の意味は？", choices:["設立する","破壊する","去る","忘れる"], a:"設立する"},
       {q:"「evidence」の意味は？", choices:["証拠","推測","秘密","噂"], a:"証拠"},
-      {q:"「exchange」の意味は？", choices:["交換する","保持する","捨てる","壊す"], a:"交換する"},
-      {q:"「excite」の意味は？", choices:["興奮させる","落ち着かせる","退屈させる","眠らせる"], a:"興奮させる"},
-      {q:"「existence」の意味は？", choices:["存在","消滅","想像","死"], a:"存在"},
-      {q:"「expand」の意味は？", choices:["拡大する","縮小する","止まる","壊す"], a:"拡大する"},
-      {q:"「expectation」の意味は？", choices:["期待","失望","過去","記憶"], a:"期待"},
       {q:"「experience」の意味は？", choices:["経験","知識","夢","空想"], a:"経験"},
-      {q:"「explanation」の意味は？", choices:["説明","質問","沈黙","嘘"], a:"説明"},
+      {q:"「explain」の意味は？", choices:["説明する","質問する","沈黙する","嘘をつく"], a:"説明する"},
       {q:"「express」の意味は？", choices:["表現する","隠す","聞く","読む"], a:"表現する"},
       {q:"「facility」の意味は？", choices:["施設","自然","困難","感情"], a:"施設"},
       {q:"「factor」の意味は？", choices:["要因","結果","偶然","全体"], a:"要因"},
-      {q:"「fashionable」の意味は？", choices:["流行の","時代遅れの","安い","普通の"], a:"流行の"},
       {q:"「favorite」の意味は？", choices:["お気に入りの","嫌いな","普通の","古い"], a:"お気に入りの"},
-      {q:"「feature」の意味は？", choices:["特徴","全体","欠点","過去"], a:"特徴"},
       {q:"「flexible」の意味は？", choices:["柔軟な","硬い","壊れやすい","重い"], a:"柔軟な"},
       {q:"「focus」の意味は？", choices:["集中する","散らす","無視する","眠る"], a:"集中する"},
       {q:"「foreign」の意味は？", choices:["外国の","国内の","地元の","公式の"], a:"外国の"},
       {q:"「frequent」の意味は？", choices:["頻繁な","まれな","一度きりの","遅い"], a:"頻繁な"},
-      {q:"「frightened」の意味は？", choices:["怖がった","喜んだ","退屈した","誇らしい"], a:"怖がった"},
-      {q:"「function」の意味は？", choices:["機能","故障","娯楽","外見"], a:"機能"},
       {q:"「generation」の意味は？", choices:["世代","個人","瞬間","永遠"], a:"世代"},
-      {q:"「gesture」の意味は？", choices:["身振り","沈黙","叫び","思考"], a:"身振り"},
       {q:"「global」の意味は？", choices:["地球規模の","地元の","狭い","個人的な"], a:"地球規模の"},
       {q:"「government」の意味は？", choices:["政府","企業","家族","個人"], a:"政府"},
       {q:"「gradually」の意味は？", choices:["徐々に","突然","すぐに","決して"], a:"徐々に"},
-      {q:"「graduate」の意味は？", choices:["卒業する","入学する","中退する","欠席する"], a:"卒業する"},
       {q:"「habit」の意味は？", choices:["習慣","偶然","才能","希望"], a:"習慣"},
       {q:"「heritage」の意味は？", choices:["遺産","負債","未来","流行"], a:"遺産"},
       {q:"「hesitate」の意味は？", choices:["ためらう","決心する","急ぐ","叫ぶ"], a:"ためらう"},
-      {q:"「horizon」の意味は？", choices:["地平線","頂上","中心","底"], a:"地平線"},
-      {q:"「identity」の意味は？", choices:["身元/個性","名前","秘密","嘘"], a:"身元/個性"},
+      {q:"「identify」の意味は？", choices:["特定する/身元確認","隠す","忘れる","疑う"], a:"特定する/身元確認"},
       {q:"「ignore」の意味は？", choices:["無視する","注目する","助ける","祝う"], a:"無視する"},
-      {q:"「image」の意味は？", choices:["像/画像","事実","物体","音"], a:"像/画像"},
-      {q:"「imagination」の意味は？", choices:["想像力","現実","知識","感覚"], a:"想像力"},
+      {q:"「imagine」の意味は？", choices:["想像する","現実を見る","知識を得る","感じる"], a:"想像する"},
       {q:"「immediate」の意味は？", choices:["即座の","遅れた","遠い","永遠の"], a:"即座の"},
       {q:"「impact」の意味は？", choices:["衝撃/影響","静止","平和","沈黙"], a:"衝撃/影響"},
       {q:"「improve」の意味は？", choices:["向上させる","悪化させる","止める","壊す"], a:"向上させる"},
       {q:"「independent」の意味は？", choices:["独立した","依存した","弱い","共通の"], a:"独立した"},
       {q:"「influence」の意味は？", choices:["影響","静寂","孤立","拒絶"], a:"影響"},
       {q:"「information」の意味は？", choices:["情報","嘘","沈黙","感覚"], a:"情報"},
-      {q:"「ingredient」の意味は？", choices:["材料","製品","料理","道具"], a:"材料"},
       {q:"「injury」の意味は？", choices:["怪我","健康","勝利","成功"], a:"怪我"},
       {q:"「innocent」の意味は？", choices:["無実の","有罪の","邪悪な","賢い"], a:"無実の"},
-      {q:"「inspiration」の意味は？", choices:["霊感/刺激","退屈","絶望","沈黙"], a:"霊感/刺激"},
       {q:"「intelligence」の意味は？", choices:["知能","怠慢","感情","筋肉"], a:"知能"},
       {q:"「intention」の意味は？", choices:["意図","偶然","過去","結果"], a:"意図"},
       {q:"「interrupt」の意味は？", choices:["中断させる","続ける","助ける","祝う"], a:"中断させる"},
@@ -218,22 +193,17 @@
       {q:"「judge」の意味は？", choices:["判断する","従う","遊ぶ","歌う"], a:"判断する"},
       {q:"「knowledge」の意味は？", choices:["知識","無知","秘密","噂"], a:"知識"},
       {q:"「landscape」の意味は？", choices:["風景","都会","建物","地図"], a:"風景"},
-      {q:"「language」の意味は？", choices:["言語","数学","音楽","体育"], a:"言語"},
       {q:"「lecture」の意味は？", choices:["講義","遊び","休憩","食事"], a:"講義"},
       {q:"「limit」の意味は？", choices:["制限","無限","自由","拡大"], a:"制限"},
-      {q:"「location」の意味は？", choices:["場所","時間","理由","方法"], a:"場所"},
       {q:"「maintain」の意味は？", choices:["維持する","壊す","変える","捨てる"], a:"維持する"},
       {q:"「major」の意味は？", choices:["主要な","些細な","珍しい","古い"], a:"主要な"},
       {q:"「manage」の意味は？", choices:["どうにかやり遂げる","失敗する","諦める","逃げる"], a:"どうにかやり遂げる"},
-      {q:"「manner」の意味は？", choices:["方法/行儀","外見","名前","理由"], a:"方法/行儀"},
       {q:"「material」の意味は？", choices:["材料/物質","精神","空気","音"], a:"材料/物質"},
       {q:"「measure」の意味は？", choices:["測る","推測する","見る","聞く"], a:"測る"},
       {q:"「mention」の意味は？", choices:["言及する","黙る","隠す","忘れる"], a:"言及する"},
-      {q:"「message」の意味は？", choices:["伝言","嘘","秘密","雑談"], a:"伝言"},
       {q:"「method」の意味は？", choices:["方法","偶然","結果","目的"], a:"方法"},
       {q:"「minimum」の意味は？", choices:["最小の","最大の","平均の","無限の"], a:"最小の"},
       {q:"「movement」の意味は？", choices:["動き","静止","空間","音"], a:"動き"},
-      {q:"「nation」の意味は？", choices:["国家","都会","個人","家族"], a:"国家"},
       {q:"「negative」の意味は？", choices:["否定的な","肯定的な","明るい","活発な"], a:"否定的な"},
       {q:"「nervous」の意味は？", choices:["緊張して","落ち着いて","眠くて","怒って"], a:"緊張して"},
       {q:"「notice」の意味は？", choices:["気づく","無視する","忘れる","眠る"], a:"気づく"},
@@ -255,7 +225,6 @@
       {q:"「physical」の意味は？", choices:["身体的な","精神的な","知的な","感情的な"], a:"身体的な"},
       {q:"「pleasant」の意味は？", choices:["心地よい","不快な","怖い","悲しい"], a:"心地よい"},
       {q:"「population」の意味は？", choices:["人口","人気","汚染","平和"], a:"人口"},
-      {q:"「position」の意味は？", choices:["位置","時間","理由","価格"], a:"位置"},
       {q:"「positive」の意味は？", choices:["肯定的な","否定的な","暗い","悲観的な"], a:"肯定的な"},
       {q:"「possibility」の意味は？", choices:["可能性","不可能","確信","事実"], a:"可能性"},
       {q:"「poverty」の意味は？", choices:["貧困","富","健康","成功"], a:"貧困"},
@@ -359,7 +328,7 @@
       {q:"「weather」の意味は？", choices:["天気","気候","景色","地質"], a:"天気"},
       {q:"「wildlife」の意味は？", choices:["野生生物","ペット","家畜","人間"], a:"野生生物"},
       {q:"「wonder」の意味は？", choices:["不思議に思う","確信する","知っている","眠る"], a:"不思議に思う"},
-      // --- 熟語増量セクション ---
+      // 熟語
       {q:"「take part (  )」で「参加する」", choices:["in","on","at","to"], a:"in"},
       {q:"「depend (  )」で「〜次第である」", choices:["on","at","to","in"], a:"on"},
       {q:"「look forward (  )」で「〜を楽しみに待つ」", choices:["to","at","for","in"], a:"to"},
@@ -415,7 +384,6 @@
       {q:"「instead (  )」で「〜の代わりに」", choices:["of","for","to","in"], a:"of"},
       {q:"「in front (  )」で「〜の正面に」", choices:["of","for","at","to"], a:"of"},
       {q:"「out (  )」で「〜の外へ」", choices:["of","for","to","at"], a:"of"},
-      {q:"「because (  )」で「〜のおかげで/〜のせいで」", choices:["of","for","to","at"], a:"of"},
       {q:"「due (  )」で「〜のために/〜のせいで」", choices:["to","for","of","at"], a:"to"},
       {q:"「according (  )」で「〜によれば」", choices:["to","for","of","at"], a:"to"},
       {q:"「by means (  )」で「〜によって（手段）」", choices:["of","for","to","at"], a:"of"},
@@ -450,26 +418,36 @@
       {q:"「turn (  )」で「〜を拒む」", choices:["down","on","at","to"], a:"down"},
       {q:"「put (  )」で「〜を延期する」", choices:["off","on","at","to"], a:"off"},
       {q:"「call (  )」で「〜を中止する」", choices:["off","on","at","to"], a:"off"},
-      {q:"「give (  )」で「〜を諦める」", choices:["up","on","at","to"], a:"up"},
+      {q:"[give (  )」で「〜を諦める」", choices:["up","on","at","to"], a:"up"},
       {q:"「look (  )」で「〜を調べる」", choices:["into","for","at","after"], a:"into"},
       {q:"「come (  ) with」で「〜を思いつく」", choices:["up","on","at","to"], a:"up"},
       {q:"「keep (  ) with」で「〜に遅れずについていく」", choices:["up","on","at","to"], a:"up"},
       {q:"「catch (  ) with」で「〜に追いつく」", choices:["up","on","at","to"], a:"up"},
       {q:"「get (  ) with」で「〜と仲良くやる」", choices:["along","on","at","to"], a:"along"},
-      {q:"「take (  ) for」で「〜を...と間違える」", choices:["A","B","C","D"], a:"A"}, // AをBと間違える
       {q:"「ask (  ) a favor」で「お願いをする」", choices:["for","to","at","of"], a:"for"},
-      {q:"「depend (  ) it that...」で「...ということを信じる」", choices:["upon","on","at","to"], a:"upon"},
       {q:"「cannot help (  )」で「〜せずにはいられない」", choices:["doing","to do","done","do"], a:"doing"},
       {q:"「It goes without (  ) that...」で「...は言うまでもない」", choices:["saying","to say","said","say"], a:"saying"},
       {q:"「look (  ) on」で「〜を軽蔑する」", choices:["down","up","at","to"], a:"down"},
       {q:"「look (  ) to」で「〜を尊敬する」", choices:["up","down","at","to"], a:"up"}
     ];
 
-    // ロジック部分
     let player = { level: 1, exp: 0, hp: 100, winCount: 0 };
     let pool = [], usedPool = [], wrongAnswers = [];
     let currentQuestion = null, currentMonster = {};
-    let timerInt, timeLeft = 10, isBoss = false;
+    let timerInt, timeLeft = 10, isBoss = false, isBonus = false;
+    let bossMistakes = 0; 
+    let bonusImgInterval;
+
+    const bonusImages = [
+      "1000046944.jpg", // 9枚ランダム用ベース
+      "1000046945.png"  // 撃破用
+    ];
+
+    function speak(text) {
+      const uttr = new SpeechSynthesisUtterance(text);
+      uttr.lang = "ja-JP";
+      window.speechSynthesis.speak(uttr);
+    }
 
     function shuffle(array) {
       for (let i = array.length - 1; i > 0; i--) {
@@ -485,23 +463,55 @@
         document.getElementById("loading-screen").style.display = "none";
         document.getElementById("game-container").style.display = "flex";
         nextBattle();
-      }, 800);
+      }, 1000);
     }
 
     function nextBattle() {
+      clearInterval(bonusImgInterval);
+      isBonus = false;
+      bossMistakes = 0;
       player.winCount++;
       isBoss = player.winCount % 5 === 0;
+
       currentMonster = { 
-        n: isBoss ? "BOSS: ドラゴンレジェンド" : "MONSTER", 
+        n: isBoss ? "BOSS" : "MONSTER", 
         i: isBoss ? "🐲" : "👾", 
-        maxHp: isBoss ? 250 : 70, 
-        hp: isBoss ? 250 : 70 
+        maxHp: isBoss ? 200 : 70, 
+        hp: isBoss ? 200 : 70 
       };
+
       document.getElementById("monster-name").textContent = currentMonster.n;
-      document.getElementById("monster-image").textContent = currentMonster.i;
+      document.getElementById("monster-emoji").style.display = "block";
+      document.getElementById("monster-emoji").textContent = currentMonster.i;
+      document.getElementById("monster-img-tag").style.display = "none";
       document.getElementById("boss-timer").style.display = isBoss ? "block" : "none";
+      document.getElementById("bonus-banner").style.display = "none";
       document.getElementById("next").style.display = "none";
-      document.getElementById("log").textContent = isBoss ? "伝説のボスが目覚めた！" : "敵が現れた！";
+      document.getElementById("log").textContent = isBoss ? "ボス戦！ノーミスでクリアせよ！" : "敵が現れた！";
+      
+      loadQuestion();
+      updateDisplay();
+    }
+
+    function startBonusStage() {
+      isBonus = true;
+      isBoss = false;
+      document.getElementById("bonus-banner").style.display = "block";
+      document.getElementById("monster-name").textContent = "BONUS CHARACTER";
+      document.getElementById("monster-emoji").style.display = "none";
+      document.getElementById("monster-img-tag").style.display = "block";
+      document.getElementById("monster-img-tag").src = bonusImages[0];
+      
+      currentMonster = { n: "BONUS", maxHp: 150, hp: 150 };
+      document.getElementById("log").textContent = "ボーナスステージ！やりますねぇ！";
+
+      // ① 2秒ごとに画像をランダム切り替え演出（filterで変化）
+      bonusImgInterval = setInterval(() => {
+        const img = document.getElementById("monster-img-tag");
+        img.style.transform = `scale(${1 + Math.random()*0.1}) rotate(${Math.random()*5-2.5}deg)`;
+        img.style.filter = `hue-rotate(${Math.random()*360}deg)`;
+      }, 2000);
+
       loadQuestion();
       updateDisplay();
     }
@@ -532,9 +542,10 @@
         updateTimerUI();
         if (timeLeft <= 0) {
           clearInterval(timerInt);
+          bossMistakes++;
           recordMistake(); 
           pool.unshift(currentQuestion);
-          handleDamage(10, "タイムアップ！10ダメージ！");
+          handleDamage(10, "タイムアップ！");
           setTimeout(loadQuestion, 800);
         }
       }, 100);
@@ -554,27 +565,44 @@
       if (choice === answer) {
         btn.classList.add("correct");
         usedPool.push(currentQuestion); 
-        currentMonster.hp -= 35;
-        document.getElementById("log").textContent = "正解！ 攻撃！";
+        currentMonster.hp -= 50;
+        document.getElementById("log").textContent = "正解！";
+        
+        // ② ボーナス正解時
+        if(isBonus) speak("やりますねぇ");
+
       } else {
         btn.classList.add("wrong");
         buttons.forEach(b => { if(b.textContent === answer) b.classList.add("correct"); });
+        if(isBoss) bossMistakes++;
         recordMistake(); 
         pool.unshift(currentQuestion);
-        handleDamage(10, "ミス！10ダメージ！");
+        handleDamage(10, "ミス！");
       }
 
       setTimeout(() => {
         if (currentMonster.hp <= 0) {
-          document.getElementById("log").textContent = "勝利！";
-          player.exp += isBoss ? 100 : 40;
-          document.getElementById("next").textContent = "▶ 次のバトルへ";
-          document.getElementById("next").style.display = "block";
-          if(player.exp >= 100) { player.level++; player.exp = 0; }
+          if (isBoss && bossMistakes === 0) {
+            startBonusStage();
+          } else {
+            document.getElementById("log").textContent = isBonus ? "クリア！" : "勝利！";
+            // ③ ボーナス撃破時
+            if(isBonus) {
+              clearInterval(bonusImgInterval);
+              speak("じゃけん、夜行きましょうね");
+              document.getElementById("monster-img-tag").src = bonusImages[1];
+              document.getElementById("monster-img-tag").style.filter = "none";
+              document.getElementById("monster-img-tag").style.transform = "none";
+            }
+            player.exp += 50;
+            document.getElementById("next").textContent = "▶ 次へ";
+            document.getElementById("next").style.display = "block";
+            if(player.exp >= 100) { player.level++; player.exp = 0; }
+          }
         } else if (player.hp <= 0) {
-          document.getElementById("log").textContent = "全滅しました...";
+          document.getElementById("log").textContent = "敗北...";
           player.hp = 100; player.winCount = 0;
-          document.getElementById("next").textContent = "▶ 復活する";
+          document.getElementById("next").textContent = "▶ 復活";
           document.getElementById("next").style.display = "block";
         } else {
           loadQuestion();
@@ -587,20 +615,20 @@
       player.hp -= dmg;
       if (player.hp < 0) player.hp = 0;
       document.getElementById("log").textContent = msg;
-      document.getElementById("main-body").classList.add("shake");
-      setTimeout(() => document.getElementById("main-body").classList.remove("shake"), 300);
+      document.body.classList.add("shake");
+      setTimeout(() => document.body.classList.remove("shake"), 300);
       updateDisplay();
     }
 
     function updateDisplay() {
-      const hpText = document.getElementById("hp");
-      hpText.textContent = player.hp;
-      if (player.hp <= 30) hpText.parentElement.classList.add("hp-danger");
-      else hpText.parentElement.classList.remove("hp-danger");
+      document.getElementById("hp").textContent = player.hp;
+      if (player.hp <= 30) document.getElementById("hp-box").classList.add("hp-danger");
+      else document.getElementById("hp-box").classList.remove("hp-danger");
       document.getElementById("heal-btn").style.display = (player.hp > 0 && player.hp <= 20) ? "block" : "none";
       document.getElementById("level").textContent = player.level;
       document.getElementById("p-element").textContent = ["🔥", "💧", "🌿"][player.level % 3];
-      document.getElementById("monster-hp").style.width = (currentMonster.hp / currentMonster.maxHp * 100) + "%";
+      const max = isBoss ? 200 : isBonus ? 150 : 70;
+      document.getElementById("monster-hp").style.width = (currentMonster.hp / max * 100) + "%";
     }
 
     function updateTimerUI() {
@@ -608,21 +636,15 @@
       document.getElementById("timer-fill").style.width = (timeLeft * 10) + "%";
     }
 
-    document.getElementById("heal-btn").onclick = () => {
-      player.hp = 100;
-      document.getElementById("log").textContent = "薬草で全回復！";
-      updateDisplay();
-    };
-
+    document.getElementById("heal-btn").onclick = () => { player.hp = 100; updateDisplay(); };
     document.getElementById("review-btn").onclick = () => {
-      const content = document.getElementById("review-content");
-      content.innerHTML = wrongAnswers.length === 0 ? "<p>ミスなし！完璧！</p>" : 
-        wrongAnswers.map((item, i) => `<div style="margin-bottom:12px; border-bottom:1px solid #333; padding-bottom:5px;">${i+1}. ${item.q}<br><b style="color:#2ecc71;">正解: ${item.a}</b></div>`).join("");
+      document.getElementById("review-content").innerHTML = wrongAnswers.length ? 
+        wrongAnswers.map(m => `<p style="border-bottom:1px solid #333; padding:5px;">${m.q}<br><b style="color:#2ecc71;">A: ${m.a}</b></p>`).join("") : "ミスなし！";
       document.getElementById("review-modal").style.display = "flex";
     };
-
     document.getElementById("close-review").onclick = () => document.getElementById("review-modal").style.display = "none";
     document.getElementById("next").onclick = nextBattle;
+
     window.onload = init;
   </script>
 </body>
