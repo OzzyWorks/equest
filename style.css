@@ -14,9 +14,9 @@ body {
 }
 #monster-hp {
   height: 100%; background: #ff4757; width: 100%;
-  transition: width 0.3s ease, background 0.3s;
+  transition: width 0.3s ease;
 }
-#question { font-size: 1.1em; margin: 15px; min-height: 60px; line-height: 1.5; color: #feca57; }
+#question { font-size: 1.2em; margin: 15px; min-height: 60px; line-height: 1.5; color: #feca57; }
 #choices button {
   display: block; width: 90%; margin: 8px auto; padding: 12px;
   font-size: 1em; border-radius: 8px; border: none; cursor: pointer;
@@ -26,8 +26,6 @@ body {
 .wrong { background: #f44336 !important; color: white !important; }
 #log { margin: 10px; min-height: 40px; font-weight: bold; color: #1dd1a1; }
 #next {
-  margin-top: 10px; padding: 12px 30px; font-size: 1.1em;
+  padding: 12px 30px; font-size: 1.1em;
   background: #ff9f43; border: none; border-radius: 25px; color: white; cursor: pointer;
 }
-/* ボス戦用のスタイル */
-.boss-mode { background: #4834d4 !important; border: 3px solid #eb4d4b; }
