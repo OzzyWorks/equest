@@ -210,7 +210,7 @@
       } else {
         if (isBoss) bossMistakes++;
         missList.push({q: currentQ.q, a: currentQ.a, user: choice});
-        damagePlayer(15); document.getElementById("log").textContent = "つう恨の ミス！";
+        damagePlayer(10); document.getElementById("log").textContent = "つう恨の ミス！";
         pool.unshift(currentQ);
       }
       updateUI();
@@ -235,7 +235,7 @@
       } else {
         if (isBonus) { 
           clearInterval(bonusImgInterval);
-          speak("じゃけん、夜行きましょうね"); 
+          speak("イクイク イイヨコイヨ。イキスギィィィィィィィィィィィィ"); 
           document.getElementById("bonus-image-view").style.display = "none";
           const vic = document.getElementById("victory-image-view");
           vic.style.display = "block"; vic.src = "1000046945.png";
