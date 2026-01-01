@@ -40,7 +40,7 @@
     #next-area { display: none; text-align: center; }
     #next { padding: 12px; font-weight: bold; border-radius: 5px; cursor: pointer; margin: 5px; border: 2px solid #fff; background: #fff; color: #000; width: 80%; }
 
-    /* モーダル共通設定 */
+    /* モーダル */
     #difficulty-modal, #review-modal { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000; padding: 20px; box-sizing: border-box; border: 4px solid gold; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
     .diff-btn { width: 80%; padding: 20px; margin: 10px; font-size: 1.2rem; font-weight: bold; border: 3px solid #fff; background: #000; color: #fff; cursor: pointer; }
     .review-item { margin-bottom: 15px; border-bottom: 1px solid #444; padding-bottom: 10px; text-align: left; width: 100%; }
@@ -61,7 +61,7 @@
         <button class="diff-btn" onclick="selectDifficulty('questions2.js')" style="border-color: #e74c3c; color: #e74c3c;">応用編</button>
       </div>
       <div id="loading-msg" style="display: none;">
-        <p style="color: #fff; font-size: 1.2rem; animation: flash 0.5s infinite alternate;">データを よみこんでいます...</p>
+        <p style="color: #fff; font-size: 1.2rem; animation: flash 0.5s infinite alternate;">じゅんびちゅう...</p>
       </div>
     </div>
   </div>
@@ -122,37 +122,53 @@
       window.speechSynthesis.speak(uttr);
     }
 
+    // ★重要修正：読み込み失敗回避ロジック
     function selectDifficulty(fileName) {
-      document.getElementById("diff-buttons").style.display = "none";
-      document.getElementById("diff-title").textContent = "じゅんびちゅう...";
-      document.getElementById("loading-msg").style.display = "block";
+      const buttons = document.getElementById("diff-buttons");
+      const loading = document.getElementById("loading-msg");
+      const title = document.getElementById("diff-title");
 
-      // 既存データの破棄
-      window.masterQuestions = undefined;
+      buttons.style.display = "none";
+      loading.style.display = "block";
+      title.textContent = "データをよみこみちゅう...";
+
+      // 以前のスクリプトタグがあれば削除
+      const oldScript = document.getElementById('question-script');
+      if (oldScript) oldScript.remove();
 
       const script = document.createElement('script');
-      script.src = fileName;
+      script.id = 'question-script';
+      // キャッシュ回避のためタイムスタンプを付与
+      script.src = fileName + "?t=" + new Date().getTime();
+
       script.onload = () => {
-        if (typeof masterQuestions !== 'undefined' && masterQuestions.length > 0) {
+        // masterQuestionsが定義されているか、グローバル変数を確認
+        if (typeof window.masterQuestions !== 'undefined') {
+          console.log("Load Success: ", fileName);
           setTimeout(() => {
             document.getElementById("difficulty-modal").style.display = "none";
             init();
-          }, 800);
+          }, 500);
         } else {
-          showError("データが見つかりません。ファイル名を確認してください。");
+          handleLoadError("データが正しく読み込めませんでした。");
         }
       };
-      script.onerror = () => showError("ファイルの読み込みに失敗しました。");
+
+      script.onerror = () => {
+        handleLoadError("ファイル(" + fileName + ")が見つからないか、アクセスが拒否されました。");
+      };
+
       document.body.appendChild(script);
     }
 
-    function showError(msg) {
+    function handleLoadError(msg) {
       alert(msg);
       document.getElementById("diff-buttons").style.display = "block";
       document.getElementById("loading-msg").style.display = "none";
       document.getElementById("diff-title").textContent = "ぼうけんの 難易度";
     }
 
+    // --- 以降、既存ロジック ---
     function init() {
       pool = [...masterQuestions].sort(() => Math.random() - 0.5);
       startBattle();
