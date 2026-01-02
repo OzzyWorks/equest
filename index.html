@@ -8,17 +8,11 @@
     html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; color: #fff; font-family: 'Courier New', Consolas, monospace; }
     body { display: flex; flex-direction: column; box-sizing: border-box; padding: 10px; position: relative; }
 
-    /* ① バージョン表示：はっきり見えるよう白文字＋黒縁取りに変更 */
+    /* ① バージョン表示 */
     #version-tag { 
-      position: absolute; 
-      top: 5px; 
-      right: 10px; 
-      font-size: 0.8rem; 
-      color: #fff; 
+      position: absolute; top: 5px; right: 10px; font-size: 0.8rem; color: #fff; 
       text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
-      z-index: 2000; 
-      pointer-events: none; 
-      font-weight: bold;
+      z-index: 2000; pointer-events: none; font-weight: bold;
     }
 
     #game-screen { 
@@ -30,21 +24,54 @@
     #monster-area { 
       flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; 
       background: radial-gradient(ellipse at bottom, #228b22 0%, rgba(0,0,0,0) 70%);
+      position: relative;
     }
     
     #monster-image-box { width: 180px; height: 180px; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
     #monster-emoji { font-size: 100px; filter: drop-shadow(0 0 10px #000); }
     #monster-name { background: rgba(0,0,0,0.7); padding: 2px 10px; border: 1px solid #fff; font-size: 0.9rem; margin-bottom: 5px; color: #fff; }
 
+    /* クリティカル：斬撃エフェクト */
+    .slash {
+      position: absolute; width: 5px; height: 250px; background: yellow;
+      top: 50%; left: 50%; z-index: 150;
+      transform: translate(-50%, -50%) rotate(45deg) scaleY(0);
+      box-shadow: 0 0 15px yellow;
+      animation: slash-ani 0.3s ease-out forwards;
+    }
+    @keyframes slash-ani {
+      0% { transform: translate(-50%, -50%) rotate(45deg) scaleY(0); opacity: 1; }
+      100% { transform: translate(-50%, -50%) rotate(45deg) scaleY(1.5); opacity: 0; }
+    }
+
+    /* クリティカル：文字エフェクト */
+    .critical-text {
+      position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);
+      color: yellow; font-size: 2rem; font-weight: bold; font-style: italic;
+      text-shadow: 3px 3px 0 #000; z-index: 160;
+      white-space: nowrap; animation: crit-text-ani 0.5s ease-out forwards;
+      pointer-events: none;
+    }
+    @keyframes crit-text-ani {
+      0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+      50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+      100% { transform: translate(-50%, -60%) scale(1); opacity: 0; }
+    }
+
+    /* 背景の青揺れ */
+    .flash-blue { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 100, 255, 0.4); pointer-events: none; z-index: 100; animation: fade-out 0.5s forwards; }
+    @keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
+    .critical-shake { animation: c-shake 0.1s ease-in-out infinite; }
+    @keyframes c-shake { 0%, 100% { transform: translate(0,0); } 25% { transform: translate(-15px, 15px); } 75% { transform: translate(15px, -15px); } }
+
+    /* 以下、基本スタイル維持 */
     #bonus-image-view { display: none; width: 100%; height: 100%; background-image: url('1000046944.jpg'); background-size: 300% 300%; background-repeat: no-repeat; border: 4px solid #ffd700; border-radius: 12px; }
     #victory-image-view { display: none; width: 100%; height: 100%; object-fit: contain; background: #fff; border-radius: 12px; }
     #boss-timer { display: none; position: absolute; top: 10px; right: 10px; background: #000; color: #ff4757; border: 2px solid #fff; padding: 5px; width: 80px; text-align: center; z-index: 10; }
     #timer-fill { height: 4px; background: #ff4757; width: 100%; margin-top: 2px; }
-
     #ui-area { flex: 1.5; display: flex; flex-direction: column; background: #000; border: 4px solid #fff; border-radius: 8px; margin-top: 8px; padding: 12px; position: relative; box-shadow: inset 0 0 0 2px #000; }
     #status { display: flex; justify-content: space-around; align-items: center; font-size: 0.85rem; border-bottom: 2px solid #fff; padding-bottom: 8px; margin-bottom: 8px; }
     #btn-anytime-review { padding: 4px 8px; background: #444; color: #fff; border: 1px solid #fff; font-size: 0.7rem; cursor: pointer; }
-
     #question { font-size: 1rem; text-align: center; min-height: 4.5em; display: flex; align-items: center; justify-content: center; padding: 5px; line-height: 1.5; }
     #choices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     #choices button { padding: 15px 5px; font-size: 0.9rem; background: #000; color: #fff; border: 2px solid #fff; border-radius: 0; cursor: pointer; transition: 0.1s; }
@@ -53,19 +80,10 @@
     #next-area { display: none; text-align: center; }
     .action-btn { padding: 12px; font-weight: bold; border-radius: 5px; cursor: pointer; margin: 5px; border: 2px solid #fff; background: #fff; color: #000; width: 80%; }
     .menu-btn { background: #444 !important; color: #fff !important; border-color: #fff !important; }
-
-    /* ② クリティカル・青揺れエフェクト用 */
-    .flash-blue { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 100, 255, 0.5); pointer-events: none; z-index: 100; animation: fade-out 0.5s forwards; }
-    @keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
-    
-    .critical-shake { animation: c-shake 0.1s ease-in-out infinite; }
-    @keyframes c-shake { 0%, 100% { transform: translate(0,0); } 25% { transform: translate(-15px, 15px); } 75% { transform: translate(15px, -15px); } }
-
     #difficulty-modal, #review-modal { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000; padding: 20px; box-sizing: border-box; border: 4px solid gold; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
     .diff-btn { width: 80%; padding: 20px; margin: 10px; font-size: 1.2rem; font-weight: bold; border: 3px solid #fff; background: #000; color: #fff; cursor: pointer; }
     .review-item { margin-bottom: 15px; border-bottom: 1px solid #444; padding-bottom: 10px; text-align: left; width: 100%; }
     .btn-focus { padding: 5px 10px; background: #e74c3c; color: #fff; border: none; font-size: 0.7rem; cursor: pointer; margin-top: 5px; font-weight: bold; }
-
     @keyframes flash { from { opacity: 1; } to { opacity: 0.3; } }
     .shake { animation: shake 0.2s ease-in-out 2; }
     @keyframes shake { 0%, 100% { transform: translate(0,0); } 25% { transform: translate(-8px,0); } 75% { transform: translate(8px,0); } }
@@ -73,7 +91,7 @@
 </head>
 <body>
 
-  <div id="version-tag">v.1.03</div>
+  <div id="version-tag">v.1.05</div>
 
   <div id="difficulty-modal" style="display: flex;">
     <div id="diff-content">
@@ -102,6 +120,7 @@
       <div style="width:140px; height:12px; background:#333; border:2px solid #fff; margin-top:20px;">
         <div id="monster-hp-bar" style="height:100%; background:#f00; width:100%; transition: width 0.3s;"></div>
       </div>
+      <div id="monster-effects" style="position: absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;"></div>
     </div>
     <div id="effect-layer"></div>
   </div>
@@ -137,11 +156,11 @@
 
     const bonusBgm = new Audio('sentou-two.mp3');
     bonusBgm.loop = true;
-    bonusBgm.volume = 0.3; // ボーナス音量を30%に設定
+    bonusBgm.volume = 0.3; // BGM音量維持
 
-    const positions = ["0% 0%", "50% 0%", "100% 0%", "0% 50%", "50% 50%", "100% 50%", "0% 100%", "50% 100%", "100% 100%"];
     const monsterData = [{emoji:"👻",name:"ゴースト"},{emoji:"🦇",name:"ドラキー"},{emoji:"🐺",name:"リカント"},{emoji:"🐍",name:"おおさそり"},{emoji:"🕷️",name:"大グモ"},{emoji:"💀",name:"がいこつ兵"}];
 
+    // 英語読み上げ（維持）
     function speakEnglish(text) {
       const uttr = new SpeechSynthesisUtterance();
       let engPart = text.match(/「(.+?)」/) ? text.match(/「(.+?)」/)[1] : text.replace(/\(.+?\)/, "blank");
@@ -185,11 +204,11 @@
             init();
           }, 600);
         } else {
-          alert("エラー: 問題データが読み込めませんでした。");
+          alert("データエラー");
         }
       };
       script.onerror = () => {
-        alert("エラー: " + fileName + " が見つかりません。");
+        alert("ファイル未検出");
         document.getElementById("diff-buttons").style.display = "block";
         document.getElementById("loading-msg").style.display = "none";
       };
@@ -206,11 +225,9 @@
       isBonus = false; bossMistakes = 0; player.canHeal = true;
       isBoss = (player.wins > 0 && (player.wins + 1) % 5 === 0);
       monster.maxHp = isBoss ? 200 : 70; monster.hp = monster.maxHp;
-      
       const mEmoji = document.getElementById("monster-emoji");
       const mName = document.getElementById("monster-name");
       mEmoji.style.display = "block";
-      
       if (isBoss) {
         mEmoji.textContent = "🐉"; mName.textContent = "魔王 (BOSS)";
         mName.style.color = "red"; mName.style.borderColor = "red";
@@ -219,7 +236,6 @@
         mEmoji.textContent = data.emoji; mName.textContent = data.name;
         mName.style.color = "#fff"; mName.style.borderColor = "#fff";
       }
-      
       document.getElementById("bonus-image-view").style.display = "none";
       document.getElementById("victory-image-view").style.display = "none";
       document.getElementById("boss-timer").style.display = isBoss ? "block" : "none";
@@ -227,12 +243,6 @@
       document.getElementById("next-area").style.display = "none";
       document.getElementById("btn-menu").style.display = "none";
       document.getElementById("next").style.display = "inline-block";
-      
-      if (isBoss) {
-        document.getElementById("log").innerHTML = "<span style='color:red; font-size:1rem;'>!!! BOSS 戦 !!!</span><br><small>全問正解でクリアすると<br>ボーナスステージへ挑戦できます！</small>";
-      } else {
-        document.getElementById("log").textContent = mName.textContent + " が あらわれた！";
-      }
       updateUI(); loadQuestion();
     }
 
@@ -244,9 +254,7 @@
       if (player.hp <= 20 && player.canHeal) { showHealEvent(); return; }
       currentQ = pool.pop();
       document.getElementById("question").textContent = currentQ.q;
-      
       speakEnglish(currentQ.q);
-
       const choicesEl = document.getElementById("choices");
       choicesEl.innerHTML = "";
       [...currentQ.choices].sort(() => Math.random() - 0.5).forEach(c => {
@@ -257,35 +265,6 @@
       if (isBoss && !isBonus) startTimer();
     }
 
-    function showHealEvent() {
-      document.getElementById("question").innerHTML = "<span style='color:#ff4757;'>ちからが つきそうだ…<br>かみさまに いのりを ささげますか？</span>";
-      const choicesEl = document.getElementById("choices");
-      choicesEl.innerHTML = "";
-      const healBtn = document.createElement("button");
-      healBtn.textContent = "いのる（HP50 かいふく）";
-      healBtn.style.gridColumn = "1 / span 2"; healBtn.style.borderColor = "#2ecc71";
-      healBtn.onclick = () => {
-        player.hp = Math.min(player.maxHp, player.hp + 50); player.canHeal = false;
-        document.getElementById("log").textContent = "HPが かいふくした！"; updateUI(); loadQuestion();
-      };
-      choicesEl.appendChild(healBtn);
-    }
-
-    function startTimer() {
-      timeLeft = 10; clearInterval(timerInt);
-      document.getElementById("boss-timer").style.display = "block";
-      timerInt = setInterval(() => {
-        timeLeft -= 0.1;
-        document.getElementById("time-num").textContent = Math.ceil(timeLeft);
-        document.getElementById("timer-fill").style.width = (timeLeft * 10) + "%";
-        if (timeLeft <= 0) { 
-          clearInterval(timerInt); bossMistakes++; damagePlayer(10); highlightCorrect(); 
-          speak(isBonus ? "痛いですね・・・これは痛い・・・" : "あーもうめちゃくちゃだよ");
-          document.getElementById("log").textContent = "じかんぎれ！"; setTimeout(loadQuestion, 1200); 
-        }
-      }, 100);
-    }
-
     function checkAnswer(choice) {
       clearInterval(timerInt); highlightCorrect();
       if (choice === currentQ.a) {
@@ -294,15 +273,7 @@
         monster.hp -= dmg; 
         
         if (isCritical) {
-          document.getElementById("log").textContent = "会心の一撃！50ダメージ！";
-          const effect = document.createElement("div");
-          effect.className = "flash-blue";
-          document.getElementById("effect-layer").appendChild(effect);
-          document.getElementById("game-screen").classList.add("critical-shake");
-          setTimeout(() => {
-            document.getElementById("game-screen").classList.remove("critical-shake");
-            effect.remove();
-          }, 500);
+          triggerCriticalEffect();
         } else {
           document.getElementById("log").textContent = "20のダメージをあたえた！";
         }
@@ -321,6 +292,40 @@
       setTimeout(() => { if (monster.hp <= 0) handleDefeat(); else loadQuestion(); }, 1200);
     }
 
+    // クリティカル演出関数
+    function triggerCriticalEffect() {
+      document.getElementById("log").textContent = "会心の一撃！50ダメージ！";
+      const effectArea = document.getElementById("monster-effects");
+      
+      // 1. 斬撃（黄色い斜め線）
+      const slash = document.createElement("div");
+      slash.className = "slash";
+      effectArea.appendChild(slash);
+
+      // 2. Critical文字
+      const critText = document.createElement("div");
+      critText.className = "critical-text";
+      critText.textContent = "Critical Damage!";
+      effectArea.appendChild(critText);
+
+      // 3. 画面の青揺れ（以前の演出）
+      const effectLayer = document.getElementById("effect-layer");
+      const flash = document.createElement("div");
+      flash.className = "flash-blue";
+      effectLayer.appendChild(flash);
+      
+      document.getElementById("game-screen").classList.add("critical-shake");
+
+      // 演出終了後に削除
+      setTimeout(() => {
+        slash.remove();
+        critText.remove();
+        flash.remove();
+        document.getElementById("game-screen").classList.remove("critical-shake");
+      }, 500);
+    }
+
+    // 共通ロジック
     function highlightCorrect() {
       const btns = document.querySelectorAll("#choices button");
       btns.forEach(b => { b.disabled = true; if (b.textContent === currentQ.a) b.style.background = "#2ecc71"; else b.style.opacity = "0.5"; });
@@ -331,8 +336,7 @@
         startBonus();
       } else {
         if (isBonus) { 
-          bonusBgm.pause();
-          bonusBgm.currentTime = 0;
+          bonusBgm.pause(); bonusBgm.currentTime = 0;
           clearInterval(bonusImgInterval); speak("イクイク イイヨコイヨ。イキスギィィィィィィィィィィィィ"); 
           document.getElementById("bonus-image-view").style.display = "none";
           const vic = document.getElementById("victory-image-view"); vic.style.display = "block"; vic.src = "1000046945.png";
@@ -342,51 +346,47 @@
             document.getElementById("btn-menu").style.display = "inline-block";
         }
         player.wins++; 
-        document.getElementById("log").textContent = document.getElementById("monster-name").textContent + " を たおした！";
+        document.getElementById("log").textContent = "敵を たおした！";
         document.getElementById("next-area").style.display = "block"; document.getElementById("choices").innerHTML = "";
       }
     }
 
     function startBonus() {
       isBonus = true; isBoss = false; monster.maxHp = 350; monster.hp = 350;
-      bonusBgm.play().catch(e => console.log("BGM再生に失敗しました:", e));
+      bonusBgm.play().catch(e => {});
       document.getElementById("bonus-banner").style.display = "block";
       document.getElementById("monster-emoji").style.display = "none";
       document.getElementById("monster-name").textContent = "??? (BONUS)";
       document.getElementById("boss-timer").style.display = "none";
       const bView = document.getElementById("bonus-image-view"); bView.style.display = "block";
       bonusImgInterval = setInterval(() => {
-        const rndPos = positions[Math.floor(Math.random() * positions.length)];
+        const rndPos = ["0% 0%", "50% 0%", "100% 0%", "0% 50%", "50% 50%", "100% 50%", "0% 100%", "50% 100%", "100% 100%"][Math.floor(Math.random() * 9)];
         bView.style.backgroundPosition = rndPos; bView.style.filter = `hue-rotate(${Math.random()*360}deg)`;
       }, 2000);
       updateUI(); loadQuestion();
     }
 
-    function openReviewAnytime() { speak("あっ、いいっすよ（快諾）"); showReview(); }
-    function setFocusQuestion(index) {
-      speak("わかるわかる（タメ口）");
-      const item = missList[index];
-      pool = pool.filter(q => q.q !== item.q); pool.push({q:item.q, a:item.a, choices:item.choices});
-      alert("次はこの問題を優先して出題します！"); closeReview();
-    }
-
+    function openReviewAnytime() { speak("あっ、いいっすよ"); showReview(); }
     function showReview() {
       const modal = document.getElementById("review-modal");
       const list = document.getElementById("review-list");
-      list.innerHTML = missList.length === 0 ? "まだ ミスは ありません。" : "";
+      list.innerHTML = missList.length === 0 ? "ミスなし。" : "";
       missList.forEach((m, i) => {
-        list.innerHTML += `<div class="review-item">${i+1}. ${m.q}<br><span style="color:#2ecc71;">正解: ${m.a}</span><br><button class="btn-focus" onclick="setFocusQuestion(${i})">集中攻撃（次にだす）</button></div>`;
+        list.innerHTML += `<div class="review-item">${i+1}. ${m.q}<br><span style="color:#2ecc71;">正解: ${m.a}</span><br><button class="btn-focus" onclick="setFocusQuestion(${i})">優先出題</button></div>`;
       });
       modal.style.display = "flex";
     }
-
+    function setFocusQuestion(index) {
+      const item = missList[index];
+      pool = pool.filter(q => q.q !== item.q); pool.push({q:item.q, a:item.a, choices:item.choices});
+      closeReview();
+    }
     function closeReview() { if (player.hp <= 0) location.reload(); else document.getElementById("review-modal").style.display = "none"; }
     function damagePlayer(dmg) {
       player.hp -= dmg; document.body.classList.add("shake");
       setTimeout(() => document.body.classList.remove("shake"), 200);
       if (player.hp <= 0) { player.hp = 0; updateUI(); showReview(); }
     }
-
     function updateUI() {
       document.getElementById("hp").textContent = player.hp;
       document.getElementById("hp-display").style.color = player.hp <= 20 ? "#ff4757" : "#fff";
@@ -395,10 +395,16 @@
       const pct = Math.max(0, (monster.hp / monster.maxHp) * 100);
       document.getElementById("monster-hp-bar").style.width = pct + "%";
     }
-
-    window.speechSynthesis.onvoiceschanged = () => {
-      window.speechSynthesis.getVoices();
-    };
+    function showHealEvent() {
+      document.getElementById("question").innerHTML = "<span style='color:#ff4757;'>いのりますか？</span>";
+      const choicesEl = document.getElementById("choices");
+      choicesEl.innerHTML = "";
+      const healBtn = document.createElement("button");
+      healBtn.textContent = "いのる（HP50回復）";
+      healBtn.onclick = () => { player.hp = Math.min(player.maxHp, player.hp + 50); player.canHeal = false; updateUI(); loadQuestion(); };
+      choicesEl.appendChild(healBtn);
+    }
+    window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
   </script>
 </body>
 </html>
