@@ -30,7 +30,7 @@
     #monster-emoji { font-size: 100px; filter: drop-shadow(0 0 10px #000); }
     #monster-name { background: rgba(0,0,0,0.7); padding: 2px 10px; border: 1px solid #fff; font-size: 0.9rem; margin-bottom: 5px; color: #fff; }
 
-    /* 痛恨の稲妻エフェクト */
+    /* 痛恨の稲妻 */
     .thunder {
       position: absolute; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(255, 0, 0, 0.3); z-index: 500; pointer-events: none;
@@ -105,7 +105,7 @@
 </head>
 <body>
 
-  <div id="version-tag">v.1.06</div>
+  <div id="version-tag">v.1.07</div>
 
   <div id="difficulty-modal" style="display: flex;">
     <div id="diff-content">
@@ -199,6 +199,8 @@
       if (!currentQ) return;
       highlightCorrect();
 
+      let delay = 1200; // 次の展開への待機時間
+
       if (choice === currentQ.a) {
         let isCritical = Math.random() < 0.2;
         let dmg = isCritical ? 50 : 20;
@@ -225,11 +227,23 @@
           speak(isBonus ? "痛いですね・・・これは痛い・・・" : "あーもうめちゃくちゃだよ");
         }
         damagePlayer(playerDmg);
+        
         let insertIdx = Math.floor(Math.random() * (pool.length / 2));
         pool.splice(insertIdx, 0, currentQ);
       }
+      
       updateUI();
-      setTimeout(() => { if (monster.hp <= 0) handleDefeat(); else loadQuestion(); }, 1200);
+
+      // 【修正】ダメージを受けた直後にHPが低ければ、次の問題ロード前に回復イベントを割り込ませる
+      setTimeout(() => {
+        if (monster.hp <= 0) {
+          handleDefeat();
+        } else if (player.hp > 0 && player.hp <= 20 && player.canHeal) {
+          showHealEvent(); // 瀕死なら即回復画面へ
+        } else if (player.hp > 0) {
+          loadQuestion();
+        }
+      }, delay);
     }
 
     function triggerThunderEffect() {
@@ -292,9 +306,11 @@
           pool = [...usedPool].sort(() => Math.random() - 0.5);
           usedPool = [];
         } else {
-          alert("問題データがありません。"); return;
+          return;
         }
       }
+      
+      // loadQuestion内でも一応チェックするが、メインはcheckAnswerからの割り込み
       if (player.hp <= 20 && player.canHeal) { showHealEvent(); return; }
       
       currentQ = pool.pop();
@@ -323,7 +339,7 @@
 
     function damagePlayer(dmg) {
       player.hp -= dmg;
-      if (player.hp <= 0) { player.hp = 0; updateUI(); showReview(); }
+      if (player.hp <= 0) { player.hp = 0; }
     }
 
     function updateUI() {
@@ -408,6 +424,10 @@
         list.innerHTML += `<div class="review-item">${i+1}. ${m.q}<br><span style="color:#2ecc71;">正解: ${m.a}</span><br><button class="btn-focus" onclick="setFocusQuestion(${i})">優先出題</button></div>`;
       });
       modal.style.display = "flex";
+      if (player.hp <= 0) {
+          speak("ヌッ！");
+          document.getElementById("log").textContent = "あなたは たおれた…";
+      }
     }
     function setFocusQuestion(index) {
       const item = missList[index];
@@ -415,12 +435,28 @@
       closeReview();
     }
     function closeReview() { if (player.hp <= 0) location.reload(); else document.getElementById("review-modal").style.display = "none"; }
+    
+    // 回復イベント画面
     function showHealEvent() {
-      document.getElementById("question").innerHTML = "<span style='color:#ff4757;'>いのりますか？</span>";
+      document.getElementById("log").textContent = "瀕死の状態だ！";
+      document.getElementById("question").innerHTML = "<span style='color:#ff4757; font-size:1.2rem; font-weight:bold;'>神に いのりますか？</span>";
       const choicesEl = document.getElementById("choices"); choicesEl.innerHTML = "";
-      const healBtn = document.createElement("button"); healBtn.textContent = "いのる（HP50回復）";
-      healBtn.onclick = () => { player.hp = Math.min(player.maxHp, player.hp + 50); player.canHeal = false; updateUI(); loadQuestion(); };
+      const healBtn = document.createElement("button"); 
+      healBtn.textContent = "いのる（HP回復・一度だけ）";
+      healBtn.style.borderColor = "gold";
+      healBtn.onclick = () => { 
+        player.hp = Math.min(player.maxHp, player.hp + 60); 
+        player.canHeal = false; 
+        updateUI(); 
+        document.getElementById("log").textContent = "HPが 60 かいふくした！";
+        setTimeout(loadQuestion, 1000); 
+      };
       choicesEl.appendChild(healBtn);
+      
+      const noBtn = document.createElement("button");
+      noBtn.textContent = "いのらない";
+      noBtn.onclick = () => { loadQuestion(); };
+      choicesEl.appendChild(noBtn);
     }
     window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
   </script>
