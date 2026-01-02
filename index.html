@@ -5,11 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>ENGLISH QUEST - DQ EDITION</title>
   <style>
-    html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; color: #f00; font-family: 'Courier New', Consolas, monospace; }
+    html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; color: #fff; font-family: 'Courier New', Consolas, monospace; }
     body { display: flex; flex-direction: column; box-sizing: border-box; padding: 10px; position: relative; }
 
-    /* ① バージョン表示 */
-    #version-tag { position: absolute; top: 5px; right: 10px; font-size: 0.7rem; color: rgba(0,0,0,0.5); z-index: 2000; pointer-events: none; }
+    /* ① バージョン表示：はっきり見えるよう白文字＋黒縁取りに変更 */
+    #version-tag { 
+      position: absolute; 
+      top: 5px; 
+      right: 10px; 
+      font-size: 0.8rem; 
+      color: #fff; 
+      text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+      z-index: 2000; 
+      pointer-events: none; 
+      font-weight: bold;
+    }
 
     #game-screen { 
       flex: 1; display: flex; flex-direction: column; 
@@ -63,7 +73,7 @@
 </head>
 <body>
 
-  <div id="version-tag">v.1.02</div>
+  <div id="version-tag">v.1.03</div>
 
   <div id="difficulty-modal" style="display: flex;">
     <div id="diff-content">
@@ -127,25 +137,19 @@
 
     const bonusBgm = new Audio('sentou-two.mp3');
     bonusBgm.loop = true;
-    bonusBgm.volume = 0.3; // ここを追加（0.3は元の音量の30%という意味）
+    bonusBgm.volume = 0.3; // ボーナス音量を30%に設定
 
     const positions = ["0% 0%", "50% 0%", "100% 0%", "0% 50%", "50% 50%", "100% 50%", "0% 100%", "50% 100%", "100% 100%"];
     const monsterData = [{emoji:"👻",name:"ゴースト"},{emoji:"🦇",name:"ドラキー"},{emoji:"🐺",name:"リカント"},{emoji:"🐍",name:"おおさそり"},{emoji:"🕷️",name:"大グモ"},{emoji:"💀",name:"がいこつ兵"}];
 
-    // ③ 女性の声・英語読み上げ用設定
     function speakEnglish(text) {
       const uttr = new SpeechSynthesisUtterance();
-      // 単語問題の形式（「〇〇」の意味は？）から英単語部分を抽出、またはそのまま
       let engPart = text.match(/「(.+?)」/) ? text.match(/「(.+?)」/)[1] : text.replace(/\(.+?\)/, "blank");
-      
       uttr.text = engPart;
       uttr.lang = "en-US";
-      
-      // 女性の声を探して設定
       const voices = window.speechSynthesis.getVoices();
       const femaleVoice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Female') || v.name.includes('Google US English') || v.name.includes('Samantha') || v.name.includes('Zira')));
       if (femaleVoice) uttr.voice = femaleVoice;
-      
       uttr.rate = 0.9;
       uttr.pitch = 1.1;
       window.speechSynthesis.speak(uttr);
@@ -241,7 +245,6 @@
       currentQ = pool.pop();
       document.getElementById("question").textContent = currentQ.q;
       
-      // ③ 出題時に英語読み上げ
       speakEnglish(currentQ.q);
 
       const choicesEl = document.getElementById("choices");
@@ -290,7 +293,6 @@
         let dmg = isCritical ? 50 : 20;
         monster.hp -= dmg; 
         
-        // ② クリティカル演出
         if (isCritical) {
           document.getElementById("log").textContent = "会心の一撃！50ダメージ！";
           const effect = document.createElement("div");
@@ -394,7 +396,6 @@
       document.getElementById("monster-hp-bar").style.width = pct + "%";
     }
 
-    // 音声リスト読み込み待ち
     window.speechSynthesis.onvoiceschanged = () => {
       window.speechSynthesis.getVoices();
     };
