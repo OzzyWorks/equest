@@ -63,7 +63,7 @@
 </head>
 <body>
 
-  <div id="version-tag">v.1.01</div>
+  <div id="version-tag">v.1.02</div>
 
   <div id="difficulty-modal" style="display: flex;">
     <div id="diff-content">
@@ -127,6 +127,7 @@
 
     const bonusBgm = new Audio('sentou-two.mp3');
     bonusBgm.loop = true;
+    bonusBgm.volume = 0.3; // ここを追加（0.3は元の音量の30%という意味）
 
     const positions = ["0% 0%", "50% 0%", "100% 0%", "0% 50%", "50% 50%", "100% 50%", "0% 100%", "50% 100%", "100% 100%"];
     const monsterData = [{emoji:"👻",name:"ゴースト"},{emoji:"🦇",name:"ドラキー"},{emoji:"🐺",name:"リカント"},{emoji:"🐍",name:"おおさそり"},{emoji:"🕷️",name:"大グモ"},{emoji:"💀",name:"がいこつ兵"}];
