@@ -38,9 +38,9 @@
     #choices button:active { background: #fff; color: #000; }
     #log { font-size: 0.8rem; color: #ffff00; text-align: center; margin: 8px 0; font-weight: bold; min-height: 2.4em; line-height: 1.2; }
     #next-area { display: none; text-align: center; }
-    #next { padding: 12px; font-weight: bold; border-radius: 5px; cursor: pointer; margin: 5px; border: 2px solid #fff; background: #fff; color: #000; width: 80%; }
+    .action-btn { padding: 12px; font-weight: bold; border-radius: 5px; cursor: pointer; margin: 5px; border: 2px solid #fff; background: #fff; color: #000; width: 80%; }
+    .menu-btn { background: #444 !important; color: #fff !important; border-color: #fff !important; }
 
-    /* モーダル共通設定 */
     #difficulty-modal, #review-modal { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000; padding: 20px; box-sizing: border-box; border: 4px solid gold; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
     .diff-btn { width: 80%; padding: 20px; margin: 10px; font-size: 1.2rem; font-weight: bold; border: 3px solid #fff; background: #000; color: #fff; cursor: pointer; }
     .review-item { margin-bottom: 15px; border-bottom: 1px solid #444; padding-bottom: 10px; text-align: left; width: 100%; }
@@ -94,7 +94,8 @@
     <div id="choices"></div>
     <div id="log"></div>
     <div id="next-area">
-      <button id="next" onclick="startBattle()">▶ つぎの たたかいへ</button>
+      <button id="next" class="action-btn" onclick="startBattle()">▶ つぎの たたかいへ</button>
+      <button id="btn-menu" class="action-btn menu-btn" style="display:none;" onclick="returnToMenu()">▶ トップメニューへもどる</button>
     </div>
 
     <div id="review-modal">
@@ -111,6 +112,9 @@
     let isBoss = false, isBonus = false, bossMistakes = 0;
     let timerInt, timeLeft = 10, bonusImgInterval, currentQ = null;
 
+    const bonusBgm = new Audio('sentou-two.mp3');
+    bonusBgm.loop = true;
+
     const positions = ["0% 0%", "50% 0%", "100% 0%", "0% 50%", "50% 50%", "100% 50%", "0% 100%", "50% 100%", "100% 100%"];
     const monsterData = [{emoji:"👻",name:"ゴースト"},{emoji:"🦇",name:"ドラキー"},{emoji:"🐺",name:"リカント"},{emoji:"🐍",name:"おおさそり"},{emoji:"🕷️",name:"大グモ"},{emoji:"💀",name:"がいこつ兵"}];
 
@@ -123,18 +127,20 @@
       window.speechSynthesis.speak(uttr);
     }
 
-    // ②・③・④ 難易度選択とファイル読み込み制御
+    // ① トップメニューへ戻る
+    function returnToMenu() {
+      bonusBgm.pause();
+      bonusBgm.currentTime = 0;
+      location.reload(); 
+    }
+
     function selectDifficulty(fileName) {
       document.getElementById("diff-buttons").style.display = "none";
       document.getElementById("loading-msg").style.display = "block";
-      
-      // グローバル変数が初期化されるのを待つ
       window.masterQuestions = undefined;
-
       const script = document.createElement('script');
       script.src = fileName;
       script.onload = () => {
-        // 読み込み完了後に初期化
         if (typeof masterQuestions !== 'undefined' && masterQuestions.length > 0) {
           setTimeout(() => {
             document.getElementById("difficulty-modal").style.display = "none";
@@ -153,7 +159,7 @@
     }
 
     function init() {
-      // ⑤ 出題が偏らないようにプールをシャッフル
+      // ③ 出題が偏らないよう全問題をシャッフル
       pool = [...masterQuestions].sort(() => Math.random() - 0.5);
       startBattle();
     }
@@ -182,6 +188,8 @@
       document.getElementById("boss-timer").style.display = isBoss ? "block" : "none";
       document.getElementById("bonus-banner").style.display = "none";
       document.getElementById("next-area").style.display = "none";
+      document.getElementById("btn-menu").style.display = "none";
+      document.getElementById("next").style.display = "inline-block";
       
       if (isBoss) {
         document.getElementById("log").innerHTML = "<span style='color:red; font-size:1rem;'>!!! BOSS 戦 !!!</span><br><small>全問正解でクリアすると<br>ボーナスステージへ挑戦できます！</small>";
@@ -192,19 +200,15 @@
     }
 
     function loadQuestion() {
-      // ⑤ プールが空になったらusedPoolから補充して再シャッフル（重複防止）
       if (pool.length === 0) {
         pool = [...usedPool].sort(() => Math.random() - 0.5);
         usedPool = [];
       }
-      
       if (player.hp <= 20 && player.canHeal) { showHealEvent(); return; }
-      
       currentQ = pool.pop();
       document.getElementById("question").textContent = currentQ.q;
       const choicesEl = document.getElementById("choices");
       choicesEl.innerHTML = "";
-      
       [...currentQ.choices].sort(() => Math.random() - 0.5).forEach(c => {
         const btn = document.createElement("button");
         btn.textContent = c; btn.onclick = () => checkAnswer(c);
@@ -212,8 +216,6 @@
       });
       if (isBoss && !isBonus) startTimer();
     }
-
-    // --- 以降、基本ロジックを維持 ---
 
     function showHealEvent() {
       document.getElementById("question").innerHTML = "<span style='color:#ff4757;'>ちからが つきそうだ…<br>かみさまに いのりを ささげますか？</span>";
@@ -247,15 +249,22 @@
     function checkAnswer(choice) {
       clearInterval(timerInt); highlightCorrect();
       if (choice === currentQ.a) {
-        monster.hp -= 50; document.getElementById("log").textContent = "かいしんの いちげき！";
+        // ② ダメージ計算変更：基本20、20%で会心50
+        let isCritical = Math.random() < 0.2;
+        let dmg = isCritical ? 50 : 20;
+        monster.hp -= dmg; 
+        document.getElementById("log").textContent = isCritical ? "会心の一撃！50ダメージ！" : "20のダメージをあたえた！";
         speak(isBonus ? "やりますねぇぇ" : "おっ、そうだな"); 
-        usedPool.push(currentQ); // ⑤ 使用済みに追加
+        usedPool.push(currentQ);
       } else {
         if (isBoss) bossMistakes++;
         if (!missList.find(m => m.q === currentQ.q)) missList.push({q:currentQ.q, a:currentQ.a, choices:currentQ.choices});
         damagePlayer(10); document.getElementById("log").textContent = "つう恨の ミス！";
         speak(isBonus ? "痛いですね・・・これは痛い・・・" : "あーもうめちゃくちゃだよ");
-        pool.unshift(currentQ); // ⑤ 間違えたらプールの先頭に戻して再出題されやすくする
+        
+        // ③ 出題の偏り防止：間違えた問題は先頭ではなくランダムな位置（半分より後ろ）に戻す
+        let insertIdx = Math.floor(Math.random() * (pool.length / 2));
+        pool.splice(insertIdx, 0, currentQ);
       }
       updateUI();
       setTimeout(() => { if (monster.hp <= 0) handleDefeat(); else loadQuestion(); }, 1200);
@@ -271,17 +280,29 @@
         startBonus();
       } else {
         if (isBonus) { 
+          bonusBgm.pause();
+          bonusBgm.currentTime = 0;
           clearInterval(bonusImgInterval); speak("イクイク イイヨコイヨ。イキスギィィィィィィィィィィィィ"); 
           document.getElementById("bonus-image-view").style.display = "none";
           const vic = document.getElementById("victory-image-view"); vic.style.display = "block"; vic.src = "1000046945.png";
+          
+          // ① ボーナス撃破後はメニューに戻るボタンを表示
+          document.getElementById("btn-menu").style.display = "inline-block";
+          document.getElementById("next").style.display = "none";
+        } else if (isBoss) {
+            // ① ボス通常撃破後（全問正解でない場合）もメニューに戻るボタンを表示
+            document.getElementById("btn-menu").style.display = "inline-block";
         }
-        player.wins++; document.getElementById("log").textContent = document.getElementById("monster-name").textContent + " を たおした！";
+        
+        player.wins++; 
+        document.getElementById("log").textContent = document.getElementById("monster-name").textContent + " を たおした！";
         document.getElementById("next-area").style.display = "block"; document.getElementById("choices").innerHTML = "";
       }
     }
 
     function startBonus() {
       isBonus = true; isBoss = false; monster.maxHp = 350; monster.hp = 350;
+      bonusBgm.play().catch(e => console.log("BGM再生に失敗しました:", e));
       document.getElementById("bonus-banner").style.display = "block";
       document.getElementById("monster-emoji").style.display = "none";
       document.getElementById("monster-name").textContent = "??? (BONUS)";
