@@ -36,7 +36,6 @@
       background: rgba(255, 0, 0, 0.3); z-index: 500; pointer-events: none;
       animation: thunder-flash 0.1s steps(2) infinite;
     }
-    /* 稲妻のギザギザ（簡易表現） */
     .thunder::before {
       content: "⚡"; position: absolute; top: 50%; left: 50%;
       transform: translate(-50%, -50%) scale(20); color: #ff4757;
@@ -48,7 +47,7 @@
       100% { opacity: 0; }
     }
 
-    /* クリティカル演出（維持） */
+    /* クリティカル演出 */
     .slash {
       position: absolute; width: 5px; height: 250px; background: yellow;
       top: 50%; left: 50%; z-index: 150;
@@ -62,7 +61,7 @@
     }
     .critical-text {
       position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);
-      color: yellow; font-size: 2rem; font-weight: bold; font-style: italic;
+      color: yellow; font-size: 1.8rem; font-weight: bold; font-style: italic;
       text-shadow: 3px 3px 0 #000; z-index: 160;
       white-space: nowrap; animation: crit-text-ani 0.5s ease-out forwards;
       pointer-events: none;
@@ -73,31 +72,32 @@
       100% { transform: translate(-50%, -60%) scale(1); opacity: 0; }
     }
 
-    /* その他スタイル維持 */
     .flash-blue { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 100, 255, 0.4); pointer-events: none; z-index: 100; animation: fade-out 0.5s forwards; }
     @keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
     .critical-shake { animation: c-shake 0.1s ease-in-out infinite; }
-    @keyframes c-shake { 0%, 100% { transform: translate(0,0); } 25% { transform: translate(-15px, 15px); } 75% { transform: translate(15px, -15px); } }
+    @keyframes c-shake { 0%, 100% { transform: translate(0,0); } 25% { transform: translate(-10px, 10px); } 75% { transform: translate(10px, -10px); } }
+
+    #ui-area { flex: 1.5; display: flex; flex-direction: column; background: #000; border: 4px solid #fff; border-radius: 8px; margin-top: 8px; padding: 12px; position: relative; }
+    #status { display: flex; justify-content: space-around; align-items: center; font-size: 0.85rem; border-bottom: 2px solid #fff; padding-bottom: 8px; margin-bottom: 8px; }
+    #btn-anytime-review { padding: 4px 8px; background: #444; color: #fff; border: 1px solid #fff; font-size: 0.7rem; cursor: pointer; }
+    #question { font-size: 1rem; text-align: center; min-height: 4.5em; display: flex; align-items: center; justify-content: center; padding: 5px; line-height: 1.4; }
+    #choices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    #choices button { padding: 15px 5px; font-size: 0.9rem; background: #000; color: #fff; border: 2px solid #fff; border-radius: 0; cursor: pointer; }
+    #log { font-size: 0.8rem; color: #ffff00; text-align: center; margin: 8px 0; font-weight: bold; min-height: 2.4em; }
+    #next-area { display: none; text-align: center; }
+    .action-btn { padding: 12px; font-weight: bold; border-radius: 5px; cursor: pointer; margin: 5px; border: 2px solid #fff; background: #fff; color: #000; width: 80%; }
+    .menu-btn { background: #444 !important; color: #fff !important; }
+
+    #difficulty-modal, #review-modal { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000; padding: 20px; box-sizing: border-box; border: 4px solid gold; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+    .diff-btn { width: 80%; padding: 20px; margin: 10px; font-size: 1.2rem; font-weight: bold; border: 3px solid #fff; background: #000; color: #fff; cursor: pointer; }
+    .review-item { margin-bottom: 15px; border-bottom: 1px solid #444; padding-bottom: 10px; text-align: left; width: 100%; }
+    .btn-focus { padding: 5px 10px; background: #e74c3c; color: #fff; border: none; font-size: 0.7rem; cursor: pointer; margin-top: 5px; font-weight: bold; }
 
     #bonus-image-view { display: none; width: 100%; height: 100%; background-image: url('1000046944.jpg'); background-size: 300% 300%; background-repeat: no-repeat; border: 4px solid #ffd700; border-radius: 12px; }
     #victory-image-view { display: none; width: 100%; height: 100%; object-fit: contain; background: #fff; border-radius: 12px; }
     #boss-timer { display: none; position: absolute; top: 10px; right: 10px; background: #000; color: #ff4757; border: 2px solid #fff; padding: 5px; width: 80px; text-align: center; z-index: 10; }
     #timer-fill { height: 4px; background: #ff4757; width: 100%; margin-top: 2px; }
-    #ui-area { flex: 1.5; display: flex; flex-direction: column; background: #000; border: 4px solid #fff; border-radius: 8px; margin-top: 8px; padding: 12px; position: relative; box-shadow: inset 0 0 0 2px #000; }
-    #status { display: flex; justify-content: space-around; align-items: center; font-size: 0.85rem; border-bottom: 2px solid #fff; padding-bottom: 8px; margin-bottom: 8px; }
-    #btn-anytime-review { padding: 4px 8px; background: #444; color: #fff; border: 1px solid #fff; font-size: 0.7rem; cursor: pointer; }
-    #question { font-size: 1rem; text-align: center; min-height: 4.5em; display: flex; align-items: center; justify-content: center; padding: 5px; line-height: 1.5; }
-    #choices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    #choices button { padding: 15px 5px; font-size: 0.9rem; background: #000; color: #fff; border: 2px solid #fff; border-radius: 0; cursor: pointer; transition: 0.1s; }
-    #choices button:active { background: #fff; color: #000; }
-    #log { font-size: 0.8rem; color: #ffff00; text-align: center; margin: 8px 0; font-weight: bold; min-height: 2.4em; line-height: 1.2; }
-    #next-area { display: none; text-align: center; }
-    .action-btn { padding: 12px; font-weight: bold; border-radius: 5px; cursor: pointer; margin: 5px; border: 2px solid #fff; background: #fff; color: #000; width: 80%; }
-    .menu-btn { background: #444 !important; color: #fff !important; border-color: #fff !important; }
-    #difficulty-modal, #review-modal { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000; padding: 20px; box-sizing: border-box; border: 4px solid gold; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-    .diff-btn { width: 80%; padding: 20px; margin: 10px; font-size: 1.2rem; font-weight: bold; border: 3px solid #fff; background: #000; color: #fff; cursor: pointer; }
-    .review-item { margin-bottom: 15px; border-bottom: 1px solid #444; padding-bottom: 10px; text-align: left; width: 100%; }
-    .btn-focus { padding: 5px 10px; background: #e74c3c; color: #fff; border: none; font-size: 0.7rem; cursor: pointer; margin-top: 5px; font-weight: bold; }
+
     @keyframes flash { from { opacity: 1; } to { opacity: 0.3; } }
     .shake { animation: shake 0.2s ease-in-out 2; }
     @keyframes shake { 0%, 100% { transform: translate(0,0); } 25% { transform: translate(-8px,0); } 75% { transform: translate(8px,0); } }
@@ -168,6 +168,7 @@
     let isBoss = false, isBonus = false, bossMistakes = 0;
     let timerInt, timeLeft = 10, bonusImgInterval, currentQ = null;
 
+    const monsterData = [{emoji:"👻",name:"ゴースト"},{emoji:"🦇",name:"ドラキー"},{emoji:"🐺",name:"リカント"},{emoji:"🐍",name:"おおさそり"},{emoji:"🕷️",name:"大グモ"},{emoji:"💀",name:"がいこつ兵"}];
     const bonusBgm = new Audio('sentou-two.mp3');
     bonusBgm.loop = true;
     bonusBgm.volume = 0.3;
@@ -175,8 +176,7 @@
     function speakEnglish(text) {
       const uttr = new SpeechSynthesisUtterance();
       let engPart = text.match(/「(.+?)」/) ? text.match(/「(.+?)」/)[1] : text.replace(/\(.+?\)/, "blank");
-      uttr.text = engPart;
-      uttr.lang = "en-US";
+      uttr.text = engPart; uttr.lang = "en-US";
       const voices = window.speechSynthesis.getVoices();
       const femaleVoice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Female') || v.name.includes('Google US English') || v.name.includes('Samantha') || v.name.includes('Zira')));
       if (femaleVoice) uttr.voice = femaleVoice;
@@ -195,9 +195,11 @@
     }
 
     function checkAnswer(choice) {
-      clearInterval(timerInt); highlightCorrect();
+      clearInterval(timerInt);
+      if (!currentQ) return;
+      highlightCorrect();
+
       if (choice === currentQ.a) {
-        // プレイヤーの攻撃
         let isCritical = Math.random() < 0.2;
         let dmg = isCritical ? 50 : 20;
         monster.hp -= dmg; 
@@ -206,29 +208,22 @@
         speak(isBonus ? "やりますねぇぇ" : "おっ、そうだな"); 
         usedPool.push(currentQ);
       } else {
-        // 敵の攻撃（ロジック追加）
         if (isBoss) bossMistakes++;
         if (!missList.find(m => m.q === currentQ.q)) missList.push({q:currentQ.q, a:currentQ.a, choices:currentQ.choices});
         
-        let isGraveError = Math.random() < 0.2; // 20%の確率で痛恨の一撃
-        let playerDmg = 10; // 通常ダメージ
+        let isGraveError = Math.random() < 0.2; 
+        let playerDmg = 10; 
 
         if (isGraveError) {
-          triggerThunderEffect(); // 稲妻演出
+          triggerThunderEffect();
           document.getElementById("log").innerHTML = "<span style='color:red; font-size:1.1rem;'>痛恨の一撃！！</span>";
           speak(isBonus ? "痛いですね・・・これは痛い・・・" : "あーもうめちゃくちゃだよ");
-          
-          if (player.hp >= 60) {
-            playerDmg = 50;
-          } else {
-            playerDmg = player.hp - 10; // 残りHPが10になるダメージ
-            if (playerDmg < 0) playerDmg = 10; // 既に10以下の場合は最低10
-          }
+          if (player.hp >= 60) playerDmg = 50;
+          else playerDmg = Math.max(10, player.hp - 10);
         } else {
           document.getElementById("log").textContent = "つう恨の ミス！";
           speak(isBonus ? "痛いですね・・・これは痛い・・・" : "あーもうめちゃくちゃだよ");
         }
-
         damagePlayer(playerDmg);
         let insertIdx = Math.floor(Math.random() * (pool.length / 2));
         pool.splice(insertIdx, 0, currentQ);
@@ -237,22 +232,15 @@
       setTimeout(() => { if (monster.hp <= 0) handleDefeat(); else loadQuestion(); }, 1200);
     }
 
-    // 痛恨の演出：赤い稲妻
     function triggerThunderEffect() {
       const effectLayer = document.getElementById("effect-layer");
       const thunder = document.createElement("div");
       thunder.className = "thunder";
       effectLayer.appendChild(thunder);
-      
-      // 画面全体を激しく揺らす
       document.body.classList.add("shake");
-      setTimeout(() => {
-        thunder.remove();
-        document.body.classList.remove("shake");
-      }, 500);
+      setTimeout(() => { thunder.remove(); document.body.classList.remove("shake"); }, 500);
     }
 
-    // プレイヤーのクリティカル演出（維持）
     function triggerCriticalEffect() {
       document.getElementById("log").textContent = "会心の一撃！50ダメージ！";
       const effectArea = document.getElementById("monster-effects");
@@ -270,44 +258,12 @@
       }, 500);
     }
 
-    // 以下、その他の共通関数は維持
-    function damagePlayer(dmg) {
-      player.hp -= dmg;
-      if (player.hp <= 0) { player.hp = 0; updateUI(); showReview(); }
-    }
-    function updateUI() {
-      document.getElementById("hp").textContent = player.hp;
-      document.getElementById("hp-display").style.color = player.hp <= 20 ? "#ff4757" : "#fff";
-      document.getElementById("wins").textContent = player.wins;
-      document.getElementById("level").textContent = Math.floor(player.wins / 3) + 1;
-      const pct = Math.max(0, (monster.hp / monster.maxHp) * 100);
-      document.getElementById("monster-hp-bar").style.width = pct + "%";
-    }
-    function highlightCorrect() {
-      const btns = document.querySelectorAll("#choices button");
-      btns.forEach(b => { b.disabled = true; if (b.textContent === currentQ.a) b.style.background = "#2ecc71"; else b.style.opacity = "0.5"; });
-    }
-    function handleDefeat() {
-      if (isBoss && bossMistakes === 0) startBonus();
-      else {
-        if (isBonus) { 
-          bonusBgm.pause(); bonusBgm.currentTime = 0; clearInterval(bonusImgInterval);
-          speak("イクイク イイヨコイヨ。イキスギィィィィィィィィィィィィ"); 
-          document.getElementById("bonus-image-view").style.display = "none";
-          const vic = document.getElementById("victory-image-view"); vic.style.display = "block"; vic.src = "1000046945.png";
-          document.getElementById("btn-menu").style.display = "inline-block";
-          document.getElementById("next").style.display = "none";
-        } else if (isBoss) document.getElementById("btn-menu").style.display = "inline-block";
-        player.wins++; 
-        document.getElementById("log").textContent = "敵を たおした！";
-        document.getElementById("next-area").style.display = "block"; document.getElementById("choices").innerHTML = "";
-      }
-    }
     function startBattle() {
       clearInterval(bonusImgInterval); clearInterval(timerInt);
       isBonus = false; bossMistakes = 0; player.canHeal = true;
       isBoss = (player.wins > 0 && (player.wins + 1) % 5 === 0);
       monster.maxHp = isBoss ? 200 : 70; monster.hp = monster.maxHp;
+      
       const mEmoji = document.getElementById("monster-emoji");
       const mName = document.getElementById("monster-name");
       mEmoji.style.display = "block";
@@ -326,20 +282,36 @@
       document.getElementById("next-area").style.display = "none";
       document.getElementById("btn-menu").style.display = "none";
       document.getElementById("next").style.display = "inline-block";
-      updateUI(); loadQuestion();
+      updateUI();
+      loadQuestion();
     }
+
     function loadQuestion() {
-      if (pool.length === 0) { pool = [...usedPool].sort(() => Math.random() - 0.5); usedPool = []; }
+      if (pool.length === 0) {
+        if (usedPool.length > 0) {
+          pool = [...usedPool].sort(() => Math.random() - 0.5);
+          usedPool = [];
+        } else {
+          alert("問題データがありません。"); return;
+        }
+      }
       if (player.hp <= 20 && player.canHeal) { showHealEvent(); return; }
-      currentQ = pool.pop(); document.getElementById("question").textContent = currentQ.q;
+      
+      currentQ = pool.pop();
+      document.getElementById("question").textContent = currentQ.q;
       speakEnglish(currentQ.q);
-      const choicesEl = document.getElementById("choices"); choicesEl.innerHTML = "";
+      
+      const choicesEl = document.getElementById("choices");
+      choicesEl.innerHTML = "";
       [...currentQ.choices].sort(() => Math.random() - 0.5).forEach(c => {
-        const btn = document.createElement("button"); btn.textContent = c; btn.onclick = () => checkAnswer(c);
+        const btn = document.createElement("button");
+        btn.textContent = c;
+        btn.onclick = () => checkAnswer(c);
         choicesEl.appendChild(btn);
       });
       if (isBoss && !isBonus) startTimer();
     }
+
     function startTimer() {
       timeLeft = 10; clearInterval(timerInt);
       timerInt = setInterval(() => {
@@ -348,6 +320,48 @@
         if (timeLeft <= 0) { clearInterval(timerInt); checkAnswer(""); }
       }, 100);
     }
+
+    function damagePlayer(dmg) {
+      player.hp -= dmg;
+      if (player.hp <= 0) { player.hp = 0; updateUI(); showReview(); }
+    }
+
+    function updateUI() {
+      document.getElementById("hp").textContent = player.hp;
+      document.getElementById("hp-display").style.color = player.hp <= 20 ? "#ff4757" : "#fff";
+      document.getElementById("wins").textContent = player.wins;
+      document.getElementById("level").textContent = Math.floor(player.wins / 3) + 1;
+      const pct = Math.max(0, (monster.hp / monster.maxHp) * 100);
+      document.getElementById("monster-hp-bar").style.width = pct + "%";
+    }
+
+    function highlightCorrect() {
+      const btns = document.querySelectorAll("#choices button");
+      btns.forEach(b => { 
+        b.disabled = true; 
+        if (b.textContent === currentQ.a) b.style.background = "#2ecc71"; 
+        else b.style.opacity = "0.5"; 
+      });
+    }
+
+    function handleDefeat() {
+      if (isBoss && bossMistakes === 0) startBonus();
+      else {
+        if (isBonus) { 
+          bonusBgm.pause(); bonusBgm.currentTime = 0; clearInterval(bonusImgInterval);
+          speak("イクイク イイヨコイヨ。イキスギィィィィィィィィィィィィ"); 
+          document.getElementById("bonus-image-view").style.display = "none";
+          const vic = document.getElementById("victory-image-view"); vic.style.display = "block"; vic.src = "1000046945.png";
+          document.getElementById("btn-menu").style.display = "inline-block";
+          document.getElementById("next").style.display = "none";
+        } else if (isBoss) document.getElementById("btn-menu").style.display = "inline-block";
+        player.wins++; 
+        document.getElementById("log").textContent = "敵を たおした！";
+        document.getElementById("next-area").style.display = "block";
+        document.getElementById("choices").innerHTML = "";
+      }
+    }
+
     function startBonus() {
       isBonus = true; isBoss = false; monster.maxHp = 350; monster.hp = 350;
       bonusBgm.play().catch(e => {});
@@ -362,14 +376,28 @@
       }, 2000);
       updateUI(); loadQuestion();
     }
+
     function selectDifficulty(f) {
       document.getElementById("diff-buttons").style.display = "none";
       document.getElementById("loading-msg").style.display = "block";
-      const s = document.createElement('script'); s.src = f;
-      s.onload = () => { setTimeout(() => { document.getElementById("difficulty-modal").style.display = "none"; init(); }, 600); };
+      const s = document.createElement('script');
+      s.src = f;
+      s.onload = () => { 
+        setTimeout(() => {
+          if (typeof masterQuestions !== 'undefined') {
+            document.getElementById("difficulty-modal").style.display = "none";
+            init(); 
+          } else { alert("データが読み込めませんでした。"); }
+        }, 600);
+      };
       document.body.appendChild(s);
     }
-    function init() { pool = [...masterQuestions].sort(() => Math.random() - 0.5); startBattle(); }
+
+    function init() {
+      pool = [...masterQuestions].sort(() => Math.random() - 0.5);
+      startBattle();
+    }
+
     function returnToMenu() { bonusBgm.pause(); bonusBgm.currentTime = 0; location.reload(); }
     function openReviewAnytime() { speak("あっ、いいっすよ"); showReview(); }
     function showReview() {
