@@ -30,7 +30,6 @@
     #monster-emoji { font-size: 100px; filter: drop-shadow(0 0 10px #000); }
     #monster-name { background: rgba(0,0,0,0.7); padding: 2px 10px; border: 1px solid #fff; font-size: 0.9rem; margin-bottom: 5px; color: #fff; }
 
-    /* 痛恨の稲妻 */
     .thunder {
       position: absolute; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(255, 0, 0, 0.3); z-index: 500; pointer-events: none;
@@ -45,19 +44,6 @@
       0% { opacity: 0; }
       50% { opacity: 1; background: rgba(255, 0, 0, 0.5); }
       100% { opacity: 0; }
-    }
-
-    /* クリティカル演出 */
-    .slash {
-      position: absolute; width: 5px; height: 250px; background: yellow;
-      top: 50%; left: 50%; z-index: 150;
-      transform: translate(-50%, -50%) rotate(45deg) scaleY(0);
-      box-shadow: 0 0 15px yellow;
-      animation: slash-ani 0.3s ease-out forwards;
-    }
-    @keyframes slash-ani {
-      0% { transform: translate(-50%, -50%) rotate(45deg) scaleY(0); opacity: 1; }
-      100% { transform: translate(-50%, -50%) rotate(45deg) scaleY(1.5); opacity: 0; }
     }
 
     #ui-area { flex: 1.5; display: flex; flex-direction: column; background: #000; border: 4px solid #fff; border-radius: 8px; margin-top: 8px; padding: 12px; position: relative; }
@@ -75,11 +61,6 @@
     .diff-btn { width: 80%; padding: 20px; margin: 10px; font-size: 1.2rem; font-weight: bold; border: 3px solid #fff; background: #000; color: #fff; cursor: pointer; }
     .review-item { margin-bottom: 15px; border-bottom: 1px solid #444; padding-bottom: 10px; text-align: left; width: 100%; }
     
-    #bonus-image-view { display: none; width: 100%; height: 100%; background-image: url('1000046944.jpg'); background-size: 300% 300%; background-repeat: no-repeat; border: 4px solid #ffd700; border-radius: 12px; }
-    #victory-image-view { display: none; width: 100%; height: 100%; object-fit: contain; background: #fff; border-radius: 12px; }
-    #boss-timer { display: none; position: absolute; top: 10px; right: 10px; background: #000; color: #ff4757; border: 2px solid #fff; padding: 5px; width: 80px; text-align: center; z-index: 10; }
-    #timer-fill { height: 4px; background: #ff4757; width: 100%; margin-top: 2px; }
-
     @keyframes flash { from { opacity: 1; } to { opacity: 0.3; } }
     .shake { animation: shake 0.2s ease-in-out 2; }
     @keyframes shake { 0%, 100% { transform: translate(0,0); } 25% { transform: translate(-8px,0); } 75% { transform: translate(8px,0); } }
@@ -104,19 +85,14 @@
   </div>
 
   <div id="game-screen">
-    <div id="bonus-banner" style="display:none; position:absolute; top:15%; left:50%; transform:translateX(-50%); color:gold; font-size:2rem; font-weight:bold; text-shadow:3px 3px #000; z-index:5; animation:flash 0.5s infinite alternate;">BONUS STAGE</div>
-    <div id="boss-timer">TIME:<span id="time-num">10</span><div id="timer-fill"></div></div>
     <div id="monster-area">
       <div id="monster-name"></div>
       <div id="monster-image-box">
         <span id="monster-emoji">👾</span>
-        <div id="bonus-image-view"></div>
-        <img id="victory-image-view" src="" alt="">
       </div>
       <div style="width:140px; height:12px; background:#333; border:2px solid #fff; margin-top:20px;">
         <div id="monster-hp-bar" style="height:100%; background:#f00; width:100%; transition: width 0.3s;"></div>
       </div>
-      <div id="monster-effects" style="position: absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;"></div>
     </div>
     <div id="effect-layer"></div>
   </div>
@@ -148,19 +124,28 @@
     let player = { hp: 100, wins: 0, maxHp: 100, canHeal: true };
     let monster = { hp: 70, maxHp: 70 };
     let pool = [], usedPool = [], missList = [];
-    let isBoss = false, isBonus = false, currentQ = null;
-    let timerInt, timeLeft = 10;
+    let currentQ = null, timerInt;
 
-    const monsterData = [{emoji:"👻",name:"ゴースト"},{emoji:"🦇",name:"ドラキー"},{emoji:"🐺",name:"リカント"},{emoji:"🐍",name:"おおさそり"},{emoji:"🕷️",name:"大グモ"},{emoji:"💀",name:"がいこつ兵"}];
+    const monsterData = [{emoji:"👻",name:"ゴースト"},{emoji:"蝙蝠",name:"ドラキー"},{emoji:"🐺",name:"リカント"}];
 
-    function speak(text, lang="ja-JP") {
+    // --- 音声出力機能の復元 ---
+    function speakEnglish(text) {
+      const uttr = new SpeechSynthesisUtterance();
+      // カッコ内の日本語を除去して英語のみを抽出
+      let engPart = text.match(/「(.+?)」/) ? text.match(/「(.+?)」/)[1] : text.replace(/\(.+?\)/, " ");
+      uttr.text = engPart; uttr.lang = "en-US";
+      uttr.rate = 0.9;
+      window.speechSynthesis.speak(uttr);
+    }
+
+    function speak(text) {
       const uttr = new SpeechSynthesisUtterance(text);
-      uttr.lang = lang;
+      uttr.lang = "ja-JP";
+      uttr.pitch = 0.5; uttr.rate = 1.5;
       window.speechSynthesis.speak(uttr);
     }
 
     function checkAnswer(choice) {
-      clearInterval(timerInt);
       if (!currentQ) return;
       
       const btns = document.querySelectorAll("#choices button");
@@ -173,13 +158,17 @@
       if (choice === currentQ.a) {
         monster.hp -= 20;
         document.getElementById("log").textContent = "20のダメージをあたえた！";
+        speak("おっ、そうだな");
         usedPool.push(currentQ);
       } else {
         if (!missList.find(m => m.q === currentQ.q)) missList.push(currentQ);
-        let dmg = (Math.random() < 0.2) ? 50 : 15;
-        if (dmg === 50) triggerThunderEffect();
+        let isThunder = Math.random() < 0.2;
+        let dmg = isThunder ? 50 : 15;
+        if (isThunder) triggerThunderEffect();
+        
         player.hp = Math.max(0, player.hp - dmg);
-        document.getElementById("log").textContent = dmg === 50 ? "痛恨の一撃！！" : "ダメージをうけた！";
+        document.getElementById("log").textContent = isThunder ? "痛恨の一撃！！" : "ダメージをうけた！";
+        speak("あーもうめちゃくちゃだよ");
         pool.unshift(currentQ); 
       }
       
@@ -209,6 +198,7 @@
 
     function handleGameOver() {
       document.getElementById("log").innerHTML = "<span style='color:red;'>しんでしまった！</span>";
+      speak("ヌッ！");
       document.getElementById("choices").innerHTML = "";
       document.getElementById("question").textContent = "あなたの冒険は ここで終わった。";
       document.getElementById("btn-anytime-review").textContent = "復習してトップへ";
@@ -219,13 +209,12 @@
     function showHealEvent() {
       document.getElementById("log").textContent = "体力が 限界だ...";
       document.getElementById("question").innerHTML = "<span style='color:#ff4757; font-weight:bold;'>神に いのりますか？</span>";
-      const choicesEl = document.getElementById("choices"); 
-      choicesEl.innerHTML = "";
+      const choicesEl = document.getElementById("choices"); choicesEl.innerHTML = "";
       
       const healBtn = document.createElement("button"); 
       healBtn.textContent = "いのる（HP全回復・一度のみ）";
       healBtn.onclick = () => { 
-        player.hp = 100; 
+        player.hp = 100; // 全回復
         player.canHeal = false; 
         updateUI(); 
         document.getElementById("log").textContent = "HPが 全かいふくした！";
@@ -237,19 +226,22 @@
       noBtn.textContent = "いのらない";
       noBtn.onclick = () => { 
         document.getElementById("log").textContent = "あなたは いのらなかった。";
-        setTimeout(loadQuestion, 800); 
+        loadQuestion(); // すぐに次の問題へ
       };
       choicesEl.appendChild(noBtn);
     }
 
     function loadQuestion() {
-      if (pool.length === 0) pool = [...usedPool];
+      if (pool.length === 0) pool = [...usedPool].sort(() => Math.random() - 0.5);
       currentQ = pool.pop();
       document.getElementById("question").textContent = currentQ.q;
       
+      // 音声読み上げ
+      speakEnglish(currentQ.q);
+      
       const choicesEl = document.getElementById("choices");
       choicesEl.innerHTML = "";
-      [...currentQ.choices].sort(() => Math.random() - 0.5).forEach(c => {
+      [...currentQ.choices].forEach(c => {
         const btn = document.createElement("button");
         btn.textContent = c;
         btn.onclick = () => checkAnswer(c);
@@ -262,8 +254,7 @@
       document.getElementById("hp-display").style.color = player.hp <= 20 ? "#ff4757" : "#fff";
       document.getElementById("wins").textContent = player.wins;
       document.getElementById("level").textContent = Math.floor(player.wins / 3) + 1;
-      const pct = Math.max(0, (monster.hp / monster.maxHp) * 100);
-      document.getElementById("monster-hp-bar").style.width = pct + "%";
+      document.getElementById("monster-hp-bar").style.width = (monster.hp / 70 * 100) + "%";
     }
 
     function handleDefeat() {
@@ -317,7 +308,7 @@
       modal.style.display = "flex";
     }
 
-    function openReviewAnytime() { showReview(player.hp <= 0); }
+    function openReviewAnytime() { speak("あっ、いいっすよ"); showReview(player.hp <= 0); }
     function closeReview() { document.getElementById("review-modal").style.display = "none"; }
     function returnToMenu() { location.reload(); }
   </script>
