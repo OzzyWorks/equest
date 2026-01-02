@@ -8,7 +8,6 @@
     html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; color: #fff; font-family: 'Courier New', Consolas, monospace; }
     body { display: flex; flex-direction: column; box-sizing: border-box; padding: 10px; position: relative; }
 
-    /* ① バージョン表示 */
     #version-tag { 
       position: absolute; top: 5px; right: 10px; font-size: 0.8rem; color: #fff; 
       text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
@@ -31,7 +30,25 @@
     #monster-emoji { font-size: 100px; filter: drop-shadow(0 0 10px #000); }
     #monster-name { background: rgba(0,0,0,0.7); padding: 2px 10px; border: 1px solid #fff; font-size: 0.9rem; margin-bottom: 5px; color: #fff; }
 
-    /* クリティカル：斬撃エフェクト */
+    /* 痛恨の稲妻エフェクト */
+    .thunder {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(255, 0, 0, 0.3); z-index: 500; pointer-events: none;
+      animation: thunder-flash 0.1s steps(2) infinite;
+    }
+    /* 稲妻のギザギザ（簡易表現） */
+    .thunder::before {
+      content: "⚡"; position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%) scale(20); color: #ff4757;
+      text-shadow: 0 0 20px #fff; opacity: 0.8;
+    }
+    @keyframes thunder-flash {
+      0% { opacity: 0; }
+      50% { opacity: 1; background: rgba(255, 0, 0, 0.5); }
+      100% { opacity: 0; }
+    }
+
+    /* クリティカル演出（維持） */
     .slash {
       position: absolute; width: 5px; height: 250px; background: yellow;
       top: 50%; left: 50%; z-index: 150;
@@ -43,8 +60,6 @@
       0% { transform: translate(-50%, -50%) rotate(45deg) scaleY(0); opacity: 1; }
       100% { transform: translate(-50%, -50%) rotate(45deg) scaleY(1.5); opacity: 0; }
     }
-
-    /* クリティカル：文字エフェクト */
     .critical-text {
       position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);
       color: yellow; font-size: 2rem; font-weight: bold; font-style: italic;
@@ -58,13 +73,12 @@
       100% { transform: translate(-50%, -60%) scale(1); opacity: 0; }
     }
 
-    /* 背景の青揺れ */
+    /* その他スタイル維持 */
     .flash-blue { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 100, 255, 0.4); pointer-events: none; z-index: 100; animation: fade-out 0.5s forwards; }
     @keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
     .critical-shake { animation: c-shake 0.1s ease-in-out infinite; }
     @keyframes c-shake { 0%, 100% { transform: translate(0,0); } 25% { transform: translate(-15px, 15px); } 75% { transform: translate(15px, -15px); } }
 
-    /* 以下、基本スタイル維持 */
     #bonus-image-view { display: none; width: 100%; height: 100%; background-image: url('1000046944.jpg'); background-size: 300% 300%; background-repeat: no-repeat; border: 4px solid #ffd700; border-radius: 12px; }
     #victory-image-view { display: none; width: 100%; height: 100%; object-fit: contain; background: #fff; border-radius: 12px; }
     #boss-timer { display: none; position: absolute; top: 10px; right: 10px; background: #000; color: #ff4757; border: 2px solid #fff; padding: 5px; width: 80px; text-align: center; z-index: 10; }
@@ -91,7 +105,7 @@
 </head>
 <body>
 
-  <div id="version-tag">v.1.05</div>
+  <div id="version-tag">v.1.06</div>
 
   <div id="difficulty-modal" style="display: flex;">
     <div id="diff-content">
@@ -154,13 +168,10 @@
     let isBoss = false, isBonus = false, bossMistakes = 0;
     let timerInt, timeLeft = 10, bonusImgInterval, currentQ = null;
 
-    const bonusBgm = new Audio('BattleTheme.mp3');
+    const bonusBgm = new Audio('sentou-two.mp3');
     bonusBgm.loop = true;
-    bonusBgm.volume = 0.3; // BGM音量維持
+    bonusBgm.volume = 0.3;
 
-    const monsterData = [{emoji:"👻",name:"ゴースト"},{emoji:"🦇",name:"ドラキー"},{emoji:"🐺",name:"リカント"},{emoji:"🐍",name:"おおさそり"},{emoji:"🕷️",name:"大グモ"},{emoji:"💀",name:"がいこつ兵"}];
-
-    // 英語読み上げ（維持）
     function speakEnglish(text) {
       const uttr = new SpeechSynthesisUtterance();
       let engPart = text.match(/「(.+?)」/) ? text.match(/「(.+?)」/)[1] : text.replace(/\(.+?\)/, "blank");
@@ -169,8 +180,7 @@
       const voices = window.speechSynthesis.getVoices();
       const femaleVoice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Female') || v.name.includes('Google US English') || v.name.includes('Samantha') || v.name.includes('Zira')));
       if (femaleVoice) uttr.voice = femaleVoice;
-      uttr.rate = 0.9;
-      uttr.pitch = 1.1;
+      uttr.rate = 0.9; uttr.pitch = 1.1;
       window.speechSynthesis.speak(uttr);
     }
 
@@ -180,46 +190,119 @@
       const voices = window.speechSynthesis.getVoices();
       const jaVoice = voices.find(v => v.lang === 'ja-JP');
       if (jaVoice) uttr.voice = jaVoice;
-      uttr.pitch = 0.4;
-      uttr.rate = 1.6;
+      uttr.pitch = 0.4; uttr.rate = 1.6;
       window.speechSynthesis.speak(uttr);
     }
 
-    function returnToMenu() {
-      bonusBgm.pause();
-      bonusBgm.currentTime = 0;
-      location.reload(); 
-    }
+    function checkAnswer(choice) {
+      clearInterval(timerInt); highlightCorrect();
+      if (choice === currentQ.a) {
+        // プレイヤーの攻撃
+        let isCritical = Math.random() < 0.2;
+        let dmg = isCritical ? 50 : 20;
+        monster.hp -= dmg; 
+        if (isCritical) triggerCriticalEffect();
+        else document.getElementById("log").textContent = "20のダメージをあたえた！";
+        speak(isBonus ? "やりますねぇぇ" : "おっ、そうだな"); 
+        usedPool.push(currentQ);
+      } else {
+        // 敵の攻撃（ロジック追加）
+        if (isBoss) bossMistakes++;
+        if (!missList.find(m => m.q === currentQ.q)) missList.push({q:currentQ.q, a:currentQ.a, choices:currentQ.choices});
+        
+        let isGraveError = Math.random() < 0.2; // 20%の確率で痛恨の一撃
+        let playerDmg = 10; // 通常ダメージ
 
-    function selectDifficulty(fileName) {
-      document.getElementById("diff-buttons").style.display = "none";
-      document.getElementById("loading-msg").style.display = "block";
-      window.masterQuestions = undefined;
-      const script = document.createElement('script');
-      script.src = fileName;
-      script.onload = () => {
-        if (typeof masterQuestions !== 'undefined' && masterQuestions.length > 0) {
-          setTimeout(() => {
-            document.getElementById("difficulty-modal").style.display = "none";
-            init();
-          }, 600);
+        if (isGraveError) {
+          triggerThunderEffect(); // 稲妻演出
+          document.getElementById("log").innerHTML = "<span style='color:red; font-size:1.1rem;'>痛恨の一撃！！</span>";
+          speak(isBonus ? "痛いですね・・・これは痛い・・・" : "あーもうめちゃくちゃだよ");
+          
+          if (player.hp >= 60) {
+            playerDmg = 50;
+          } else {
+            playerDmg = player.hp - 10; // 残りHPが10になるダメージ
+            if (playerDmg < 0) playerDmg = 10; // 既に10以下の場合は最低10
+          }
         } else {
-          alert("データエラー");
+          document.getElementById("log").textContent = "つう恨の ミス！";
+          speak(isBonus ? "痛いですね・・・これは痛い・・・" : "あーもうめちゃくちゃだよ");
         }
-      };
-      script.onerror = () => {
-        alert("ファイル未検出");
-        document.getElementById("diff-buttons").style.display = "block";
-        document.getElementById("loading-msg").style.display = "none";
-      };
-      document.body.appendChild(script);
+
+        damagePlayer(playerDmg);
+        let insertIdx = Math.floor(Math.random() * (pool.length / 2));
+        pool.splice(insertIdx, 0, currentQ);
+      }
+      updateUI();
+      setTimeout(() => { if (monster.hp <= 0) handleDefeat(); else loadQuestion(); }, 1200);
     }
 
-    function init() {
-      pool = [...masterQuestions].sort(() => Math.random() - 0.5);
-      startBattle();
+    // 痛恨の演出：赤い稲妻
+    function triggerThunderEffect() {
+      const effectLayer = document.getElementById("effect-layer");
+      const thunder = document.createElement("div");
+      thunder.className = "thunder";
+      effectLayer.appendChild(thunder);
+      
+      // 画面全体を激しく揺らす
+      document.body.classList.add("shake");
+      setTimeout(() => {
+        thunder.remove();
+        document.body.classList.remove("shake");
+      }, 500);
     }
 
+    // プレイヤーのクリティカル演出（維持）
+    function triggerCriticalEffect() {
+      document.getElementById("log").textContent = "会心の一撃！50ダメージ！";
+      const effectArea = document.getElementById("monster-effects");
+      const slash = document.createElement("div"); slash.className = "slash";
+      effectArea.appendChild(slash);
+      const critText = document.createElement("div"); critText.className = "critical-text";
+      critText.textContent = "Critical Damage!"; effectArea.appendChild(critText);
+      const effectLayer = document.getElementById("effect-layer");
+      const flash = document.createElement("div"); flash.className = "flash-blue";
+      effectLayer.appendChild(flash);
+      document.getElementById("game-screen").classList.add("critical-shake");
+      setTimeout(() => {
+        slash.remove(); critText.remove(); flash.remove();
+        document.getElementById("game-screen").classList.remove("critical-shake");
+      }, 500);
+    }
+
+    // 以下、その他の共通関数は維持
+    function damagePlayer(dmg) {
+      player.hp -= dmg;
+      if (player.hp <= 0) { player.hp = 0; updateUI(); showReview(); }
+    }
+    function updateUI() {
+      document.getElementById("hp").textContent = player.hp;
+      document.getElementById("hp-display").style.color = player.hp <= 20 ? "#ff4757" : "#fff";
+      document.getElementById("wins").textContent = player.wins;
+      document.getElementById("level").textContent = Math.floor(player.wins / 3) + 1;
+      const pct = Math.max(0, (monster.hp / monster.maxHp) * 100);
+      document.getElementById("monster-hp-bar").style.width = pct + "%";
+    }
+    function highlightCorrect() {
+      const btns = document.querySelectorAll("#choices button");
+      btns.forEach(b => { b.disabled = true; if (b.textContent === currentQ.a) b.style.background = "#2ecc71"; else b.style.opacity = "0.5"; });
+    }
+    function handleDefeat() {
+      if (isBoss && bossMistakes === 0) startBonus();
+      else {
+        if (isBonus) { 
+          bonusBgm.pause(); bonusBgm.currentTime = 0; clearInterval(bonusImgInterval);
+          speak("イクイク イイヨコイヨ。イキスギィィィィィィィィィィィィ"); 
+          document.getElementById("bonus-image-view").style.display = "none";
+          const vic = document.getElementById("victory-image-view"); vic.style.display = "block"; vic.src = "1000046945.png";
+          document.getElementById("btn-menu").style.display = "inline-block";
+          document.getElementById("next").style.display = "none";
+        } else if (isBoss) document.getElementById("btn-menu").style.display = "inline-block";
+        player.wins++; 
+        document.getElementById("log").textContent = "敵を たおした！";
+        document.getElementById("next-area").style.display = "block"; document.getElementById("choices").innerHTML = "";
+      }
+    }
     function startBattle() {
       clearInterval(bonusImgInterval); clearInterval(timerInt);
       isBonus = false; bossMistakes = 0; player.canHeal = true;
@@ -245,112 +328,26 @@
       document.getElementById("next").style.display = "inline-block";
       updateUI(); loadQuestion();
     }
-
     function loadQuestion() {
-      if (pool.length === 0) {
-        pool = [...usedPool].sort(() => Math.random() - 0.5);
-        usedPool = [];
-      }
+      if (pool.length === 0) { pool = [...usedPool].sort(() => Math.random() - 0.5); usedPool = []; }
       if (player.hp <= 20 && player.canHeal) { showHealEvent(); return; }
-      currentQ = pool.pop();
-      document.getElementById("question").textContent = currentQ.q;
+      currentQ = pool.pop(); document.getElementById("question").textContent = currentQ.q;
       speakEnglish(currentQ.q);
-      const choicesEl = document.getElementById("choices");
-      choicesEl.innerHTML = "";
+      const choicesEl = document.getElementById("choices"); choicesEl.innerHTML = "";
       [...currentQ.choices].sort(() => Math.random() - 0.5).forEach(c => {
-        const btn = document.createElement("button");
-        btn.textContent = c; btn.onclick = () => checkAnswer(c);
+        const btn = document.createElement("button"); btn.textContent = c; btn.onclick = () => checkAnswer(c);
         choicesEl.appendChild(btn);
       });
       if (isBoss && !isBonus) startTimer();
     }
-
-    function checkAnswer(choice) {
-      clearInterval(timerInt); highlightCorrect();
-      if (choice === currentQ.a) {
-        let isCritical = Math.random() < 0.2;
-        let dmg = isCritical ? 50 : 20;
-        monster.hp -= dmg; 
-        
-        if (isCritical) {
-          triggerCriticalEffect();
-        } else {
-          document.getElementById("log").textContent = "20のダメージをあたえた！";
-        }
-        
-        speak(isBonus ? "やりますねぇぇ" : "おっ、そうだな"); 
-        usedPool.push(currentQ);
-      } else {
-        if (isBoss) bossMistakes++;
-        if (!missList.find(m => m.q === currentQ.q)) missList.push({q:currentQ.q, a:currentQ.a, choices:currentQ.choices});
-        damagePlayer(10); document.getElementById("log").textContent = "つう恨の ミス！";
-        speak(isBonus ? "痛いですね・・・これは痛い・・・" : "あーもうめちゃくちゃだよ");
-        let insertIdx = Math.floor(Math.random() * (pool.length / 2));
-        pool.splice(insertIdx, 0, currentQ);
-      }
-      updateUI();
-      setTimeout(() => { if (monster.hp <= 0) handleDefeat(); else loadQuestion(); }, 1200);
+    function startTimer() {
+      timeLeft = 10; clearInterval(timerInt);
+      timerInt = setInterval(() => {
+        timeLeft -= 0.1; document.getElementById("time-num").textContent = Math.ceil(timeLeft);
+        document.getElementById("timer-fill").style.width = (timeLeft * 10) + "%";
+        if (timeLeft <= 0) { clearInterval(timerInt); checkAnswer(""); }
+      }, 100);
     }
-
-    // クリティカル演出関数
-    function triggerCriticalEffect() {
-      document.getElementById("log").textContent = "会心の一撃！50ダメージ！";
-      const effectArea = document.getElementById("monster-effects");
-      
-      // 1. 斬撃（黄色い斜め線）
-      const slash = document.createElement("div");
-      slash.className = "slash";
-      effectArea.appendChild(slash);
-
-      // 2. Critical文字
-      const critText = document.createElement("div");
-      critText.className = "critical-text";
-      critText.textContent = "Critical Damage!";
-      effectArea.appendChild(critText);
-
-      // 3. 画面の青揺れ（以前の演出）
-      const effectLayer = document.getElementById("effect-layer");
-      const flash = document.createElement("div");
-      flash.className = "flash-blue";
-      effectLayer.appendChild(flash);
-      
-      document.getElementById("game-screen").classList.add("critical-shake");
-
-      // 演出終了後に削除
-      setTimeout(() => {
-        slash.remove();
-        critText.remove();
-        flash.remove();
-        document.getElementById("game-screen").classList.remove("critical-shake");
-      }, 500);
-    }
-
-    // 共通ロジック
-    function highlightCorrect() {
-      const btns = document.querySelectorAll("#choices button");
-      btns.forEach(b => { b.disabled = true; if (b.textContent === currentQ.a) b.style.background = "#2ecc71"; else b.style.opacity = "0.5"; });
-    }
-
-    function handleDefeat() {
-      if (isBoss && bossMistakes === 0) {
-        startBonus();
-      } else {
-        if (isBonus) { 
-          bonusBgm.pause(); bonusBgm.currentTime = 0;
-          clearInterval(bonusImgInterval); speak("イクイク イイヨコイヨ。イキスギィィィィィィィィィィィィ"); 
-          document.getElementById("bonus-image-view").style.display = "none";
-          const vic = document.getElementById("victory-image-view"); vic.style.display = "block"; vic.src = "1000046945.png";
-          document.getElementById("btn-menu").style.display = "inline-block";
-          document.getElementById("next").style.display = "none";
-        } else if (isBoss) {
-            document.getElementById("btn-menu").style.display = "inline-block";
-        }
-        player.wins++; 
-        document.getElementById("log").textContent = "敵を たおした！";
-        document.getElementById("next-area").style.display = "block"; document.getElementById("choices").innerHTML = "";
-      }
-    }
-
     function startBonus() {
       isBonus = true; isBoss = false; monster.maxHp = 350; monster.hp = 350;
       bonusBgm.play().catch(e => {});
@@ -365,7 +362,15 @@
       }, 2000);
       updateUI(); loadQuestion();
     }
-
+    function selectDifficulty(f) {
+      document.getElementById("diff-buttons").style.display = "none";
+      document.getElementById("loading-msg").style.display = "block";
+      const s = document.createElement('script'); s.src = f;
+      s.onload = () => { setTimeout(() => { document.getElementById("difficulty-modal").style.display = "none"; init(); }, 600); };
+      document.body.appendChild(s);
+    }
+    function init() { pool = [...masterQuestions].sort(() => Math.random() - 0.5); startBattle(); }
+    function returnToMenu() { bonusBgm.pause(); bonusBgm.currentTime = 0; location.reload(); }
     function openReviewAnytime() { speak("あっ、いいっすよ"); showReview(); }
     function showReview() {
       const modal = document.getElementById("review-modal");
@@ -382,25 +387,10 @@
       closeReview();
     }
     function closeReview() { if (player.hp <= 0) location.reload(); else document.getElementById("review-modal").style.display = "none"; }
-    function damagePlayer(dmg) {
-      player.hp -= dmg; document.body.classList.add("shake");
-      setTimeout(() => document.body.classList.remove("shake"), 200);
-      if (player.hp <= 0) { player.hp = 0; updateUI(); showReview(); }
-    }
-    function updateUI() {
-      document.getElementById("hp").textContent = player.hp;
-      document.getElementById("hp-display").style.color = player.hp <= 20 ? "#ff4757" : "#fff";
-      document.getElementById("wins").textContent = player.wins;
-      document.getElementById("level").textContent = Math.floor(player.wins / 3) + 1;
-      const pct = Math.max(0, (monster.hp / monster.maxHp) * 100);
-      document.getElementById("monster-hp-bar").style.width = pct + "%";
-    }
     function showHealEvent() {
       document.getElementById("question").innerHTML = "<span style='color:#ff4757;'>いのりますか？</span>";
-      const choicesEl = document.getElementById("choices");
-      choicesEl.innerHTML = "";
-      const healBtn = document.createElement("button");
-      healBtn.textContent = "いのる（HP50回復）";
+      const choicesEl = document.getElementById("choices"); choicesEl.innerHTML = "";
+      const healBtn = document.createElement("button"); healBtn.textContent = "いのる（HP50回復）";
       healBtn.onclick = () => { player.hp = Math.min(player.maxHp, player.hp + 50); player.canHeal = false; updateUI(); loadQuestion(); };
       choicesEl.appendChild(healBtn);
     }
