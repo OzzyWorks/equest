@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>ENGLISH QUEST - DQ EDITION</title>
   <style>
-    /* スタイル設定は Ver 1.11 を継承 */
     html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; color: #fff; font-family: 'Courier New', Consolas, monospace; }
     body { display: flex; flex-direction: column; box-sizing: border-box; padding: 10px; position: relative; }
     #version-tag { position: absolute; top: 5px; right: 10px; font-size: 0.8rem; color: #fff; text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000; z-index: 2000; pointer-events: none; font-weight: bold; }
@@ -20,7 +19,11 @@
     #ui-area { flex: 1.5; display: flex; flex-direction: column; background: #000; border: 4px solid #fff; border-radius: 8px; margin-top: 8px; padding: 12px; position: relative; }
     #status { display: flex; justify-content: space-around; align-items: center; font-size: 0.85rem; border-bottom: 2px solid #fff; padding-bottom: 8px; margin-bottom: 8px; }
     #btn-anytime-review { padding: 4px 8px; background: #444; color: #fff; border: 1px solid #fff; font-size: 0.7rem; cursor: pointer; }
-    #question { font-size: 1rem; text-align: center; min-height: 4.5em; display: flex; align-items: center; justify-content: center; padding: 5px; line-height: 1.4; }
+    
+    /* 修正: 問題エリアのレイアウト調整 */
+    #question { font-size: 1rem; text-align: center; min-height: 5.5em; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5px; line-height: 1.4; }
+    .ja-translate { font-size: 0.85rem; color: #aaa; margin-top: 5px; font-weight: normal; }
+    
     #choices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     #choices button { padding: 15px 5px; font-size: 0.9rem; background: #000; color: #fff; border: 2px solid #fff; border-radius: 0; cursor: pointer; }
     #log { font-size: 0.8rem; color: #ffff00; text-align: center; margin: 8px 0; font-weight: bold; min-height: 2.4em; }
@@ -41,7 +44,7 @@
 </head>
 <body>
 
-  <div id="version-tag">v.1.12</div>
+  <div id="version-tag">v.1.13</div>
 
   <div id="difficulty-modal" style="display: flex;">
     <div id="diff-content">
@@ -49,7 +52,7 @@
       <p style="color:#fff; margin-bottom:20px;">どの ぼうけんに でかけるんだい？</p>
       <div id="diff-buttons">
         <button class="diff-btn" onclick="selectDifficulty('questions.js', 15)">普通編</button>
-        <button class="diff-btn" onclick="selectDifficulty('questions2.js', 20)" style="border-color: #e74c3c; color: #e74c3c;">応用編</button>
+        <button class="diff-btn" onclick="selectDifficulty('quedtion2.js', 20)" style="border-color: #e74c3c; color: #e74c3c;">応用編</button>
       </div>
       <div id="loading-msg" style="display: none;">
         <p style="color: #fff; font-size: 1.2rem; animation: flash 0.5s infinite alternate;">データを よみこんでいます...</p>
@@ -137,21 +140,16 @@
         monster.hp -= 20;
         document.getElementById("log").textContent = "20のダメージをあたえた！";
         speak(isBonus ? "やりますねぇぇ" : "おっ、そうだな");
-        // 正解した問題は使用済みプールへ
         usedPool.push(currentQ);
       } else {
         if (isBoss) bossMistakes++;
         if (!missList.find(m => m.q === currentQ.q)) missList.push(currentQ);
-        
         let isThunder = Math.random() < 0.2;
         let dmg = isThunder ? 50 : 10; 
         if (isThunder) triggerThunderEffect();
-        
         player.hp = Math.max(0, player.hp - dmg);
         document.getElementById("log").textContent = isThunder ? "痛恨の一撃！！" : "ダメージをうけた！";
         speak(isBonus ? "痛いですね・・・" : "あーもうめちゃくちゃだよ");
-        
-        // --- 修正: 間違えた問題は pool の先頭に戻す（優先復習） ---
         pool.unshift(currentQ); 
       }
       
@@ -204,15 +202,21 @@
     }
 
     function loadQuestion() {
-      // --- 修正: poolが空になったらusedPoolから補充してシャッフル ---
       if (pool.length === 0) {
-        if (usedPool.length === 0) return; // エラー回避
+        if (usedPool.length === 0) return;
         pool = [...usedPool].sort(() => Math.random() - 0.5);
         usedPool = [];
       }
       
-      currentQ = pool.shift(); // 先頭から取り出す
-      document.getElementById("question").textContent = currentQ.q;
+      currentQ = pool.shift();
+      
+      // 修正: 英文と日本語訳の表示
+      const qEl = document.getElementById("question");
+      qEl.innerHTML = `<div>${currentQ.q}</div>`;
+      if (currentQ.j) {
+        qEl.innerHTML += `<div class="ja-translate">（${currentQ.j}）</div>`;
+      }
+      
       speakEnglish(currentQ.q);
       
       const choicesEl = document.getElementById("choices");
@@ -304,7 +308,6 @@
       s.src = f;
       s.onload = () => { 
         document.getElementById("difficulty-modal").style.display = "none";
-        // 最初のロード時にシャッフル
         pool = [...masterQuestions].sort(() => Math.random() - 0.5);
         usedPool = [];
         startBattle();
@@ -328,4 +331,3 @@
   </script>
 </body>
 </html>
-
