@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>ENGLISH QUEST - DQ EDITION</title>
   <style>
+    /* スタイル設定は Ver 1.10 を継承 */
     html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; color: #fff; font-family: 'Courier New', Consolas, monospace; }
     body { display: flex; flex-direction: column; box-sizing: border-box; padding: 10px; position: relative; }
 
@@ -73,7 +74,7 @@
 </head>
 <body>
 
-  <div id="version-tag">v.1.10</div>
+  <div id="version-tag">v.1.11</div>
 
   <div id="difficulty-modal" style="display: flex;">
     <div id="diff-content">
@@ -173,8 +174,10 @@
       } else {
         if (isBoss) bossMistakes++;
         if (!missList.find(m => m.q === currentQ.q)) missList.push(currentQ);
+        
+        // --- 修正: 通常ダメージを 10 に設定 ---
         let isThunder = Math.random() < 0.2;
-        let dmg = isThunder ? 50 : 15;
+        let dmg = isThunder ? 50 : 10; 
         if (isThunder) triggerThunderEffect();
         
         player.hp = Math.max(0, player.hp - dmg);
@@ -249,7 +252,11 @@
       
       const choicesEl = document.getElementById("choices");
       choicesEl.innerHTML = "";
-      [...currentQ.choices].forEach(c => {
+      
+      // --- 修正: 選択肢を必ずシャッフルする ---
+      let shuffledChoices = [...currentQ.choices].sort(() => Math.random() - 0.5);
+      
+      shuffledChoices.forEach(c => {
         const btn = document.createElement("button");
         btn.textContent = c;
         btn.onclick = () => checkAnswer(c);
@@ -281,7 +288,7 @@
       } else {
         if (isBonus) {
           bonusBgm.pause(); bonusBgm.currentTime = 0; 
-          victoryBgm.play(); // 勝利BGM再生
+          victoryBgm.play();
           clearInterval(bonusImgInterval);
           speak("イクイク イイヨコイヨ。イキスギィィィィィィィィィィィィ"); 
           document.getElementById("bonus-image-view").style.display = "none";
@@ -333,7 +340,7 @@
     }
 
     function selectDifficulty(f, time) {
-      bossTimeLimit = time; // タイマー設定
+      bossTimeLimit = time;
       document.getElementById("loading-msg").style.display = "block";
       const s = document.createElement('script');
       s.src = f;
